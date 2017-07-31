@@ -61,15 +61,53 @@ var _login2 = _interopRequireDefault(_login);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-angular.module('app', ['ui.router', 'satellizer']).component('app', _app2.default).component('login', _login2.default).config(function ($stateProvider, $urlRouterProvider, $authProvider) {
-       $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
-       $urlRouterProvider.otherwise('/');
-       $stateProvider.state('login', {
-              url: '/login',
-              templateUrl: './app/login/login.html',
-              controller: _login2.default.controller,
-              controllerAs: '$ctrl'
-       });
+// import principal from './app.services.js';
+
+
+angular.module('app', ['ui.router', 'satellizer']).component('app', _app2.default).component('login', _login2.default).config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
+  $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
+  $authProvider.signupUrl = 'http://localhost:7000/register';
+  $urlRouterProvider.otherwise('/');
+  $stateProvider.state('login', {
+    url: '/login',
+    templateUrl: './app/login/login.html',
+    controller: _login2.default.controller,
+    controllerAs: '$ctrl'
+  }).state('register', {
+    url: '/register',
+    templateUrl: './app/login/register.html',
+    controller: _login2.default.controller,
+    controllerAs: '$ctrl'
+  });
+}).directive('equals', function () {
+  return {
+    restrict: 'A', // only activate on element attribute
+    require: '?ngModel', // get a hold of NgModelController
+    link: function link(scope, elem, attrs, ngModel) {
+      if (!ngModel) return; // do nothing if no ng-model
+
+      // watch own value and re-validate on change
+      scope.$watch(attrs.ngModel, function () {
+        validate();
+      });
+
+      // observe the other value and re-validate on change
+      attrs.$observe('equals', function (val) {
+        validate();
+      });
+
+      var validate = function validate() {
+        // values
+        var val1 = ngModel.$viewValue,
+            val2 = attrs.equals;
+
+        // check for values in the fiels and set validity
+        if (val1 && val2) {
+          ngModel.$setValidity('equals', !val1 || !val2 || val1 === val2);
+        }
+      };
+    }
+  };
 });
 
 },{"./app.component":1,"./login/login.component":5}],5:[function(require,module,exports){
@@ -112,7 +150,7 @@ var loginController = function loginController($rootScope, $auth, $http) {
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
-    console.log('yo');
+
     ctrl.login = function () {
 
         var credentials = {
@@ -127,10 +165,30 @@ var loginController = function loginController($rootScope, $auth, $http) {
             ctrl.$rootScope.token = data.data.access_token;
             $http.defaults.headers.common['Authorization'] = 'Bearer ' + ctrl.$rootScope.token;
             $http.defaults.headers.common['Accept'] = 'application/json';
-
-            console.log($http.defaults.headers.common);
             // If login is successful, redirect to the users state
-            window.location.href = "#!/home";
+            // window.location.href = "#!/home";
+            console.log();
+        }).catch(function (error) {
+            alert('wrong!');
+        });
+    }; // end login
+
+
+    ctrl.signup = function () {
+
+        var user = {
+            name: ctrl.name,
+            email: ctrl.email,
+            password: ctrl.password,
+            password_confirmation: ctrl.password_confirmation,
+            grant_type: 'password',
+            client_id: 1,
+            client_secret: 'DKlsxJbWHCctqF99zBDCwFWON7Yb8m73oXXfavLY'
+        };
+
+        $auth.signup(user).then(function (response) {}).catch(function (response) {
+            alert('whoops');
+            console.log(user);
         });
     };
 };
