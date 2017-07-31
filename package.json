@@ -18,6 +18,7 @@
   "homepage": "https://github.com/JMStewart00/swither-frontend#readme",
   "devDependencies": {
     "angular": "^1.5.6",
+    "@uirouter/angularjs": "^1.0.3",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",
     "babel-preset-env": "^1.5.2",
@@ -30,6 +31,7 @@
     "gulp-concat": "^2.6.1",
     "gulp-connect": "^5.0.0",
     "gulp-sass": "^3.1.0",
+    "satellizer": "^0.15.5",
     "stringify": "^5.1.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.9.0"

@@ -4,6 +4,8 @@ class appCtrl {
 
 		let ctrl = this;
 		ctrl.$rootScope = $rootScope;
+		console.log('hello');
+
 
 	} // end constructor
 } // end appCtrl
