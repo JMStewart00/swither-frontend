@@ -45,7 +45,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location) {
 exports.default = appCtrl;
 
 },{}],3:[function(require,module,exports){
-module.exports = "\n<div ui-view></div>";
+module.exports = "<div class=\"container\">\n\t<navbar></navbar>\n\t<div ui-view></div>\n</div>";
 
 },{}],4:[function(require,module,exports){
 'use strict';
@@ -58,36 +58,40 @@ var _login = require('./login/login.component');
 
 var _login2 = _interopRequireDefault(_login);
 
+var _navbar = require('./navbar/navbar.component');
+
+var _navbar2 = _interopRequireDefault(_navbar);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // import principal from './app.services.js';
 
 
-angular.module('app', ['ui.router', 'satellizer']).component('app', _app2.default).component('login', _login2.default).config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
-       $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
-       $authProvider.signupUrl = 'http://localhost:7000/register';
+angular.module('app', ['ui.router', 'satellizer']).component('app', _app2.default).component('login', _login2.default).component('navbar', _navbar2.default).config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
+        $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
+        $authProvider.signupUrl = 'http://localhost:7000/register';
 
-       $urlRouterProvider.otherwise('/');
+        $urlRouterProvider.otherwise('/');
 
-       $stateProvider.state('login', {
-              url: '/login',
-              templateUrl: './app/login/login.html',
-              controller: _login2.default.controller,
-              controllerAs: '$ctrl'
-       }).state('register', {
-              url: '/register',
-              templateUrl: './app/login/register.html',
-              controller: _login2.default.controller,
-              controllerAs: '$ctrl'
-       }).state('dash', {
-              url: '/dashboard',
-              templateUrl: './app/dashboard/dashboard.html',
-              controller: _login2.default.controller,
-              controllerAs: '$ctrl'
-       });
+        $stateProvider.state('login', {
+                url: '/login',
+                templateUrl: './app/login/login.html',
+                controller: _login2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('register', {
+                url: '/register',
+                templateUrl: './app/login/register.html',
+                controller: _login2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('dash', {
+                url: '/dashboard',
+                templateUrl: './app/dashboard/dashboard.html',
+                controller: _login2.default.controller,
+                controllerAs: '$ctrl'
+        });
 });
 
-},{"./app.component":1,"./login/login.component":5}],5:[function(require,module,exports){
+},{"./app.component":1,"./login/login.component":5,"./navbar/navbar.component":8}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -171,5 +175,52 @@ exports.default = loginController;
 
 },{}],7:[function(require,module,exports){
 module.exports = "<div class=\"col-sm-4 col-sm-offset-4\">\n    <div class=\"well\">\n        <h3>Login</h3>\n        <form>\n            <div ng-if=\"$ctrl.$rootScope.loginError\" class=\"alert-danger\">{{$ctrl.$rootScope.loginError}}</div>\n            <div class=\"form-group\">\n                <input type=\"email\" class=\"form-control\" placeholder=\"Email\" ng-model=\"$ctrl.email\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"password\" class=\"form-control\" placeholder=\"Password\" ng-model=\"$ctrl.password\">\n            </div>\n            <button class=\"btn btn-primary\" ng-click=\"$ctrl.login()\">Submit</button>\n        </form>\n    </div>\n</div>";
+
+},{}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _navbar = require('./navbar.html');
+
+var _navbar2 = _interopRequireDefault(_navbar);
+
+var _navbar3 = require('./navbar.controller');
+
+var _navbar4 = _interopRequireDefault(_navbar3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var navbarComponent = {
+	bindings: {},
+	template: _navbar2.default,
+	controller: ['$rootScope', '$auth', '$http', '$state', _navbar4.default],
+	controllerAs: '$ctrl'
+};
+
+exports.default = navbarComponent;
+
+},{"./navbar.controller":9,"./navbar.html":10}],9:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var navbarController = function navbarController($rootScope, $auth, $http, $state) {
+    _classCallCheck(this, navbarController);
+
+    var ctrl = this;
+    ctrl.$rootScope = $rootScope;
+};
+
+exports.default = navbarController;
+
+},{}],10:[function(require,module,exports){
+module.exports = "<div class=\"row mt-5\">\n\t<div class=\"col-2 offset-2\">\n\t\t<h2>logo</h2>\n\t</div>\n\t<div class=\"col-2 offset-4\">\n\t\t<h2></h2>\n\t</div>\n</div>";
 
 },{}]},{},[4]);
