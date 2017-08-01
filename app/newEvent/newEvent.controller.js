@@ -1,10 +1,10 @@
-class navbarController {
+class newEventController {
     constructor($rootScope, $auth, $http, $state) {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
 
-
-    };
 }
 
-export default navbarController;
+}
+
+export default newEventController;

@@ -1,8 +1,12 @@
 <div class="row mt-5">
 	<div class="col-2 offset-2">
-		<h2>logo</h2>
+		<p>logo</p>
 	</div>
-	<div class="col-2 offset-4">
-		<h2></h2>
+	<div class="col-6 offset-2">
+<div class="row">
+	<a ng-show="!$ctrl.$rootScope.loginStatus" class="btn col m-0 text-right" go-click="register">Register</a>
+	<a ng-show="!$ctrl.$rootScope.loginStatus" class="btn col m-0" go-click="login">Login</a>
+	<a ng-show="$ctrl.$rootScope.loginStatus" ng-click="$ctrl.$rootScope.logout()" class="btn col text-right m-0">Logout</a>
+</div>
 	</div>
 </div>

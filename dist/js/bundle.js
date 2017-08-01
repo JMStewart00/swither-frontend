@@ -15,7 +15,7 @@ var _app4 = _interopRequireDefault(_app3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_app4.default.$inject = ['$rootScope', '$http', '$location'];
+_app4.default.$inject = ['$rootScope', '$http', '$location', '$auth'];
 
 var appComponent = {
 	template: _app2.default,
@@ -33,11 +33,12 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var appCtrl = function appCtrl($rootScope, $http, $location) {
+var appCtrl = function appCtrl($rootScope, $http, $location, $auth) {
 	_classCallCheck(this, appCtrl);
 
 	var ctrl = this;
 	ctrl.$rootScope = $rootScope;
+	ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
 } // end constructor
 ; // end appCtrl
 
@@ -62,36 +63,131 @@ var _navbar = require('./navbar/navbar.component');
 
 var _navbar2 = _interopRequireDefault(_navbar);
 
+var _dashboard = require('./dashboard/dashboard.component');
+
+var _dashboard2 = _interopRequireDefault(_dashboard);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // import principal from './app.services.js';
 
 
-angular.module('app', ['ui.router', 'satellizer']).component('app', _app2.default).component('login', _login2.default).component('navbar', _navbar2.default).config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
-        $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
-        $authProvider.signupUrl = 'http://localhost:7000/register';
+angular.module('app', ['ui.router', 'satellizer']).component('app', _app2.default).component('login', _login2.default).component('navbar', _navbar2.default).component('dashboard', _dashboard2.default).config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
+  $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
+  $authProvider.signupUrl = 'http://localhost:7000/register';
 
-        $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/');
 
-        $stateProvider.state('login', {
-                url: '/login',
-                templateUrl: './app/login/login.html',
-                controller: _login2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('register', {
-                url: '/register',
-                templateUrl: './app/login/register.html',
-                controller: _login2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('dash', {
-                url: '/dashboard',
-                templateUrl: './app/dashboard/dashboard.html',
-                controller: _login2.default.controller,
-                controllerAs: '$ctrl'
-        });
+  $stateProvider.state('login', {
+    url: '/login',
+    templateUrl: './app/login/login.html',
+    controller: _login2.default.controller,
+    controllerAs: '$ctrl'
+  }).state('register', {
+    url: '/register',
+    templateUrl: './app/login/register.html',
+    controller: _login2.default.controller,
+    controllerAs: '$ctrl'
+  }).state('auth.dashboard', {
+    url: '/dashboard',
+    templateUrl: './app/dashboard/dashboard.html',
+    controller: _dashboard2.default.controller,
+    controllerAs: '$ctrl'
+  }).state('auth', {
+    resolve: {
+      loginRequired: loginRequired
+    }
+  });
+
+  function skipIfLoggedIn($q, $auth) {
+    var deferred = $q.defer();
+    if ($auth.isAuthenticated()) {
+      deferred.reject();
+    } else {
+      deferred.resolve();
+    }
+    return deferred.promise;
+  }
+
+  function loginRequired($q, $state, $auth) {
+    var deferred = $q.defer();
+    if ($auth.isAuthenticated()) {
+      deferred.resolve();
+    } else {
+      $state.go('login');
+    }
+    return deferred.promise;
+  }
+}).directive('goClick', function ($state) {
+  return function (scope, element, attrs) {
+    var path = void 0;
+
+    attrs.$observe('goClick', function (val) {
+      path = val;
+    });
+
+    element.bind('click', function () {
+      scope.$apply(function () {
+        $state.go(path);
+      });
+    });
+  };
 });
 
-},{"./app.component":1,"./login/login.component":5,"./navbar/navbar.component":8}],5:[function(require,module,exports){
+},{"./app.component":1,"./dashboard/dashboard.component":5,"./login/login.component":8,"./navbar/navbar.component":11}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _dashboard = require('./dashboard.html');
+
+var _dashboard2 = _interopRequireDefault(_dashboard);
+
+var _dashboard3 = require('./dashboard.controller');
+
+var _dashboard4 = _interopRequireDefault(_dashboard3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var dashboardComponent = {
+	bindings: {},
+	template: _dashboard2.default,
+	controller: ['$rootScope', '$auth', '$http', '$state', _dashboard4.default],
+	controllerAs: '$ctrl'
+};
+
+exports.default = dashboardComponent;
+
+},{"./dashboard.controller":6,"./dashboard.html":7}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var dashboardController = function dashboardController($rootScope, $auth, $http, $state) {
+    _classCallCheck(this, dashboardController);
+
+    var ctrl = this;
+    ctrl.$rootScope = $rootScope;
+
+    ctrl.$rootScope.logout = function () {
+        $auth.logout();
+        ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+        $state.go('login');
+    };
+};
+
+exports.default = dashboardController;
+
+},{}],7:[function(require,module,exports){
+module.exports = "<h1>hello world</h1>\n";
+
+},{}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -117,7 +213,7 @@ var loginComponent = {
 
 exports.default = loginComponent;
 
-},{"./login.controller":6,"./login.html":7}],6:[function(require,module,exports){
+},{"./login.controller":9,"./login.html":10}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -132,8 +228,10 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
 
-    ctrl.login = function () {
+    // define login function for use in the front end
+    ctrl.$rootScope.login = function () {
 
+        // grab credentials from the front end form and send off to login
         var credentials = {
             grant_type: 'password',
             client_id: 1,
@@ -144,17 +242,19 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
             // Use Satellizer's $auth service to login
         };$auth.login(credentials).then(function (data) {
             $auth.setToken(data.data.access_token);
-            console.log($auth.isAuthenticated());
-            $state.go('dash');
+            $state.go('auth.dashboard');
+            ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+            ctrl.$rootScope.loginError = '';
         }).catch(function (error) {
             ctrl.$rootScope.loginError = error.data.message;
-            console.log($auth.isAuthenticated());
         });
     }; // end login
 
 
-    ctrl.signup = function () {
+    // define function called signup
+    ctrl.$rootScope.signup = function () {
 
+        // grab data from the form to send to the backend for registering new user
         var user = {
             name: ctrl.name,
             email: ctrl.email,
@@ -165,18 +265,19 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
             client_secret: 'DKlsxJbWHCctqF99zBDCwFWON7Yb8m73oXXfavLY'
         };
 
+        // satellizer's signup function to send data via http request to server.
         $auth.signup(user).then(function (response) {
-            windnow.location.href = '/login';
+            $state.go('login');
         }).catch(function (error) {});
     };
 };
 
 exports.default = loginController;
 
-},{}],7:[function(require,module,exports){
-module.exports = "<div class=\"col-sm-4 col-sm-offset-4\">\n    <div class=\"well\">\n        <h3>Login</h3>\n        <form>\n            <div ng-if=\"$ctrl.$rootScope.loginError\" class=\"alert-danger\">{{$ctrl.$rootScope.loginError}}</div>\n            <div class=\"form-group\">\n                <input type=\"email\" class=\"form-control\" placeholder=\"Email\" ng-model=\"$ctrl.email\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"password\" class=\"form-control\" placeholder=\"Password\" ng-model=\"$ctrl.password\">\n            </div>\n            <button class=\"btn btn-primary\" ng-click=\"$ctrl.login()\">Submit</button>\n        </form>\n    </div>\n</div>";
+},{}],10:[function(require,module,exports){
+module.exports = "<div class=\"col-sm-4 col-sm-offset-4\">\n    <div class=\"well\">\n        <h3>Login</h3>\n        <form>\n            <div ng-if=\"$ctrl.$rootScope.loginError\" class=\"alert-danger\">{{$ctrl.$rootScope.loginError}}</div>\n            <div class=\"form-group\">\n                <input type=\"email\" class=\"form-control\" placeholder=\"Email\" ng-model=\"$ctrl.email\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"password\" class=\"form-control\" placeholder=\"Password\" ng-model=\"$ctrl.password\">\n            </div>\n            <button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.login()\">Submit</button>\n        </form>\n    </div>\n</div>";
 
-},{}],8:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -202,7 +303,7 @@ var navbarComponent = {
 
 exports.default = navbarComponent;
 
-},{"./navbar.controller":9,"./navbar.html":10}],9:[function(require,module,exports){
+},{"./navbar.controller":12,"./navbar.html":13}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -220,7 +321,7 @@ var navbarController = function navbarController($rootScope, $auth, $http, $stat
 
 exports.default = navbarController;
 
-},{}],10:[function(require,module,exports){
-module.exports = "<div class=\"row mt-5\">\n\t<div class=\"col-2 offset-2\">\n\t\t<h2>logo</h2>\n\t</div>\n\t<div class=\"col-2 offset-4\">\n\t\t<h2></h2>\n\t</div>\n</div>";
+},{}],13:[function(require,module,exports){
+module.exports = "<div class=\"row mt-5\">\n\t<div class=\"col-2 offset-2\">\n\t\t<p>logo</p>\n\t</div>\n\t<div class=\"col-6 offset-2\">\n<div class=\"row\">\n\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col m-0 text-right\" go-click=\"register\">Register</a>\n\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col m-0\" go-click=\"login\">Login</a>\n\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" ng-click=\"$ctrl.$rootScope.logout()\" class=\"btn col text-right m-0\">Logout</a>\n</div>\n\t</div>\n</div>";
 
 },{}]},{},[4]);

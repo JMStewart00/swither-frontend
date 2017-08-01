@@ -1,10 +1,9 @@
-class navbarController {
+class landingController {
     constructor($rootScope, $auth, $http, $state) {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
 
-
     };
 }
 
-export default navbarController;
+export default landingController;

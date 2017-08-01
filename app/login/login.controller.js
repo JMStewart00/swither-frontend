@@ -4,8 +4,10 @@ class loginController {
         ctrl.$rootScope = $rootScope;
 
 
-        ctrl.login = () => {
+        // define login function for use in the front end
+        ctrl.$rootScope.login = () => {
 
+            // grab credentials from the front end form and send off to login
             let credentials = {
                 grant_type: 'password',
                 client_id: 1,
@@ -18,19 +20,21 @@ class loginController {
             $auth.login(credentials)
                 .then((data) => {
                     $auth.setToken(data.data.access_token);
-                    console.log($auth.isAuthenticated());
-                    $state.go('dash');
+                    $state.go('auth.dashboard');
+                    ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+                    ctrl.$rootScope.loginError = '';
 
                 }).catch((error) => {
                     ctrl.$rootScope.loginError = error.data.message;
-                    console.log($auth.isAuthenticated());
                 })
 
         } // end login
 
 
-        ctrl.signup = () => {
+        // define function called signup
+        ctrl.$rootScope.signup = () => {
 
+            // grab data from the form to send to the backend for registering new user
             let user = {
                 name: ctrl.name,
                 email: ctrl.email,
@@ -41,15 +45,19 @@ class loginController {
                 client_secret: 'DKlsxJbWHCctqF99zBDCwFWON7Yb8m73oXXfavLY'
             };
 
+            // satellizer's signup function to send data via http request to server.
             $auth.signup(user)
               .then( (response) => {
-                windnow.location.href = '/login';
+                $state.go('login');
               })
               .catch( (error) => {
                  
               });
             }
-    };
+
+
+
+    }; // end constructor
 }
 
 export default loginController;

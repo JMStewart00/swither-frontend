@@ -32,7 +32,7 @@ gulp.task('connect', () => {
 });
 
 gulp.task('html', function () {
-  gulp.src('./**/**')
+  gulp.src('./**')
     .pipe(connect.reload());
 });
 
@@ -42,7 +42,7 @@ gulp.task('js', function () {
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['./*'], ['html']);
+  gulp.watch(['./**'], ['html']);
   gulp.watch(['./dist/js/bundle.js'], ['js'])
 });
 
