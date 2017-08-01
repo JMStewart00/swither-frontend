@@ -1,4 +1,4 @@
-class dashboardController {
+class swipeScreenController {
     constructor($rootScope, $auth, $http, $state) {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
@@ -14,4 +14,4 @@ class dashboardController {
     };
 }
 
-export default dashboardController;
+export default swipeScreenController;

@@ -2,22 +2,39 @@ import appComponent from './app.component';
 import loginComponent from './login/login.component';
 import navbarComponent from './navbar/navbar.component';
 import dashboardComponent from './dashboard/dashboard.component';
-// import principal from './app.services.js';
+import landingComponent from './landing/landing.component';
+import newEventComponent from './newEvent/newEvent.component';
+import swipeScreenComponent from './swipeScreen/swipeScreen.component';
 
 
-
+// instantiation of the module of app, where injections will go.
 angular.module('app', ['ui.router', 'satellizer'])
 .component('app', appComponent)
 .component('login', loginComponent)
 .component('navbar', navbarComponent)
 .component('dashboard', dashboardComponent)
+.component('landing', landingComponent)
+.component('newEvent', newEventComponent)
+.component('swipeScreen', swipeScreenComponent)
+
+//configuration add-on
 .config(($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) => {
+
+        // authentication routes definitions
         $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
         $authProvider.signupUrl = 'http://localhost:7000/register';
 
+        // says to route to / on unknown or undefined routes.
         $urlRouterProvider.otherwise('/');
 
+        // states
         $stateProvider
+                .state('landing', {
+                        url: '/',
+                        templateUrl: './app/landing/landing.html',
+                        controller: landingComponent.controller,
+                        controllerAs: '$ctrl'
+                })               
                 .state('login', {
                         url: '/login',
                         templateUrl: './app/login/login.html',
@@ -34,6 +51,18 @@ angular.module('app', ['ui.router', 'satellizer'])
                         url: '/dashboard',
                         templateUrl: './app/dashboard/dashboard.html',
                         controller: dashboardComponent.controller,
+                        controllerAs: '$ctrl'
+                })
+                .state('auth.new', {
+                        url: '/newevent',
+                        templateUrl: './app/newEvent/newEvent.html',
+                        controller: newEventComponent.controller,
+                        controllerAs: '$ctrl'
+                })
+                .state('auth.swipes', {
+                        url: '/swipes',
+                        templateUrl: './app/swipeScreen/swipeScreen.html',
+                        controller: swipeScreenComponent.controller,
                         controllerAs: '$ctrl'
                 })
                 .state('auth', {
@@ -64,6 +93,8 @@ angular.module('app', ['ui.router', 'satellizer'])
                     return deferred.promise;
                   }
 })
+
+// custom angular directive for going to different routes and clicking on any element with ng-click
 .directive( 'goClick',  ( $state ) => {
   return  ( scope, element, attrs ) => {
     let path;
