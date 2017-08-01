@@ -32,7 +32,7 @@ gulp.task('connect', () => {
 });
 
 gulp.task('html', function () {
-  gulp.src('./**/*.html')
+  gulp.src('./**/**')
     .pipe(connect.reload());
 });
 
@@ -81,7 +81,7 @@ gulp.task('bundle', () => {
 });
 
 gulp.task('sass', () => {
-    return gulp.src('./app/**/*.scss')
+    return gulp.src('./**/*.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(autoprefixer(autoprefixerOptions))
     .pipe(concat('main.css'))
@@ -89,7 +89,7 @@ gulp.task('sass', () => {
 });
 
 gulp.task('css', function() {
-    gulp.watch('app/**/*.scss', ['sass']);
+    gulp.watch('./**/*.scss', ['sass']);
 })
 
 

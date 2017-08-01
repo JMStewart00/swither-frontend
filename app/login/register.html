@@ -1,0 +1,21 @@
+<div class="col-sm-4 col-sm-offset-4">
+    <div class="well">
+        <h3>Register</h3>
+        <form name="registration">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Name" ng-model="$ctrl.name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control" placeholder="Email" ng-model="$ctrl.email" required>
+            </div>
+            <div class="form-group">
+                <input type="password"  equals="{{$ctrl.password_confirmation}}" ng-model="$ctrl.password" required>
+            </div>
+            <div class="form-group">
+                <input type="password" ng-model="$ctrl.password_confirmation" equals="{{$ctrl.password}}" required>
+            </div>
+
+            <button class="btn btn-primary" ng-disabled="registration.$invalid" ng-click="$ctrl.signup()">Submit</button>
+        </form>
+    </div>
+</div>
