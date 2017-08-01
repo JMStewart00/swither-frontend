@@ -5,10 +5,11 @@ import dashboardComponent from './dashboard/dashboard.component';
 import landingComponent from './landing/landing.component';
 import newEventComponent from './newEvent/newEvent.component';
 import swipeScreenComponent from './swipeScreen/swipeScreen.component';
+import apiService from './resource.services.js';
 
 
 // instantiation of the module of app, where injections will go.
-angular.module('app', ['ui.router', 'satellizer'])
+angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
 .component('app', appComponent)
 .component('login', loginComponent)
 .component('navbar', navbarComponent)
@@ -16,6 +17,7 @@ angular.module('app', ['ui.router', 'satellizer'])
 .component('landing', landingComponent)
 .component('newEvent', newEventComponent)
 .component('swipeScreen', swipeScreenComponent)
+.factory('apiService', apiService)
 
 //configuration add-on
 .config(($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) => {

@@ -15,7 +15,7 @@ var _app4 = _interopRequireDefault(_app3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_app4.default.$inject = ['$rootScope', '$http', '$location', '$auth'];
+_app4.default.$inject = ['$rootScope', '$http', '$location', '$auth', '$state', 'apiService'];
 
 var appComponent = {
 	template: _app2.default,
@@ -25,7 +25,7 @@ var appComponent = {
 exports.default = appComponent;
 
 },{"./app.controller":2,"./app.html":3}],2:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
@@ -33,13 +33,58 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var appCtrl = function appCtrl($rootScope, $http, $location, $auth) {
+var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiService) {
 	_classCallCheck(this, appCtrl);
 
 	var ctrl = this;
 	ctrl.$rootScope = $rootScope;
 	ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+	ctrl.$http = $http;
+	ctrl.$rootScope.searchResults = [];
+
+	// global logout function to be able to be called from anywhere.
+	ctrl.$rootScope.logout = function () {
+		$auth.logout();
+		ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+		$state.go('login');
+	};
+
+	// // Setting a global function for getting ALL sites from API
+	// ctrl.$rootScope.getYelp = () => {
+
+	// 	// grabs api data for all the sites with the ngresource query()
+	// 	ctrl.query = apiService.getYelp().query();
+
+	// 	// pushes data to sites object
+	// 	ctrl.query.$promise.then( (data) => {
+	// 		ctrl.$rootScope.yelpReturn = data;
+	// 	})	
+
+	// } // end getYelp()
+
+
+	// add a site from form
+	ctrl.$rootScope.searchYelp = function () {
+
+		// instantiate new site JSON
+		ctrl.searchParameters = {
+			// grab values with JQuery from form
+			"term": $('#term').val(),
+			"location": $('#location').val()
+		};
+
+		$http.post('http://localhost:7000/api/index', ctrl.searchParameters).then(function (response) {
+			console.log(response.data);
+			ctrl.$rootScope.searchResults.push(response.data);
+			console.log(ctrl.$rootScope.searchResults);
+			$state.go('auth.dashboard');
+		});
+		// };
+	}; //end searchYelp
+
 } // end constructor
+
+
 ; // end appCtrl
 
 
@@ -67,18 +112,44 @@ var _dashboard = require('./dashboard/dashboard.component');
 
 var _dashboard2 = _interopRequireDefault(_dashboard);
 
+var _landing = require('./landing/landing.component');
+
+var _landing2 = _interopRequireDefault(_landing);
+
+var _newEvent = require('./newEvent/newEvent.component');
+
+var _newEvent2 = _interopRequireDefault(_newEvent);
+
+var _swipeScreen = require('./swipeScreen/swipeScreen.component');
+
+var _swipeScreen2 = _interopRequireDefault(_swipeScreen);
+
+var _resourceServices = require('./resource.services.js');
+
+var _resourceServices2 = _interopRequireDefault(_resourceServices);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import principal from './app.services.js';
+// instantiation of the module of app, where injections will go.
+angular.module('app', ['ui.router', 'satellizer', 'ngResource']).component('app', _app2.default).component('login', _login2.default).component('navbar', _navbar2.default).component('dashboard', _dashboard2.default).component('landing', _landing2.default).component('newEvent', _newEvent2.default).component('swipeScreen', _swipeScreen2.default).factory('apiService', _resourceServices2.default)
 
+//configuration add-on
+.config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
 
-angular.module('app', ['ui.router', 'satellizer']).component('app', _app2.default).component('login', _login2.default).component('navbar', _navbar2.default).component('dashboard', _dashboard2.default).config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
+  // authentication routes definitions
   $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
   $authProvider.signupUrl = 'http://localhost:7000/register';
 
+  // says to route to / on unknown or undefined routes.
   $urlRouterProvider.otherwise('/');
 
-  $stateProvider.state('login', {
+  // states
+  $stateProvider.state('landing', {
+    url: '/',
+    templateUrl: './app/landing/landing.html',
+    controller: _landing2.default.controller,
+    controllerAs: '$ctrl'
+  }).state('login', {
     url: '/login',
     templateUrl: './app/login/login.html',
     controller: _login2.default.controller,
@@ -92,6 +163,16 @@ angular.module('app', ['ui.router', 'satellizer']).component('app', _app2.defaul
     url: '/dashboard',
     templateUrl: './app/dashboard/dashboard.html',
     controller: _dashboard2.default.controller,
+    controllerAs: '$ctrl'
+  }).state('auth.new', {
+    url: '/newevent',
+    templateUrl: './app/newEvent/newEvent.html',
+    controller: _newEvent2.default.controller,
+    controllerAs: '$ctrl'
+  }).state('auth.swipes', {
+    url: '/swipes',
+    templateUrl: './app/swipeScreen/swipeScreen.html',
+    controller: _swipeScreen2.default.controller,
     controllerAs: '$ctrl'
   }).state('auth', {
     resolve: {
@@ -118,7 +199,10 @@ angular.module('app', ['ui.router', 'satellizer']).component('app', _app2.defaul
     }
     return deferred.promise;
   }
-}).directive('goClick', function ($state) {
+})
+
+// custom angular directive for going to different routes and clicking on any element with ng-click
+.directive('goClick', function ($state) {
   return function (scope, element, attrs) {
     var path = void 0;
 
@@ -134,7 +218,7 @@ angular.module('app', ['ui.router', 'satellizer']).component('app', _app2.defaul
   };
 });
 
-},{"./app.component":1,"./dashboard/dashboard.component":5,"./login/login.component":8,"./navbar/navbar.component":11}],5:[function(require,module,exports){
+},{"./app.component":1,"./dashboard/dashboard.component":5,"./landing/landing.component":8,"./login/login.component":11,"./navbar/navbar.component":14,"./newEvent/newEvent.component":17,"./resource.services.js":20,"./swipeScreen/swipeScreen.component":21}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -161,7 +245,7 @@ var dashboardComponent = {
 exports.default = dashboardComponent;
 
 },{"./dashboard.controller":6,"./dashboard.html":7}],6:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -174,20 +258,63 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
+    // ctrl.$rootScope.searchYelp();
 
-    ctrl.$rootScope.logout = function () {
-        $auth.logout();
-        ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
-        $state.go('login');
-    };
 };
 
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<h1>hello world</h1>\n";
+module.exports = "\n";
 
 },{}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _landing = require('./landing.html');
+
+var _landing2 = _interopRequireDefault(_landing);
+
+var _landing3 = require('./landing.controller');
+
+var _landing4 = _interopRequireDefault(_landing3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var landingComponent = {
+	bindings: {},
+	template: _landing2.default,
+	controller: ['$rootScope', '$auth', '$http', '$state', _landing4.default],
+	controllerAs: '$ctrl'
+};
+
+exports.default = landingComponent;
+
+},{"./landing.controller":9,"./landing.html":10}],9:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var landingController = function landingController($rootScope, $auth, $http, $state) {
+    _classCallCheck(this, landingController);
+
+    var ctrl = this;
+    ctrl.$rootScope = $rootScope;
+};
+
+exports.default = landingController;
+
+},{}],10:[function(require,module,exports){
+module.exports = "<h1>heyo!</h1>";
+
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -213,7 +340,7 @@ var loginComponent = {
 
 exports.default = loginComponent;
 
-},{"./login.controller":9,"./login.html":10}],9:[function(require,module,exports){
+},{"./login.controller":12,"./login.html":13}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -274,10 +401,10 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
 
 exports.default = loginController;
 
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = "<div class=\"col-sm-4 col-sm-offset-4\">\n    <div class=\"well\">\n        <h3>Login</h3>\n        <form>\n            <div ng-if=\"$ctrl.$rootScope.loginError\" class=\"alert-danger\">{{$ctrl.$rootScope.loginError}}</div>\n            <div class=\"form-group\">\n                <input type=\"email\" class=\"form-control\" placeholder=\"Email\" ng-model=\"$ctrl.email\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"password\" class=\"form-control\" placeholder=\"Password\" ng-model=\"$ctrl.password\">\n            </div>\n            <button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.login()\">Submit</button>\n        </form>\n    </div>\n</div>";
 
-},{}],11:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -303,7 +430,7 @@ var navbarComponent = {
 
 exports.default = navbarComponent;
 
-},{"./navbar.controller":12,"./navbar.html":13}],12:[function(require,module,exports){
+},{"./navbar.controller":15,"./navbar.html":16}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -321,7 +448,143 @@ var navbarController = function navbarController($rootScope, $auth, $http, $stat
 
 exports.default = navbarController;
 
-},{}],13:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = "<div class=\"row mt-5\">\n\t<div class=\"col-2 offset-2\">\n\t\t<p>logo</p>\n\t</div>\n\t<div class=\"col-6 offset-2\">\n<div class=\"row\">\n\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col m-0 text-right\" go-click=\"register\">Register</a>\n\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col m-0\" go-click=\"login\">Login</a>\n\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" ng-click=\"$ctrl.$rootScope.logout()\" class=\"btn col text-right m-0\">Logout</a>\n</div>\n\t</div>\n</div>";
+
+},{}],17:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _newEvent = require('./newEvent.html');
+
+var _newEvent2 = _interopRequireDefault(_newEvent);
+
+var _newEvent3 = require('./newEvent.controller');
+
+var _newEvent4 = _interopRequireDefault(_newEvent3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var newEventComponent = {
+	bindings: {},
+	template: _newEvent2.default,
+	controller: ['$rootScope', '$auth', '$http', '$state', _newEvent4.default],
+	controllerAs: '$ctrl'
+};
+
+exports.default = newEventComponent;
+
+},{"./newEvent.controller":18,"./newEvent.html":19}],18:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var newEventController = function newEventController($rootScope, $auth, $http, $state) {
+    _classCallCheck(this, newEventController);
+
+    var ctrl = this;
+    ctrl.$rootScope = $rootScope;
+};
+
+exports.default = newEventController;
+
+},{}],19:[function(require,module,exports){
+module.exports = "<div class=\"row\">\n    <div class=\"col\">\n        <form name=\"search\">\n            <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"Type of place\" name=\"term\" id=\"term\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"City, State or ZipCode\" name=\"location\" id=\"location\">\n            </div>\n            <button class=\"btn btn-outline-primary\" ng-click=\"$ctrl.$rootScope.searchYelp()\">Submit</button>\n        </form>\n    </div>\n</div>";
+
+},{}],20:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+
+function apiService($resource) {
+	var ctrl = this;
+	// All of the site api functions
+	// let getYelp = () => $resource('http://localhost:7000/api/index');
+	// let	searchYelp = () => $resource('http://localhost:7000/api/index/');
+	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
+	//            'update': {method: 'PUT'}
+	//        	});
+
+	return {}
+	// 			getYelp : getYelp,
+	// 			searchYelp : searchYelp,
+
+
+	// 	};
+	// function subnetsService($resource) {
+
+	// 	 return $resource('http://localhost:7000/api/subnets/:subnet', 
+	// 		 {
+	// 		 	subnet: "@subnet"
+	// 		 }
+	// 	 	);
+	;
+}
+
+exports.default = apiService;
+
+},{}],21:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _swipeScreen = require('./swipeScreen.html');
+
+var _swipeScreen2 = _interopRequireDefault(_swipeScreen);
+
+var _swipeScreen3 = require('./swipeScreen.controller');
+
+var _swipeScreen4 = _interopRequireDefault(_swipeScreen3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var swipeScreenComponent = {
+	bindings: {},
+	template: _swipeScreen2.default,
+	controller: ['$rootScope', '$auth', '$http', '$state', _swipeScreen4.default],
+	controllerAs: '$ctrl'
+};
+
+exports.default = swipeScreenComponent;
+
+},{"./swipeScreen.controller":22,"./swipeScreen.html":23}],22:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var swipeScreenController = function swipeScreenController($rootScope, $auth, $http, $state) {
+    _classCallCheck(this, swipeScreenController);
+
+    var ctrl = this;
+    ctrl.$rootScope = $rootScope;
+
+    // global logout function to be able to be called from anywhere.
+    ctrl.$rootScope.logout = function () {
+        $auth.logout();
+        ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+        $state.go('login');
+    };
+};
+
+exports.default = swipeScreenController;
+
+},{}],23:[function(require,module,exports){
+module.exports = "\n<li ng-repeat=\"business in $ctrl.$rootScope.searchResults[0]\">{{business.name}} | {{business.location.city}}, {{business.location.state}}  |  {{business.price}}</li>";
 
 },{}]},{},[4]);

@@ -1,15 +1,10 @@
 class dashboardController {
-    constructor($rootScope, $auth, $http, $state) {
+    constructor($rootScope, $auth, $http, $state ) {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
+        // ctrl.$rootScope.searchYelp();
 
 
-        // global logout function to be able to be called from anywhere.
-        ctrl.$rootScope.logout = () => {
-            $auth.logout();
-            ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
-            $state.go('login');
-        }
 
     };
 }

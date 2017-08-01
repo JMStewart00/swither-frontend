@@ -1,35 +1,6 @@
 
 
-foo {
-  bar: '1'; }
 
-foo {
-  bar: '2'; }
 
-foo {
-  bar: '3'; }
 
-foo {
-  bar: '4'; }
 
-#navbar {
-  width: 80%;
-  height: 23px; }
-
-#navbar ul {
-  list-style-type: none; }
-
-#navbar li {
-  float: left; }
-  #navbar li a {
-    font-weight: bold; }
-
-div {
-  width: foo(42px);
-  height: bar(42px); }
-
-div {
-  color: foo("bar"); }
-
-.outside {
-  color: red; }

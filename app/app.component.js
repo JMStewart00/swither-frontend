@@ -1,7 +1,7 @@
 import template from './app.html';
 import controller from './app.controller';
 
-controller.$inject = ['$rootScope', '$http', '$location', '$auth'];
+controller.$inject = ['$rootScope', '$http', '$location', '$auth', '$state', 'apiService'];
 
 
 let appComponent = {

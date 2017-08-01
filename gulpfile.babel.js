@@ -42,7 +42,7 @@ gulp.task('js', function () {
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['./**'], ['html']);
+  gulp.watch(['./*'], ['html']);
   gulp.watch(['./dist/js/bundle.js'], ['js'])
 });
 
