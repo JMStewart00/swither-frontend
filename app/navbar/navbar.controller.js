@@ -3,6 +3,7 @@ class navbarController {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
 
+
     };
 }
 
