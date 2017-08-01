@@ -1,7 +1,7 @@
 <div class="col-sm-4 col-sm-offset-4">
     <div class="well">
         <h3>Register</h3>
-        <form>
+        <form name="registration">
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Name" ng-model="$ctrl.name" required>
             </div>
@@ -15,7 +15,7 @@
                 <input type="password" ng-model="$ctrl.password_confirmation" equals="{{$ctrl.password}}" required>
             </div>
 
-            <button class="btn btn-primary" ng-click="$ctrl.signup()">Submit</button>
+            <button class="btn btn-primary" ng-disabled="registration.$invalid" ng-click="$ctrl.signup()">Submit</button>
         </form>
     </div>
 </div>

@@ -1,7 +1,8 @@
 class loginController {
-    constructor($rootScope, $auth, $http) {
+    constructor($rootScope, $auth, $http, $state) {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
+
 
         ctrl.login = () => {
 
@@ -16,14 +17,13 @@ class loginController {
             // Use Satellizer's $auth service to login
             $auth.login(credentials)
                 .then((data) => {
-                    ctrl.$rootScope.token = data.data.access_token;
-                    $http.defaults.headers.common['Authorization'] = 'Bearer ' + ctrl.$rootScope.token;
-                    $http.defaults.headers.common['Accept'] = 'application/json';
-                    // If login is successful, redirect to the users state
-                    // window.location.href = "#!/home";
-                    console.log();
+                    $auth.setToken(data.data.access_token);
+                    console.log($auth.isAuthenticated());
+                    $state.go('dash');
+
                 }).catch((error) => {
-                    alert('wrong!');
+                    ctrl.$rootScope.loginError = error.data.message;
+                    console.log($auth.isAuthenticated());
                 })
 
         } // end login
@@ -43,11 +43,10 @@ class loginController {
 
             $auth.signup(user)
               .then( (response) => {
-
+                windnow.location.href = '/login';
               })
-              .catch( (response) => {
-                 alert('whoops');
-                 console.log(user);
+              .catch( (error) => {
+                 
               });
             }
     };

@@ -2,7 +2,7 @@
 
 import loginComponent from './login.component';
 
-let loginModule = angular.module('login',[])
+let loginModule = angular.module('login',['ui.router'])
 .component('login', loginComponent)
 
 

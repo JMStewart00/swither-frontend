@@ -25,7 +25,7 @@ var appComponent = {
 exports.default = appComponent;
 
 },{"./app.controller":2,"./app.html":3}],2:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
@@ -38,7 +38,6 @@ var appCtrl = function appCtrl($rootScope, $http, $location) {
 
 	var ctrl = this;
 	ctrl.$rootScope = $rootScope;
-	console.log('hello');
 } // end constructor
 ; // end appCtrl
 
@@ -65,49 +64,27 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 angular.module('app', ['ui.router', 'satellizer']).component('app', _app2.default).component('login', _login2.default).config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
-  $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
-  $authProvider.signupUrl = 'http://localhost:7000/register';
-  $urlRouterProvider.otherwise('/');
-  $stateProvider.state('login', {
-    url: '/login',
-    templateUrl: './app/login/login.html',
-    controller: _login2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('register', {
-    url: '/register',
-    templateUrl: './app/login/register.html',
-    controller: _login2.default.controller,
-    controllerAs: '$ctrl'
-  });
-}).directive('equals', function () {
-  return {
-    restrict: 'A', // only activate on element attribute
-    require: '?ngModel', // get a hold of NgModelController
-    link: function link(scope, elem, attrs, ngModel) {
-      if (!ngModel) return; // do nothing if no ng-model
+       $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
+       $authProvider.signupUrl = 'http://localhost:7000/register';
 
-      // watch own value and re-validate on change
-      scope.$watch(attrs.ngModel, function () {
-        validate();
-      });
+       $urlRouterProvider.otherwise('/');
 
-      // observe the other value and re-validate on change
-      attrs.$observe('equals', function (val) {
-        validate();
-      });
-
-      var validate = function validate() {
-        // values
-        var val1 = ngModel.$viewValue,
-            val2 = attrs.equals;
-
-        // check for values in the fiels and set validity
-        if (val1 && val2) {
-          ngModel.$setValidity('equals', !val1 || !val2 || val1 === val2);
-        }
-      };
-    }
-  };
+       $stateProvider.state('login', {
+              url: '/login',
+              templateUrl: './app/login/login.html',
+              controller: _login2.default.controller,
+              controllerAs: '$ctrl'
+       }).state('register', {
+              url: '/register',
+              templateUrl: './app/login/register.html',
+              controller: _login2.default.controller,
+              controllerAs: '$ctrl'
+       }).state('dash', {
+              url: '/dashboard',
+              templateUrl: './app/dashboard/dashboard.html',
+              controller: _login2.default.controller,
+              controllerAs: '$ctrl'
+       });
 });
 
 },{"./app.component":1,"./login/login.component":5}],5:[function(require,module,exports){
@@ -130,7 +107,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var loginComponent = {
 	bindings: {},
 	template: _login2.default,
-	controller: ['$rootScope', '$auth', '$http', _login4.default],
+	controller: ['$rootScope', '$auth', '$http', '$state', _login4.default],
 	controllerAs: '$ctrl'
 };
 
@@ -145,7 +122,7 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var loginController = function loginController($rootScope, $auth, $http) {
+var loginController = function loginController($rootScope, $auth, $http, $state) {
     _classCallCheck(this, loginController);
 
     var ctrl = this;
@@ -162,14 +139,12 @@ var loginController = function loginController($rootScope, $auth, $http) {
 
             // Use Satellizer's $auth service to login
         };$auth.login(credentials).then(function (data) {
-            ctrl.$rootScope.token = data.data.access_token;
-            $http.defaults.headers.common['Authorization'] = 'Bearer ' + ctrl.$rootScope.token;
-            $http.defaults.headers.common['Accept'] = 'application/json';
-            // If login is successful, redirect to the users state
-            // window.location.href = "#!/home";
-            console.log();
+            $auth.setToken(data.data.access_token);
+            console.log($auth.isAuthenticated());
+            $state.go('dash');
         }).catch(function (error) {
-            alert('wrong!');
+            ctrl.$rootScope.loginError = error.data.message;
+            console.log($auth.isAuthenticated());
         });
     }; // end login
 
@@ -186,16 +161,15 @@ var loginController = function loginController($rootScope, $auth, $http) {
             client_secret: 'DKlsxJbWHCctqF99zBDCwFWON7Yb8m73oXXfavLY'
         };
 
-        $auth.signup(user).then(function (response) {}).catch(function (response) {
-            alert('whoops');
-            console.log(user);
-        });
+        $auth.signup(user).then(function (response) {
+            windnow.location.href = '/login';
+        }).catch(function (error) {});
     };
 };
 
 exports.default = loginController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<div class=\"col-sm-4 col-sm-offset-4\">\n    <div class=\"well\">\n        <h3>Login</h3>\n        <form>\n            <div class=\"form-group\">\n                <input type=\"email\" class=\"form-control\" placeholder=\"Email\" ng-model=\"$ctrl.email\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"password\" class=\"form-control\" placeholder=\"Password\" ng-model=\"$ctrl.password\">\n            </div>\n            <button class=\"btn btn-primary\" ng-click=\"$ctrl.login()\">Submit</button>\n        </form>\n    </div>\n</div>";
+module.exports = "<div class=\"col-sm-4 col-sm-offset-4\">\n    <div class=\"well\">\n        <h3>Login</h3>\n        <form>\n            <div ng-if=\"$ctrl.$rootScope.loginError\" class=\"alert-danger\">{{$ctrl.$rootScope.loginError}}</div>\n            <div class=\"form-group\">\n                <input type=\"email\" class=\"form-control\" placeholder=\"Email\" ng-model=\"$ctrl.email\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"password\" class=\"form-control\" placeholder=\"Password\" ng-model=\"$ctrl.password\">\n            </div>\n            <button class=\"btn btn-primary\" ng-click=\"$ctrl.login()\">Submit</button>\n        </form>\n    </div>\n</div>";
 
 },{}]},{},[4]);
