@@ -1,13 +1,55 @@
 class appCtrl {
 
-	constructor($rootScope, $http, $location, $auth, $state, apiService) {
+    constructor($rootScope, $http, $location, $auth, $state, apiService) {
 
-		let ctrl = this;
-		ctrl.$rootScope = $rootScope;
-		ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
-		ctrl.$http = $http;
-		ctrl.$rootScope.searchResults = [];
-
+        let ctrl = this;
+        ctrl.$rootScope = $rootScope;
+        ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+        ctrl.$http = $http;
+        ctrl.$rootScope.searchResults = [{
+        "id": "velvet-taco-chicago",
+        "name": "Velvet Taco",
+        "image_url": "https://s3-media3.fl.yelpcdn.com/bphoto/MHRSqUs9jW5Rpo_ysfiLxg/o.jpg",
+        "is_closed": false,
+        "url": "https://www.yelp.com/biz/velvet-taco-chicago?adjust_creative=_D0fpoWGQt3_-FGYLWuntg&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=_D0fpoWGQt3_-FGYLWuntg",
+        "review_count": 803,
+        "categories": [
+            {
+                "alias": "newamerican",
+                "title": "American (New)"
+            },
+            {
+                "alias": "mexican",
+                "title": "Mexican"
+            }
+        ],
+        "rating": 4,
+        "coordinates": {
+            "latitude": 41.9021988,
+            "longitude": -87.6285782
+        },
+        "transactions": [
+            "delivery",
+            "pickup"
+        ],
+        "price": "$$",
+        "location": {
+            "address1": "1110 N State St",
+            "address2": "",
+            "address3": "",
+            "city": "Chicago",
+            "zip_code": "60610",
+            "country": "US",
+            "state": "IL",
+            "display_address": [
+                "1110 N State St",
+                "Chicago, IL 60610"
+            ]
+        },
+        "phone": "+13127632654",
+        "display_phone": "(312) 763-2654",
+        "distance": 4083.25607216
+    }];
 
 
         // global logout function to be able to be called from anywhere.
@@ -17,46 +59,29 @@ class appCtrl {
             $state.go('login');
         }
 
+        // search yelp with a form
+        ctrl.$rootScope.searchYelp = () => {
 
+        // instantiate new search JSON
+            ctrl.searchParameters = {
+                // grab values with JQuery from form
+              "term": $('#term').val(),
+              "location": $('#location').val(),
+              "sort_by": 'rating'
+            };
 
-		// // Setting a global function for getting ALL sites from API
-		// ctrl.$rootScope.getYelp = () => {
-
-		// 	// grabs api data for all the sites with the ngresource query()
-		// 	ctrl.query = apiService.getYelp().query();
-
-		// 	// pushes data to sites object
-		// 	ctrl.query.$promise.then( (data) => {
-		// 		ctrl.$rootScope.yelpReturn = data;
-		// 	})	
-
-		// } // end getYelp()
-
-
-		// add a site from form
-		ctrl.$rootScope.searchYelp = () => {
-
-		// instantiate new site JSON
-			ctrl.searchParameters = {
-				// grab values with JQuery from form
-			  "term": $('#term').val(),
-			  "location": $('#location').val()
-			};
-
-			$http.post('http://localhost:7000/api/index', ctrl.searchParameters)
-				.then( (response) => {
-					console.log(response.data);
-					ctrl.$rootScope.searchResults.push(response.data);
-					console.log(ctrl.$rootScope.searchResults);
-					$state.go('auth.dashboard');
-			})
-			// };
- 			
-		} //end searchYelp
+            $http.post('http://localhost:7000/api/index', ctrl.searchParameters)
+                .then( (response) => {
+                    ctrl.$rootScope.searchResults.push(response.data);
+                    $state.go('auth.swipes');
+            })
+            // };
+            
+        } //end searchYelp
 
 
 
-	} // end constructor
+    } // end constructor
 
 
 } // end appCtrl

@@ -25,62 +25,81 @@ var appComponent = {
 exports.default = appComponent;
 
 },{"./app.controller":2,"./app.html":3}],2:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+    value: true
 });
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiService) {
-	_classCallCheck(this, appCtrl);
+    _classCallCheck(this, appCtrl);
 
-	var ctrl = this;
-	ctrl.$rootScope = $rootScope;
-	ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
-	ctrl.$http = $http;
-	ctrl.$rootScope.searchResults = [];
+    var ctrl = this;
+    ctrl.$rootScope = $rootScope;
+    ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+    ctrl.$http = $http;
+    ctrl.$rootScope.searchResults = [{
+        "id": "velvet-taco-chicago",
+        "name": "Velvet Taco",
+        "image_url": "https://s3-media3.fl.yelpcdn.com/bphoto/MHRSqUs9jW5Rpo_ysfiLxg/o.jpg",
+        "is_closed": false,
+        "url": "https://www.yelp.com/biz/velvet-taco-chicago?adjust_creative=_D0fpoWGQt3_-FGYLWuntg&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=_D0fpoWGQt3_-FGYLWuntg",
+        "review_count": 803,
+        "categories": [{
+            "alias": "newamerican",
+            "title": "American (New)"
+        }, {
+            "alias": "mexican",
+            "title": "Mexican"
+        }],
+        "rating": 4,
+        "coordinates": {
+            "latitude": 41.9021988,
+            "longitude": -87.6285782
+        },
+        "transactions": ["delivery", "pickup"],
+        "price": "$$",
+        "location": {
+            "address1": "1110 N State St",
+            "address2": "",
+            "address3": "",
+            "city": "Chicago",
+            "zip_code": "60610",
+            "country": "US",
+            "state": "IL",
+            "display_address": ["1110 N State St", "Chicago, IL 60610"]
+        },
+        "phone": "+13127632654",
+        "display_phone": "(312) 763-2654",
+        "distance": 4083.25607216
+    }];
 
-	// global logout function to be able to be called from anywhere.
-	ctrl.$rootScope.logout = function () {
-		$auth.logout();
-		ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
-		$state.go('login');
-	};
+    // global logout function to be able to be called from anywhere.
+    ctrl.$rootScope.logout = function () {
+        $auth.logout();
+        ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+        $state.go('login');
+    };
 
-	// // Setting a global function for getting ALL sites from API
-	// ctrl.$rootScope.getYelp = () => {
+    // search yelp with a form
+    ctrl.$rootScope.searchYelp = function () {
 
-	// 	// grabs api data for all the sites with the ngresource query()
-	// 	ctrl.query = apiService.getYelp().query();
+        // instantiate new search JSON
+        ctrl.searchParameters = {
+            // grab values with JQuery from form
+            "term": $('#term').val(),
+            "location": $('#location').val(),
+            "sort_by": 'rating'
+        };
 
-	// 	// pushes data to sites object
-	// 	ctrl.query.$promise.then( (data) => {
-	// 		ctrl.$rootScope.yelpReturn = data;
-	// 	})	
-
-	// } // end getYelp()
-
-
-	// add a site from form
-	ctrl.$rootScope.searchYelp = function () {
-
-		// instantiate new site JSON
-		ctrl.searchParameters = {
-			// grab values with JQuery from form
-			"term": $('#term').val(),
-			"location": $('#location').val()
-		};
-
-		$http.post('http://localhost:7000/api/index', ctrl.searchParameters).then(function (response) {
-			console.log(response.data);
-			ctrl.$rootScope.searchResults.push(response.data);
-			console.log(ctrl.$rootScope.searchResults);
-			$state.go('auth.dashboard');
-		});
-		// };
-	}; //end searchYelp
+        $http.post('http://localhost:7000/api/index', ctrl.searchParameters).then(function (response) {
+            ctrl.$rootScope.searchResults.push(response.data);
+            $state.go('auth.swipes');
+        });
+        // };
+    }; //end searchYelp
 
 } // end constructor
 
@@ -573,18 +592,13 @@ var swipeScreenController = function swipeScreenController($rootScope, $auth, $h
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
-
-    // global logout function to be able to be called from anywhere.
-    ctrl.$rootScope.logout = function () {
-        $auth.logout();
-        ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
-        $state.go('login');
-    };
+    console.log('hey');
+    console.log(ctrl.$rootScope.searchResults);
 };
 
 exports.default = swipeScreenController;
 
 },{}],23:[function(require,module,exports){
-module.exports = "\n<li ng-repeat=\"business in $ctrl.$rootScope.searchResults[0]\">{{business.name}} | {{business.location.city}}, {{business.location.state}}  |  {{business.price}}</li>";
+module.exports = "<li> {{$ctrl.$rootScope.searchResults[0].name}} | {{business.location.city}}, {{business.location.state}}  |  {{business.price}}</li>\n<div class=\"card card-default\">\n    <div class=\"container-fluid\">\n        <div class=\"row bg-inverse py-5\">\n            <div class=\"col-6 mx-auto\">\n                <img class=\"img-fluid\" src=\"{{$ctrl.$rootScope.searchResults[0].image_url}}\">\n            </div>\n            <div class=\"col-12 text-center text-white mt-3\">\n                <h3>{{$ctrl.$rootScope.searchResults[0].name}}</h3>\n                <sub>{{$ctrl.$rootScope.searchResults[0].phone}}</sub>\n            </div>\n        </div>\n        <div class=\"row mb-2\">\n            <div class=\"col-12 py-3\">\n                <p>Horton started at ACME 4 years ago and, is a pooch pooch with clever lyrics. This is a card.</p>\n            </div>\n        </div>\n        <div class=\"row mb-2 justify-content-center\">\n            <div class=\"col-2 text-center\">\n                <i class=\"fa fa-money\"></i>\n                <br> Money Signs\n                <h4>{{$ctrl.$rootScope.searchResults[0].price}}</h4>\n            </div>\n            <div class=\"col-2 text-center\">\n                <i class=\"fa fa-star\"></i>\n                <br> Rating\n                <h4>{{$ctrl.$rootScope.searchResults[0].rating}}</h4>\n            </div>\n            <div class=\"col-2 text-center\">\n                <i class=\"fa fa-cutlery\"></i>\n                <br> Cuisine\n                <h5>{{$ctrl.$rootScope.searchResults[0].categories[0].title}}</h5>\n            </div>\n            <div class=\"col-2 text-center\">\n                <i class=\"fa fa-laptop\"></i>\n                <br><a href=\"{{$ctrl.$rootScope.searchResults[0].url}}\" target=\"_blank\">Website</a>\n            </div>\n        </div>\n    </div>\n</div>";
 
 },{}]},{},[4]);
