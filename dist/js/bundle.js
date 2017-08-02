@@ -158,7 +158,6 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             ctrl.$rootScope.groups.push(data);
         });
     };
-    ctrl.$rootScope.getGroups();
 } // end constructor
 
 
@@ -335,14 +334,13 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
-    // ctrl.$rootScope.searchYelp();
-
+    ctrl.$rootScope.getGroups();
 };
 
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n<div ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n<form id=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n\t\t<input type=\"text\" name=\"group_name\" id=\"group_name\" placeholder=\"Please add group name...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n\t\t<input type=\"password\" name=\"pin\" id=\"pin\" placeholder=\"Please enter 4-digit group PIN...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n\t\t<input type=\"password\" name=\"confirm_pin\" id=\"confirm_pin\" placeholder=\"Please confirm 4-digit PIN\">\n    </div>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\">Add New Group</button>\n\n\n<li ng-repeat=\"group in $ctrl.$rootScope.groups\">{{group[0].group_name}}</li>\n\n";
+module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n<div ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n<form id=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n\t\t<input type=\"text\" name=\"group_name\" id=\"group_name\" placeholder=\"Please add group name...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n\t\t<input type=\"password\" name=\"pin\" id=\"pin\" placeholder=\"Please enter 4-digit group PIN...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n\t\t<input type=\"password\" name=\"confirm_pin\" id=\"confirm_pin\" placeholder=\"Please confirm 4-digit PIN\">\n    </div>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\">Add New Group</button>\n\n\n<li ng-repeat=\"group in $ctrl.$rootScope.groups[0]\">{{group.group_name}}</li>\n\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';

@@ -133,7 +133,7 @@ class appCtrl {
                 ctrl.$rootScope.groups.push(data);
             })
         }
-        ctrl.$rootScope.getGroups();
+
 
 
 
