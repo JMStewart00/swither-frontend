@@ -22,6 +22,7 @@ class loginController {
                     $auth.setToken(data.data.access_token);
                     $state.go('auth.dashboard');
                     ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+                    ctrl.$rootScope.userId = $auth.getPayload().sub;
                     ctrl.$rootScope.loginError = '';
 
                 }).catch((error) => {

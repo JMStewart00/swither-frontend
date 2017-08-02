@@ -56,6 +56,7 @@ class appCtrl {
         ctrl.$rootScope.logout = () => {
             $auth.logout();
             ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+            ctrl.$rootScope.userId = '';
             $state.go('login');
         }
 
@@ -75,9 +76,25 @@ class appCtrl {
                     ctrl.$rootScope.searchResults.push(response.data);
                     $state.go('auth.swipes');
             })
-            // };
             
         } //end searchYelp
+
+
+        ctrl.$rootScope.saveLike = () => {
+            console.log('save');
+            ctrl.$rootScope.userId = $auth.getPayload().sub;
+            ctrl.like = {
+              "user_id": ctrl.$rootScope.userId,
+              "group_id": 1,
+              "business_info": JSON.stringify(ctrl.$rootScope.searchResults[0])
+            };
+
+            apiService.addLike().save({}, ctrl.like)
+                .$promise
+                .then((data) => {
+                    console.log(data);
+                })
+        } //end saveLike()
 
 
 

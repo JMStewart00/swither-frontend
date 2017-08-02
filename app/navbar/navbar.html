@@ -1,17 +1,19 @@
-<div class="row mt-5">
-	<div class="col-2 offset-2">
-		<p>logo</p>
-	</div>
-	<div class="col-6 offset-2">
-<div class="row">
-	<a ng-show="!$ctrl.$rootScope.loginStatus" class="btn col m-0 text-right" go-click="register">Register</a>
-	<a ng-show="!$ctrl.$rootScope.loginStatus" class="btn col m-0" go-click="login">Login</a>
-	<a ng-show="$ctrl.$rootScope.loginStatus" ng-click="$ctrl.$rootScope.logout()" class="btn col text-right m-0">Logout</a>
+<div id="navbar">
+<div class="container">
+	<div class="row mt-5">
+		<div class="col-2 text-center align-middle">
+			<p>logo</p>
+			</div>
+				<div class="col-6"></div>
+				<a ng-show="!$ctrl.$rootScope.loginStatus" class="btn col-2 m-0 text-right border-right" go-click="register">Register</a>
+				<a ng-show="!$ctrl.$rootScope.loginStatus" class="btn col-2 m-0 text-left" go-click="login">Login</a>
+				<a ng-show="$ctrl.$rootScope.loginStatus" class="btn col-2 m-0 text-right border-right" go-click="register"></a>
+				<a ng-show="$ctrl.$rootScope.loginStatus" ng-click="$ctrl.$rootScope.logout()" class="btn col text-left m-0">Logout</a>
+			</div>
 </div>
-	</div>
 </div>
 
-		<!-- <div class="nav-wrapper mb-0">
+<!-- 		<div class="nav-wrapper mb-0">
 			<nav class="navbar navbar-toggleable" style="height: 55px">
 					<div class="row w-100 mx-auto">
 						<div class="col text-center hidden-md-down"></div>

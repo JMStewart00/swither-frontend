@@ -1,11 +1,12 @@
 class swipeScreenController {
-    constructor($rootScope, $auth, $http, $state) {
+    constructor($rootScope, $auth, $http, $state, apiService) {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
-        console.log('hey')
         console.log(ctrl.$rootScope.searchResults);
 
-    };
+
+    }; //end constructor
+
 }
 
 export default swipeScreenController;

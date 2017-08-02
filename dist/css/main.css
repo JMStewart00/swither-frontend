@@ -1,3 +1,8 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 10%; }
+
 
 @import url("https://fonts.googleapis.com/css?family=Raleway");
 @import url("https://fonts.googleapis.com/css?family=Alex+Brush");
@@ -33,14 +38,10 @@
        -o-animation-timing-function: ease-out;
           animation-timing-function: ease-out; }
 
+#navbar .container {
+  background-color: transparent; }
 
 
-
-
-html, body {
-  padding: 0;
-  margin: 0;
-  margin-bottom: 10%; }
 
 #swipeScreen #like {
   color: green; }

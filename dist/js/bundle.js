@@ -80,6 +80,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
     ctrl.$rootScope.logout = function () {
         $auth.logout();
         ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+        ctrl.$rootScope.userId = '';
         $state.go('login');
     };
 
@@ -98,8 +99,22 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             ctrl.$rootScope.searchResults.push(response.data);
             $state.go('auth.swipes');
         });
-        // };
     }; //end searchYelp
+
+
+    ctrl.$rootScope.saveLike = function () {
+        console.log('save');
+        ctrl.$rootScope.userId = $auth.getPayload().sub;
+        ctrl.like = {
+            "user_id": ctrl.$rootScope.userId,
+            "group_id": 1,
+            "business_info": JSON.stringify(ctrl.$rootScope.searchResults[0])
+        };
+
+        apiService.addLike().save({}, ctrl.like).$promise.then(function (data) {
+            console.log(data);
+        });
+    }; //end saveLike()
 
 } // end constructor
 
@@ -390,6 +405,7 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
             $auth.setToken(data.data.access_token);
             $state.go('auth.dashboard');
             ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+            ctrl.$rootScope.userId = $auth.getPayload().sub;
             ctrl.$rootScope.loginError = '';
         }).catch(function (error) {
             ctrl.$rootScope.loginError = error.data.message;
@@ -468,7 +484,7 @@ var navbarController = function navbarController($rootScope, $auth, $http, $stat
 exports.default = navbarController;
 
 },{}],16:[function(require,module,exports){
-module.exports = "<div class=\"row mt-5\">\n\t<div class=\"col-2 offset-2\">\n\t\t<p>logo</p>\n\t</div>\n\t<div class=\"col-6 offset-2\">\n<div class=\"row\">\n\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col m-0 text-right\" go-click=\"register\">Register</a>\n\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col m-0\" go-click=\"login\">Login</a>\n\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" ng-click=\"$ctrl.$rootScope.logout()\" class=\"btn col text-right m-0\">Logout</a>\n</div>\n\t</div>\n</div>\n\n\t\t<!-- <div class=\"nav-wrapper mb-0\">\n\t\t\t<nav class=\"navbar navbar-toggleable\" style=\"height: 55px\">\n\t\t\t\t\t<div class=\"row w-100 mx-auto\">\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1about\">ABOUT</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1work\">WORK</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1contact\">CONNECT</a>\n\t\t\t\t\t\t<a class=\"col hidden-sm-down text-center py-1 borderYtoX\" href=\"https://jmstewart00.github.io/stewartblog/\" target=\"_blank\">BLOG</a>\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t</div>  -->";
+module.exports = "<div id=\"navbar\">\n<div class=\"container\">\n\t<div class=\"row mt-5\">\n\t\t<div class=\"col-2 text-center align-middle\">\n\t\t\t<p>logo</p>\n\t\t\t</div>\n\t\t\t\t<div class=\"col-6\"></div>\n\t\t\t\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-right border-right\" go-click=\"register\">Register</a>\n\t\t\t\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-left\" go-click=\"login\">Login</a>\n\t\t\t\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-right border-right\" go-click=\"register\"></a>\n\t\t\t\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" ng-click=\"$ctrl.$rootScope.logout()\" class=\"btn col text-left m-0\">Logout</a>\n\t\t\t</div>\n</div>\n</div>\n\n<!-- \t\t<div class=\"nav-wrapper mb-0\">\n\t\t\t<nav class=\"navbar navbar-toggleable\" style=\"height: 55px\">\n\t\t\t\t\t<div class=\"row w-100 mx-auto\">\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1about\">ABOUT</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1work\">WORK</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1contact\">CONNECT</a>\n\t\t\t\t\t\t<a class=\"col hidden-sm-down text-center py-1 borderYtoX\" href=\"https://jmstewart00.github.io/stewartblog/\" target=\"_blank\">BLOG</a>\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t</div>  -->";
 
 },{}],17:[function(require,module,exports){
 'use strict';
@@ -518,7 +534,7 @@ exports.default = newEventController;
 module.exports = "<div class=\"row\">\n    <div class=\"col\">\n        <form name=\"search\">\n            <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"Type of place\" name=\"term\" id=\"term\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"City, State or ZipCode\" name=\"location\" id=\"location\">\n            </div>\n            <button class=\"btn btn-outline-primary\" ng-click=\"$ctrl.$rootScope.searchYelp()\">Submit</button>\n        </form>\n    </div>\n</div>";
 
 },{}],20:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
@@ -529,25 +545,27 @@ function apiService($resource) {
 	var ctrl = this;
 	// All of the site api functions
 	// let getYelp = () => $resource('http://localhost:7000/api/index');
-	// let	searchYelp = () => $resource('http://localhost:7000/api/index/');
+	var addLike = function addLike() {
+		return $resource('http://localhost:7000/api/likes/');
+	};
 	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
 	//            'update': {method: 'PUT'}
 	//        	});
 
-	return {}
-	// 			getYelp : getYelp,
-	// 			searchYelp : searchYelp,
+	return {
+		addLike: addLike
+		// 			searchYelp : searchYelp,
 
 
-	// 	};
-	// function subnetsService($resource) {
+		// 	};
+		// function subnetsService($resource) {
 
-	// 	 return $resource('http://localhost:7000/api/subnets/:subnet', 
-	// 		 {
-	// 		 	subnet: "@subnet"
-	// 		 }
-	// 	 	);
-	;
+		// 	 return $resource('http://localhost:7000/api/subnets/:subnet', 
+		// 		 {
+		// 		 	subnet: "@subnet"
+		// 		 }
+		// 	 	);
+	};
 }
 
 exports.default = apiService;
@@ -579,7 +597,7 @@ var swipeScreenComponent = {
 exports.default = swipeScreenComponent;
 
 },{"./swipeScreen.controller":22,"./swipeScreen.html":23}],22:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -587,18 +605,17 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var swipeScreenController = function swipeScreenController($rootScope, $auth, $http, $state) {
+var swipeScreenController = function swipeScreenController($rootScope, $auth, $http, $state, apiService) {
     _classCallCheck(this, swipeScreenController);
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
-    console.log('hey');
     console.log(ctrl.$rootScope.searchResults);
 };
 
 exports.default = swipeScreenController;
 
 },{}],23:[function(require,module,exports){
-module.exports = "<div id=\"swipeScreen\">\n    <div class=\"container\">\n    <div class=\"card card-default mt-2\">\n        <div class=\"container-fluid m-0\">\n            <div class=\"row bg-inverse pt-5 pb-2\">\n                <div class=\"col-6 mx-auto\">\n                    <img class=\"img-fluid\" src=\"{{$ctrl.$rootScope.searchResults[0].image_url}}\">\n                </div>\n                <div class=\"col-12 text-center text-white mt-3 mb-0\">\n                    <h3>{{$ctrl.$rootScope.searchResults[0].name}}</h3>\n                    <p>{{$ctrl.$rootScope.searchResults[0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0].location.display_address[1]}}</p>\n                    <sub class=\"align-text-top\">{{$ctrl.$rootScope.searchResults[0].phone}}</sub>\n                </div>\n            </div>\n            <div class=\"row my-2 justify-content-center\">\n                <div class=\"col hidden-sm-down\"></div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-money\"></i>\n                    <br> Price\n                    <h4>{{$ctrl.$rootScope.searchResults[0].price}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-star\"></i>\n                    <br> Rating\n                    <h4>{{$ctrl.$rootScope.searchResults[0].rating}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-cutlery\"></i>\n                    <br> Cuisine\n                    <h5>{{$ctrl.$rootScope.searchResults[0].categories[0].title}}</h5>\n                </div>\n                <div class=\"col text-center hidden-sm-down\">\n                    <i class=\"fa fa-laptop\"></i>\n                    <br><a href=\"{{$ctrl.$rootScope.searchResults[0].url}}\" target=\"_blank\">Website</a>\n                </div>\n                <div class=\"col hidden-sm-down\"></div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row justify-content-center mt-2\">\n        <div class=\"col\"></div>\n        <div class=\"col text-center\"><i id=\"dislike\" class=\"fa fa-times-circle-o fa-5x\" style=\"font-size: 8em;\"></i></div>\n        <div class=\"col text-center\"><i id=\"like\" class=\"fa fa-gratipay fa-5x\" style=\"font-size: 8em;\"></i></div>\n        <div class=\"col\"></div>\n    </div>\n    </div>\n</div>";
+module.exports = "<div id=\"swipeScreen\">\n    <div class=\"container\">\n\n\n    <div class=\"card card-default mt-2\">\n        <div class=\"container-fluid m-0\">\n            <div class=\"row bg-inverse pt-5 pb-2\">\n                <div class=\"col-6 mx-auto\">\n                    <img class=\"img-fluid\" src=\"{{$ctrl.$rootScope.searchResults[0].image_url}}\">\n                </div>\n                <div class=\"col-12 text-center text-white mt-3 mb-0\">\n                    <h3>{{$ctrl.$rootScope.searchResults[0].name}}</h3>\n                    <p>{{$ctrl.$rootScope.searchResults[0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0].location.display_address[1]}}</p>\n                    <sub class=\"align-text-top\">{{$ctrl.$rootScope.searchResults[0].phone}}</sub>\n                </div>\n            </div>\n            <div class=\"row my-2 justify-content-center\">\n                <div class=\"col hidden-sm-down\"></div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-money\"></i>\n                    <br> Price\n                    <h4>{{$ctrl.$rootScope.searchResults[0].price}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-star\"></i>\n                    <br> Rating\n                    <h4>{{$ctrl.$rootScope.searchResults[0].rating}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-cutlery\"></i>\n                    <br>Cuisine\n                    <h5>{{$ctrl.$rootScope.searchResults[0].categories[0].title}}</h5>\n                </div>\n                <div class=\"col text-center hidden-sm-down\">\n                    <i class=\"fa fa-laptop\"></i>\n                    <br><a href=\"{{$ctrl.$rootScope.searchResults[0].url}}\" target=\"_blank\">Website</a>\n                </div>\n                <div class=\"col hidden-sm-down\"></div>\n            </div>\n        </div>\n    </div>\n\n    <!-- like/pass buttons -->\n\n    <div class=\"row justify-content-center mt-2\">\n        <div class=\"col\"></div>\n        <div class=\"col text-center\">\n            <span>\n                <i id=\"dislike\" class=\"fa fa-times-circle-o fa-5x fa-spin\" style=\"font-size: 8em;\"></i>\n            </span>\n        </div>\n        <div class=\"col text-center\">\n                <i id=\"like\" class=\"fa fa-plus-circle fa-5x\" style=\"font-size: 8em;\" ng-click=\"$ctrl.$rootScope.saveLike()\"></i>\n        </div>\n        <div class=\"col\"></div>\n    </div>\n\n\n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->\n\n\n\n\n\n";
 
 },{}]},{},[4]);
