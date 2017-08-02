@@ -42,12 +42,14 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
     ctrl.$http = $http;
     ctrl.$rootScope.searchResults = [];
     ctrl.$rootScope.alert = false;
+    ctrl.$rootScope.groups = [];
 
     // global logout function to be able to be called from anywhere.
     ctrl.$rootScope.logout = function () {
         $auth.logout();
         ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
         ctrl.$rootScope.userId = '';
+        window.localStorage.clear();
         $state.go('login');
     };
 
@@ -130,16 +132,18 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
     // Adding swipes to the database if it is liked
     ctrl.$rootScope.newGroup = function () {
         // grabbing userid for current logged in user
-        // ctrl.$rootScope.userId = $auth.getPayload().sub;
+        ctrl.$rootScope.userId = $auth.getPayload().sub;
 
         // grabbing variables for the like
         ctrl.newGroup = {
             "group_name": $('#group_name').val(),
-            "pin": $('#pin').val()
+            "pin": $('#pin').val(),
+            "user_id": ctrl.$rootScope.userId
         };
 
         // calling on the service to do a post request to backend
         apiService.addGroup().save({}, ctrl.newGroup);
+        apiService.addUserToGroup().save({}, ctrl.newGroup);
 
         // set message to confirm add
         ctrl.$rootScope.message = "Added new group!";
@@ -148,6 +152,13 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         ctrl.$rootScope.alert = true;
     }; // end addGroup()
 
+    ctrl.$rootScope.getGroups = function () {
+        ctrl.groups = apiService.getUserGroups().query({ id: window.localStorage.getItem('currentUser') });
+        ctrl.groups.$promise.then(function (data) {
+            ctrl.$rootScope.groups.push(data);
+        });
+    };
+    ctrl.$rootScope.getGroups();
 } // end constructor
 
 
@@ -331,7 +342,7 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n<div ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n<form id=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n\t\t<input type=\"text\" name=\"group_name\" id=\"group_name\" placeholder=\"Please add group name...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n\t\t<input type=\"password\" name=\"pin\" id=\"pin\" placeholder=\"Please enter 4-digit group PIN...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n\t\t<input type=\"password\" name=\"confirm_pin\" id=\"confirm_pin\" placeholder=\"Please confirm 4-digit PIN\">\n    </div>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\">Add New Group</button>\n\n";
+module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n<div ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n<form id=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n\t\t<input type=\"text\" name=\"group_name\" id=\"group_name\" placeholder=\"Please add group name...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n\t\t<input type=\"password\" name=\"pin\" id=\"pin\" placeholder=\"Please enter 4-digit group PIN...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n\t\t<input type=\"password\" name=\"confirm_pin\" id=\"confirm_pin\" placeholder=\"Please confirm 4-digit PIN\">\n    </div>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\">Add New Group</button>\n\n\n<li ng-repeat=\"group in $ctrl.$rootScope.groups\">{{group[0].group_name}}</li>\n\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -438,6 +449,7 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
             $state.go('auth.dashboard');
             ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
             ctrl.$rootScope.userId = $auth.getPayload().sub;
+            window.localStorage.setItem('currentUser', ctrl.$rootScope.userId);
             ctrl.$rootScope.loginError = '';
         }).catch(function (error) {
             ctrl.$rootScope.loginError = error.data.message;
@@ -582,13 +594,21 @@ function apiService($resource) {
 	var addLike = function addLike() {
 		return $resource('http://localhost:7000/api/likes/');
 	};
+	var getUserGroups = function getUserGroups() {
+		return $resource('http://localhost:7000/api/findgroups/:id', { id: "@id" });
+	};
+	var addUserToGroup = function addUserToGroup() {
+		return $resource('http://localhost:7000/api/usergroups');
+	};
 	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
 	//            'update': {method: 'PUT'}
 	//        	});
 
 	return {
 		addLike: addLike,
-		addGroup: addGroup
+		addGroup: addGroup,
+		getUserGroups: getUserGroups,
+		addUserToGroup: addUserToGroup
 	};
 }
 

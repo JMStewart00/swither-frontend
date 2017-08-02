@@ -23,6 +23,7 @@ class loginController {
                     $state.go('auth.dashboard');
                     ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
                     ctrl.$rootScope.userId = $auth.getPayload().sub;
+                    window.localStorage.setItem('currentUser', ctrl.$rootScope.userId);
                     ctrl.$rootScope.loginError = '';
 
                 }).catch((error) => {
@@ -55,6 +56,8 @@ class loginController {
                  
               });
             }
+
+
 
 
 

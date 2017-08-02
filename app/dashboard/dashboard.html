@@ -17,3 +17,6 @@
     </div>
 <button ng-click="$ctrl.$rootScope.newGroup()">Add New Group</button>
 
+
+<li ng-repeat="group in $ctrl.$rootScope.groups">{{group[0].group_name}}</li>
+

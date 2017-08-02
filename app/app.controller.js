@@ -8,6 +8,7 @@ class appCtrl {
         ctrl.$http = $http;
         ctrl.$rootScope.searchResults = [];
         ctrl.$rootScope.alert = false;
+        ctrl.$rootScope.groups = [];
 
 
         // global logout function to be able to be called from anywhere.
@@ -15,6 +16,7 @@ class appCtrl {
             $auth.logout();
             ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
             ctrl.$rootScope.userId = '';
+            window.localStorage.clear();
             $state.go('login');
         }
 
@@ -104,16 +106,18 @@ class appCtrl {
         // Adding swipes to the database if it is liked
         ctrl.$rootScope.newGroup = () => {
             // grabbing userid for current logged in user
-            // ctrl.$rootScope.userId = $auth.getPayload().sub;
+            ctrl.$rootScope.userId = $auth.getPayload().sub;
 
             // grabbing variables for the like
             ctrl.newGroup = {
               "group_name": $('#group_name').val(),
               "pin": $('#pin').val(),
+              "user_id": ctrl.$rootScope.userId,
             };
 
             // calling on the service to do a post request to backend
             apiService.addGroup().save({}, ctrl.newGroup);
+            apiService.addUserToGroup().save({}, ctrl.newGroup);
 
             // set message to confirm add
             ctrl.$rootScope.message = "Added new group!";
@@ -122,6 +126,14 @@ class appCtrl {
             ctrl.$rootScope.alert = true;
 
         } // end addGroup()
+
+        ctrl.$rootScope.getGroups = () => {
+            ctrl.groups = apiService.getUserGroups().query({id:window.localStorage.getItem('currentUser')});
+            ctrl.groups.$promise.then( (data) => {
+                ctrl.$rootScope.groups.push(data);
+            })
+        }
+        ctrl.$rootScope.getGroups();
 
 
 
