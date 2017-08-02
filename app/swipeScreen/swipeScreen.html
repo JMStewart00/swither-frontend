@@ -1,40 +1,47 @@
-<li> {{$ctrl.$rootScope.searchResults[0].name}} | {{business.location.city}}, {{business.location.state}}  |  {{business.price}}</li>
-<div class="card card-default">
-    <div class="container-fluid">
-        <div class="row bg-inverse py-5">
-            <div class="col-6 mx-auto">
-                <img class="img-fluid" src="{{$ctrl.$rootScope.searchResults[0].image_url}}">
+<div id="swipeScreen">
+    <div class="container">
+    <div class="card card-default mt-2">
+        <div class="container-fluid m-0">
+            <div class="row bg-inverse pt-5 pb-2">
+                <div class="col-6 mx-auto">
+                    <img class="img-fluid" src="{{$ctrl.$rootScope.searchResults[0].image_url}}">
+                </div>
+                <div class="col-12 text-center text-white mt-3 mb-0">
+                    <h3>{{$ctrl.$rootScope.searchResults[0].name}}</h3>
+                    <p>{{$ctrl.$rootScope.searchResults[0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0].location.display_address[1]}}</p>
+                    <sub class="align-text-top">{{$ctrl.$rootScope.searchResults[0].phone}}</sub>
+                </div>
             </div>
-            <div class="col-12 text-center text-white mt-3">
-                <h3>{{$ctrl.$rootScope.searchResults[0].name}}</h3>
-                <sub>{{$ctrl.$rootScope.searchResults[0].phone}}</sub>
+            <div class="row my-2 justify-content-center">
+                <div class="col hidden-sm-down"></div>
+                <div class="col text-center">
+                    <i class="fa fa-money"></i>
+                    <br> Price
+                    <h4>{{$ctrl.$rootScope.searchResults[0].price}}</h4>
+                </div>
+                <div class="col text-center">
+                    <i class="fa fa-star"></i>
+                    <br> Rating
+                    <h4>{{$ctrl.$rootScope.searchResults[0].rating}}</h4>
+                </div>
+                <div class="col text-center">
+                    <i class="fa fa-cutlery"></i>
+                    <br> Cuisine
+                    <h5>{{$ctrl.$rootScope.searchResults[0].categories[0].title}}</h5>
+                </div>
+                <div class="col text-center hidden-sm-down">
+                    <i class="fa fa-laptop"></i>
+                    <br><a href="{{$ctrl.$rootScope.searchResults[0].url}}" target="_blank">Website</a>
+                </div>
+                <div class="col hidden-sm-down"></div>
             </div>
         </div>
-        <div class="row mb-2">
-            <div class="col-12 py-3">
-                <p>Horton started at ACME 4 years ago and, is a pooch pooch with clever lyrics. This is a card.</p>
-            </div>
-        </div>
-        <div class="row mb-2 justify-content-center">
-            <div class="col-2 text-center">
-                <i class="fa fa-money"></i>
-                <br> Money Signs
-                <h4>{{$ctrl.$rootScope.searchResults[0].price}}</h4>
-            </div>
-            <div class="col-2 text-center">
-                <i class="fa fa-star"></i>
-                <br> Rating
-                <h4>{{$ctrl.$rootScope.searchResults[0].rating}}</h4>
-            </div>
-            <div class="col-2 text-center">
-                <i class="fa fa-cutlery"></i>
-                <br> Cuisine
-                <h5>{{$ctrl.$rootScope.searchResults[0].categories[0].title}}</h5>
-            </div>
-            <div class="col-2 text-center">
-                <i class="fa fa-laptop"></i>
-                <br><a href="{{$ctrl.$rootScope.searchResults[0].url}}" target="_blank">Website</a>
-            </div>
-        </div>
+    </div>
+    <div class="row justify-content-center mt-2">
+        <div class="col"></div>
+        <div class="col text-center"><i id="dislike" class="fa fa-times-circle-o fa-5x" style="font-size: 8em;"></i></div>
+        <div class="col text-center"><i id="like" class="fa fa-gratipay fa-5x" style="font-size: 8em;"></i></div>
+        <div class="col"></div>
+    </div>
     </div>
 </div>
