@@ -29,6 +29,8 @@ class appCtrl {
               "sort_by": 'rating'
             };
 
+            // simple post request to the backend to send search parameters.
+            // creating an array of searchResults with the data for use in Swipes
             $http.post('http://localhost:7000/api/index', ctrl.searchParameters)
                 .then( (response) => {
                     ctrl.$rootScope.searchResults.push(response.data);
@@ -38,8 +40,14 @@ class appCtrl {
         } //end searchYelp
 
 
+
+
+        // Adding swipes to the database if it is liked
         ctrl.$rootScope.saveLike = () => {
+            // grabbing userid for current logged in user
             ctrl.$rootScope.userId = $auth.getPayload().sub;
+
+            // grabbing variables for the like
             ctrl.like = {
               "user_id": ctrl.$rootScope.userId,
               "group_id": 1,
@@ -47,23 +55,46 @@ class appCtrl {
               "business_id": ctrl.$rootScope.searchResults[0][0].id
             };
 
+            // calling on the service to do a post request to backend
             apiService.addLike().save({}, ctrl.like);
-                ctrl.$rootScope.searchResults[0].splice(0, 1);
-                ctrl.$rootScope.message = "Added to likes!";
-                ctrl.$rootScope.alert = true;
-            
-                if (ctrl.$rootScope.searchResults[0].length === 0) {
-                    $state.go('auth.dashboard');
-                    ctrl.$rootScope.alert = false;
-                }
-        } //end saveLike()
 
-        ctrl.$rootScope.skipPlace = () => {
+            // taking the first result off the array to cycle through results
             ctrl.$rootScope.searchResults[0].splice(0, 1);
+
+            // set message to confirm add
+            ctrl.$rootScope.message = "Added to likes!";
+
+            // set alert to true to show on page
+            ctrl.$rootScope.alert = true;
+            
+            // checks the results length to decide whether or not to redirect
+            if (ctrl.$rootScope.searchResults[0].length === 0) {
+
+                // redirect statement
+                $state.go('auth.dashboard');
+
+
+                ctrl.$rootScope.alert = false;
+            } // end if
+        } // end saveLike()
+
+
+
+        // skips a Place in results and discards it
+        ctrl.$rootScope.skipPlace = () => {
+            // removes first element in the array
+            ctrl.$rootScope.searchResults[0].splice(0, 1);
+
+            // sets message to skipped! 
             ctrl.$rootScope.message = "Skipped!";
+
+            // sets alert to true to show
             ctrl.$rootScope.alert = true;
 
+            // checks the results length to decide whether or not to redirect
             if (ctrl.$rootScope.searchResults[0].length === 0) {
+
+                // redirect statement 
                 $state.go('auth.dashboard');
                 ctrl.$rootScope.alert = false;
             }

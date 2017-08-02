@@ -14,14 +14,7 @@ function apiService($resource) {
 	// 			searchYelp : searchYelp,
 				}
 
-	// 	};
-// function subnetsService($resource) {
 
-// 	 return $resource('http://localhost:7000/api/subnets/:subnet', 
-// 		 {
-// 		 	subnet: "@subnet"
-// 		 }
-// 	 	);
 }
 
 

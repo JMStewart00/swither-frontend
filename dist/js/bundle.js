@@ -62,6 +62,8 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             "sort_by": 'rating'
         };
 
+        // simple post request to the backend to send search parameters.
+        // creating an array of searchResults with the data for use in Swipes
         $http.post('http://localhost:7000/api/index', ctrl.searchParameters).then(function (response) {
             ctrl.$rootScope.searchResults.push(response.data);
             $state.go('auth.swipes');
@@ -69,8 +71,12 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
     }; //end searchYelp
 
 
+    // Adding swipes to the database if it is liked
     ctrl.$rootScope.saveLike = function () {
+        // grabbing userid for current logged in user
         ctrl.$rootScope.userId = $auth.getPayload().sub;
+
+        // grabbing variables for the like
         ctrl.like = {
             "user_id": ctrl.$rootScope.userId,
             "group_id": 1,
@@ -78,23 +84,44 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             "business_id": ctrl.$rootScope.searchResults[0][0].id
         };
 
+        // calling on the service to do a post request to backend
         apiService.addLike().save({}, ctrl.like);
+
+        // taking the first result off the array to cycle through results
         ctrl.$rootScope.searchResults[0].splice(0, 1);
+
+        // set message to confirm add
         ctrl.$rootScope.message = "Added to likes!";
+
+        // set alert to true to show on page
         ctrl.$rootScope.alert = true;
 
+        // checks the results length to decide whether or not to redirect
         if (ctrl.$rootScope.searchResults[0].length === 0) {
+
+            // redirect statement
             $state.go('auth.dashboard');
-            ctrl.$rootScope.alert = false;
-        }
-    }; //end saveLike()
 
+            ctrl.$rootScope.alert = false;
+        } // end if
+    }; // end saveLike()
+
+
+    // skips a Place in results and discards it
     ctrl.$rootScope.skipPlace = function () {
+        // removes first element in the array
         ctrl.$rootScope.searchResults[0].splice(0, 1);
+
+        // sets message to skipped! 
         ctrl.$rootScope.message = "Skipped!";
+
+        // sets alert to true to show
         ctrl.$rootScope.alert = true;
 
+        // checks the results length to decide whether or not to redirect
         if (ctrl.$rootScope.searchResults[0].length === 0) {
+
+            // redirect statement 
             $state.go('auth.dashboard');
             ctrl.$rootScope.alert = false;
         }
@@ -282,7 +309,7 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button>\n<button go-click=\"landing\">Landing</button>\n\n";
+module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n\n<form id=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n\t\t<input type=\"text\" name=\"group_name\" placeholder=\"Please add group name...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n\t\t<input type=\"password\" name=\"group_name\" placeholder=\"Please enter 4-digit group PIN...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n\t\t<input type=\"password\" name=\"group_name\" placeholder=\"Please confirm 4-digit PIN\">\n    </div>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\">Add New Group</button>\n\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -379,7 +406,7 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
         var credentials = {
             grant_type: 'password',
             client_id: 1,
-            client_secret: 'DKlsxJbWHCctqF99zBDCwFWON7Yb8m73oXXfavLY',
+            client_secret: 'pt9akXPp6062bCpBe6uAwkm6byMjWizhTnfeRRAj',
             username: ctrl.email,
             password: ctrl.password
 
@@ -538,16 +565,6 @@ function apiService($resource) {
 	return {
 		addLike: addLike
 		// 			searchYelp : searchYelp,
-
-
-		// 	};
-		// function subnetsService($resource) {
-
-		// 	 return $resource('http://localhost:7000/api/subnets/:subnet', 
-		// 		 {
-		// 		 	subnet: "@subnet"
-		// 		 }
-		// 	 	);
 	};
 }
 
@@ -580,7 +597,7 @@ var swipeScreenComponent = {
 exports.default = swipeScreenComponent;
 
 },{"./swipeScreen.controller":22,"./swipeScreen.html":23}],22:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -593,7 +610,14 @@ var swipeScreenController = function swipeScreenController($rootScope, $auth, $h
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
-    console.log(ctrl.$rootScope.searchResults);
+
+    // don't allow the swipes screen to be seen if there are no search results.
+    ctrl.$rootScope.$watch('searchResults', function () {
+        console.log(ctrl.$rootScope.searchResults[0]);
+        if (ctrl.$rootScope.searchResults[0] === undefined || ctrl.$rootScope.searchResults.length === 0) {
+            $state.go('auth.new');
+        }
+    });
 };
 
 exports.default = swipeScreenController;
