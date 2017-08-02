@@ -25,7 +25,7 @@ var appComponent = {
 exports.default = appComponent;
 
 },{"./app.controller":2,"./app.html":3}],2:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -40,41 +40,8 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
     ctrl.$rootScope = $rootScope;
     ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
     ctrl.$http = $http;
-    ctrl.$rootScope.searchResults = [{
-        "id": "velvet-taco-chicago",
-        "name": "Velvet Taco",
-        "image_url": "https://s3-media3.fl.yelpcdn.com/bphoto/MHRSqUs9jW5Rpo_ysfiLxg/o.jpg",
-        "is_closed": false,
-        "url": "https://www.yelp.com/biz/velvet-taco-chicago?adjust_creative=_D0fpoWGQt3_-FGYLWuntg&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=_D0fpoWGQt3_-FGYLWuntg",
-        "review_count": 803,
-        "categories": [{
-            "alias": "newamerican",
-            "title": "American (New)"
-        }, {
-            "alias": "mexican",
-            "title": "Mexican"
-        }],
-        "rating": 4,
-        "coordinates": {
-            "latitude": 41.9021988,
-            "longitude": -87.6285782
-        },
-        "transactions": ["delivery", "pickup"],
-        "price": "$$",
-        "location": {
-            "address1": "1110 N State St",
-            "address2": "",
-            "address3": "",
-            "city": "Chicago",
-            "zip_code": "60610",
-            "country": "US",
-            "state": "IL",
-            "display_address": ["1110 N State St", "Chicago, IL 60610"]
-        },
-        "phone": "+13127632654",
-        "display_phone": "(312) 763-2654",
-        "distance": 4083.25607216
-    }];
+    ctrl.$rootScope.searchResults = [];
+    ctrl.$rootScope.alert = false;
 
     // global logout function to be able to be called from anywhere.
     ctrl.$rootScope.logout = function () {
@@ -103,19 +70,35 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
 
 
     ctrl.$rootScope.saveLike = function () {
-        console.log('save');
         ctrl.$rootScope.userId = $auth.getPayload().sub;
         ctrl.like = {
             "user_id": ctrl.$rootScope.userId,
             "group_id": 1,
-            "business_info": JSON.stringify(ctrl.$rootScope.searchResults[0])
+            "business_info": JSON.stringify(ctrl.$rootScope.searchResults[0][0]),
+            "business_id": ctrl.$rootScope.searchResults[0][0].id
         };
 
-        apiService.addLike().save({}, ctrl.like).$promise.then(function (data) {
-            console.log(data);
-        });
+        apiService.addLike().save({}, ctrl.like);
+        ctrl.$rootScope.searchResults[0].splice(0, 1);
+        ctrl.$rootScope.message = "Added to likes!";
+        ctrl.$rootScope.alert = true;
+
+        if (ctrl.$rootScope.searchResults[0].length === 0) {
+            $state.go('auth.dashboard');
+            ctrl.$rootScope.alert = false;
+        }
     }; //end saveLike()
 
+    ctrl.$rootScope.skipPlace = function () {
+        ctrl.$rootScope.searchResults[0].splice(0, 1);
+        ctrl.$rootScope.message = "Skipped!";
+        ctrl.$rootScope.alert = true;
+
+        if (ctrl.$rootScope.searchResults[0].length === 0) {
+            $state.go('auth.dashboard');
+            ctrl.$rootScope.alert = false;
+        }
+    };
 } // end constructor
 
 
@@ -299,7 +282,7 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "\n";
+module.exports = "<button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button>\n<button go-click=\"landing\">Landing</button>\n\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -616,6 +599,6 @@ var swipeScreenController = function swipeScreenController($rootScope, $auth, $h
 exports.default = swipeScreenController;
 
 },{}],23:[function(require,module,exports){
-module.exports = "<div id=\"swipeScreen\">\n    <div class=\"container\">\n\n\n    <div class=\"card card-default mt-2\">\n        <div class=\"container-fluid m-0\">\n            <div class=\"row bg-inverse pt-5 pb-2\">\n                <div class=\"col-6 mx-auto\">\n                    <img class=\"img-fluid\" src=\"{{$ctrl.$rootScope.searchResults[0].image_url}}\">\n                </div>\n                <div class=\"col-12 text-center text-white mt-3 mb-0\">\n                    <h3>{{$ctrl.$rootScope.searchResults[0].name}}</h3>\n                    <p>{{$ctrl.$rootScope.searchResults[0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0].location.display_address[1]}}</p>\n                    <sub class=\"align-text-top\">{{$ctrl.$rootScope.searchResults[0].phone}}</sub>\n                </div>\n            </div>\n            <div class=\"row my-2 justify-content-center\">\n                <div class=\"col hidden-sm-down\"></div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-money\"></i>\n                    <br> Price\n                    <h4>{{$ctrl.$rootScope.searchResults[0].price}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-star\"></i>\n                    <br> Rating\n                    <h4>{{$ctrl.$rootScope.searchResults[0].rating}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-cutlery\"></i>\n                    <br>Cuisine\n                    <h5>{{$ctrl.$rootScope.searchResults[0].categories[0].title}}</h5>\n                </div>\n                <div class=\"col text-center hidden-sm-down\">\n                    <i class=\"fa fa-laptop\"></i>\n                    <br><a href=\"{{$ctrl.$rootScope.searchResults[0].url}}\" target=\"_blank\">Website</a>\n                </div>\n                <div class=\"col hidden-sm-down\"></div>\n            </div>\n        </div>\n    </div>\n\n    <!-- like/pass buttons -->\n\n    <div class=\"row justify-content-center mt-2\">\n        <div class=\"col\"></div>\n        <div class=\"col text-center\">\n            <span>\n                <i id=\"dislike\" class=\"fa fa-times-circle-o fa-5x fa-spin\" style=\"font-size: 8em;\"></i>\n            </span>\n        </div>\n        <div class=\"col text-center\">\n                <i id=\"like\" class=\"fa fa-plus-circle fa-5x\" style=\"font-size: 8em;\" ng-click=\"$ctrl.$rootScope.saveLike()\"></i>\n        </div>\n        <div class=\"col\"></div>\n    </div>\n\n\n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->\n\n\n\n\n\n";
+module.exports = "<div id=\"swipeScreen\">\n    <div class=\"container\">\n\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"alert\" ng-if=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n        </div>\n    </div>\n    <div class=\"card card-default mt-2\">\n        <div class=\"container-fluid m-0\">\n            <div class=\"row bg-inverse pt-5 pb-2\">\n                <div class=\"col-6 mx-auto\">\n                    <img class=\"img-fluid\" src=\"{{$ctrl.$rootScope.searchResults[0][0].image_url}}\">\n                </div>\n                <div class=\"col-12 text-center text-white mt-3 mb-0\">\n                    <h3>{{$ctrl.$rootScope.searchResults[0][0].name}}</h3>\n                    <p>{{$ctrl.$rootScope.searchResults[0][0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0][0].location.display_address[1]}}</p>\n                    <sub class=\"align-text-top\">{{$ctrl.$rootScope.searchResults[0][0].phone}}</sub>\n                </div>\n            </div>\n            <div class=\"row my-2 justify-content-center\">\n                <div class=\"col hidden-sm-down\"></div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-money\"></i>\n                    <br> Price\n                    <h4>{{$ctrl.$rootScope.searchResults[0][0].price}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-star\"></i>\n                    <br> Rating\n                    <h4>{{$ctrl.$rootScope.searchResults[0][0].rating}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-cutlery\"></i>\n                    <br>Cuisine\n                    <h5>{{$ctrl.$rootScope.searchResults[0][0].categories[0].title}}</h5>\n                </div>\n                <div class=\"col text-center hidden-sm-down\">\n                    <i class=\"fa fa-laptop\"></i>\n                    <br><a href=\"{{$ctrl.$rootScope.searchResults[0][0].url}}\" target=\"_blank\">Website</a>\n                </div>\n                <div class=\"col hidden-sm-down\"></div>\n            </div>\n        </div>\n    </div>\n\n    <!-- like/pass buttons -->\n\n    <div class=\"row justify-content-center mt-2\">\n        <div class=\"col\"></div>\n        <div class=\"col text-center\">\n                <i id=\"dislike\" class=\"fa fa-times-circle-o fa-5x\" style=\"font-size: 8em;\"  ng-click=\"$ctrl.$rootScope.skipPlace()\"></i>\n        </div>\n        <div class=\"col text-center\">\n                <i id=\"like\" class=\"fa fa-plus-circle fa-5x\" style=\"font-size: 8em;\" ng-click=\"$ctrl.$rootScope.saveLike()\"></i>\n        </div>\n        <div class=\"col\"></div>\n    </div>\n\n\n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->\n\n\n\n\n\n";
 
 },{}]},{},[4]);
