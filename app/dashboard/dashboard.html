@@ -1,1 +1,19 @@
-<h1>hello world</h1>
+<!-- <button go-click="auth.swipes">Swipes</button>
+<button go-click="auth.new">New Event</button> -->
+
+<form id="addGroup">
+  <div class="container main-center">
+    <div class="form-group">
+      <label for="siteSelect">Group Name:</label>
+		<input type="text" name="group_name" placeholder="Please add group name...">
+    </div>
+    <div class="form-group">
+      <label for="password">Enter PIN:</label>
+		<input type="password" name="group_name" placeholder="Please enter 4-digit group PIN...">
+    </div>
+    <div class="form-group">
+      <label for="password_confirmation">Confirm PIN:</label>
+		<input type="password" name="group_name" placeholder="Please confirm 4-digit PIN">
+    </div>
+<button ng-click="$ctrl.$rootScope.newGroup()">Add New Group</button>
+

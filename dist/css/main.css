@@ -1,35 +1,50 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 10%; }
 
 
-foo {
-  bar: '1'; }
+@import url("https://fonts.googleapis.com/css?family=Raleway");
+@import url("https://fonts.googleapis.com/css?family=Alex+Brush");
+@import url("https://fonts.googleapis.com/css?family=PT+Sans");
+@import url("https://fonts.googleapis.com/css?family=Montserrat:800");
+#maincontent {
+  background-image: url(./food.jpg);
+  background-image-opacity: .5;
+  -webkit-background-size: cover;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+  display: table;
+  width: 100%;
+  padding: 10%; }
 
-foo {
-  bar: '2'; }
+#title {
+  position: relative;
+  -webkit-animation: mymove 1s;
+  -o-animation: mymove 1s;
+     animation: mymove 1s;
+  font-weight: bold;
+  color: white; }
 
-foo {
-  bar: '3'; }
+#title {
+  -webkit-animation-timing-function: ease-out; }
 
-foo {
-  bar: '4'; }
+#title {
+  -webkit-animation-timing-function: ease-out;
+       -o-animation-timing-function: ease-out;
+          animation-timing-function: ease-out; }
 
-#navbar {
-  width: 80%;
-  height: 23px; }
+#navbar .container {
+  background-color: transparent; }
 
-#navbar ul {
-  list-style-type: none; }
 
-#navbar li {
-  float: left; }
-  #navbar li a {
-    font-weight: bold; }
 
-div {
-  width: foo(42px);
-  height: bar(42px); }
+#swipeScreen #like {
+  color: green; }
 
-div {
-  color: foo("bar"); }
-
-.outside {
+#swipeScreen #dislike {
   color: red; }

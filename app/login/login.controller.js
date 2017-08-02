@@ -11,7 +11,7 @@ class loginController {
             let credentials = {
                 grant_type: 'password',
                 client_id: 1,
-                client_secret: 'DKlsxJbWHCctqF99zBDCwFWON7Yb8m73oXXfavLY',
+                client_secret: 'pt9akXPp6062bCpBe6uAwkm6byMjWizhTnfeRRAj',
                 username: ctrl.email,
                 password: ctrl.password
             }
@@ -22,6 +22,7 @@ class loginController {
                     $auth.setToken(data.data.access_token);
                     $state.go('auth.dashboard');
                     ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+                    ctrl.$rootScope.userId = $auth.getPayload().sub;
                     ctrl.$rootScope.loginError = '';
 
                 }).catch((error) => {

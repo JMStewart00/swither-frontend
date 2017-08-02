@@ -3,7 +3,7 @@ import connect from 'gulp-connect';
 import browserify from 'browserify';
 import watchify from 'watchify';
 import stringify from 'stringify';
-import babelify    from 'babelify';
+import babelify from 'babelify';
 import source from 'vinyl-source-stream';
 import autoprefixer from 'gulp-autoprefixer';
 import concat from 'gulp-concat';
@@ -25,14 +25,14 @@ const autoprefixerOptions = {
 gulp.task('connect', () => {
     connect.server({
         root: './',
-        port: 8000,
-        livereload: true
+        livereload: true,
+        port: 8000
     });
 
 });
 
 gulp.task('html', function () {
-  gulp.src('./**')
+  gulp.src('./*')
     .pipe(connect.reload());
 });
 
@@ -42,7 +42,7 @@ gulp.task('js', function () {
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['./**'], ['html']);
+  gulp.watch(['./*'], ['html']);
   gulp.watch(['./dist/js/bundle.js'], ['js'])
 });
 
@@ -81,7 +81,7 @@ gulp.task('bundle', () => {
 });
 
 gulp.task('sass', () => {
-    return gulp.src('./**/*.scss')
+    return gulp.src('./app/**/*.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(autoprefixer(autoprefixerOptions))
     .pipe(concat('main.css'))
@@ -89,7 +89,7 @@ gulp.task('sass', () => {
 });
 
 gulp.task('css', function() {
-    gulp.watch('./**/*.scss', ['sass']);
+    gulp.watch('app/**/*.scss', ['sass']);
 })
 
 
