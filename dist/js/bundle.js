@@ -126,6 +126,28 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             ctrl.$rootScope.alert = false;
         }
     };
+
+    // Adding swipes to the database if it is liked
+    ctrl.$rootScope.newGroup = function () {
+        // grabbing userid for current logged in user
+        // ctrl.$rootScope.userId = $auth.getPayload().sub;
+
+        // grabbing variables for the like
+        ctrl.newGroup = {
+            "group_name": $('#group_name').val(),
+            "pin": $('#pin').val()
+        };
+
+        // calling on the service to do a post request to backend
+        apiService.addGroup().save({}, ctrl.newGroup);
+
+        // set message to confirm add
+        ctrl.$rootScope.message = "Added new group!";
+
+        // set alert to true to show on page
+        ctrl.$rootScope.alert = true;
+    }; // end addGroup()
+
 } // end constructor
 
 
@@ -309,7 +331,7 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n\n<form id=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n\t\t<input type=\"text\" name=\"group_name\" placeholder=\"Please add group name...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n\t\t<input type=\"password\" name=\"group_name\" placeholder=\"Please enter 4-digit group PIN...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n\t\t<input type=\"password\" name=\"group_name\" placeholder=\"Please confirm 4-digit PIN\">\n    </div>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\">Add New Group</button>\n\n";
+module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n<div ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n<form id=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n\t\t<input type=\"text\" name=\"group_name\" id=\"group_name\" placeholder=\"Please add group name...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n\t\t<input type=\"password\" name=\"pin\" id=\"pin\" placeholder=\"Please enter 4-digit group PIN...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n\t\t<input type=\"password\" name=\"confirm_pin\" id=\"confirm_pin\" placeholder=\"Please confirm 4-digit PIN\">\n    </div>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\">Add New Group</button>\n\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -406,7 +428,7 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
         var credentials = {
             grant_type: 'password',
             client_id: 1,
-            client_secret: 'pt9akXPp6062bCpBe6uAwkm6byMjWizhTnfeRRAj',
+            client_secret: 'Zlp39UHfaR8Zcoeh3UcXfZnwt1ZEWcchaIjKFObl',
             username: ctrl.email,
             password: ctrl.password
 
@@ -431,10 +453,10 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
             name: ctrl.name,
             email: ctrl.email,
             password: ctrl.password,
-            password_confirmation: ctrl.password_confirmation,
-            grant_type: 'password',
-            client_id: 1,
-            client_secret: 'DKlsxJbWHCctqF99zBDCwFWON7Yb8m73oXXfavLY'
+            password_confirmation: ctrl.password_confirmation
+            // grant_type: 'password',
+            // client_id: 1,
+            // client_secret: 'Zlp39UHfaR8Zcoeh3UcXfZnwt1ZEWcchaIjKFObl'
         };
 
         // satellizer's signup function to send data via http request to server.
@@ -554,7 +576,9 @@ Object.defineProperty(exports, "__esModule", {
 function apiService($resource) {
 	var ctrl = this;
 	// All of the site api functions
-	// let getYelp = () => $resource('http://localhost:7000/api/index');
+	var addGroup = function addGroup() {
+		return $resource('http://localhost:7000/api/groups/');
+	};
 	var addLike = function addLike() {
 		return $resource('http://localhost:7000/api/likes/');
 	};
@@ -563,8 +587,8 @@ function apiService($resource) {
 	//        	});
 
 	return {
-		addLike: addLike
-		// 			searchYelp : searchYelp,
+		addLike: addLike,
+		addGroup: addGroup
 	};
 }
 

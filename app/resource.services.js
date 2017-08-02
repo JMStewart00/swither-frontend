@@ -3,7 +3,7 @@
 function apiService($resource) {
 	let ctrl = this;
 	// All of the site api functions
-	// let getYelp = () => $resource('http://localhost:7000/api/index');
+	let addGroup = () => $resource('http://localhost:7000/api/groups/');
 	let	addLike = () => $resource('http://localhost:7000/api/likes/');
 	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
  //            'update': {method: 'PUT'}
@@ -11,7 +11,7 @@ function apiService($resource) {
 		
 		return {
 				addLike : addLike,
-	// 			searchYelp : searchYelp,
+				addGroup : addGroup,
 				}
 
 

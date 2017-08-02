@@ -101,6 +101,29 @@ class appCtrl {
         }
 
 
+        // Adding swipes to the database if it is liked
+        ctrl.$rootScope.newGroup = () => {
+            // grabbing userid for current logged in user
+            // ctrl.$rootScope.userId = $auth.getPayload().sub;
+
+            // grabbing variables for the like
+            ctrl.newGroup = {
+              "group_name": $('#group_name').val(),
+              "pin": $('#pin').val(),
+            };
+
+            // calling on the service to do a post request to backend
+            apiService.addGroup().save({}, ctrl.newGroup);
+
+            // set message to confirm add
+            ctrl.$rootScope.message = "Added new group!";
+
+            // set alert to true to show on page
+            ctrl.$rootScope.alert = true;
+
+        } // end addGroup()
+
+
 
     } // end constructor
 
