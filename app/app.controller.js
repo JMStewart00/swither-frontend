@@ -8,6 +8,7 @@ class appCtrl {
         ctrl.$http = $http;
         ctrl.$rootScope.searchResults = [];
         ctrl.$rootScope.alert = false;
+        ctrl.$rootScope.groups = [];
 
 
         // global logout function to be able to be called from anywhere.
@@ -15,6 +16,10 @@ class appCtrl {
             $auth.logout();
             ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
             ctrl.$rootScope.userId = '';
+            window.localStorage.clear();
+            ctrl.$rootScope.alert = false;
+            ctrl.$rootScope.groups = [];
+            ctrl.$rootScope.message = '';
             $state.go('login');
         }
 
@@ -50,7 +55,7 @@ class appCtrl {
             // grabbing variables for the like
             ctrl.like = {
               "user_id": ctrl.$rootScope.userId,
-              "group_id": 1,
+              "group_id": 16,
               "business_info": JSON.stringify(ctrl.$rootScope.searchResults[0][0]),
               "business_id": ctrl.$rootScope.searchResults[0][0].id
             };
@@ -99,6 +104,75 @@ class appCtrl {
                 ctrl.$rootScope.alert = false;
             }
         }
+
+
+        // Adding swipes to the database if it is liked
+        ctrl.$rootScope.newGroup = () => {
+            // grabbing userid for current logged in user
+            ctrl.$rootScope.userId = $auth.getPayload().sub;
+
+            // grabbing variables for the like
+            ctrl.newGroup = {
+              "group_name": $('#group_name').val(),
+              "pin": $('#pin').val(),
+              "user_id": ctrl.$rootScope.userId,
+            };
+
+            // calling on the service to do a post request to backend
+            apiService.addGroup().save({}, ctrl.newGroup)
+            .$promise
+            .then( (data) => {
+                apiService.addUserToGroup().save({}, ctrl.newGroup);
+
+                // change page
+                $state.go('auth.dashboard');
+                // set message to confirm add
+                ctrl.$rootScope.message = "Added new group!";
+
+                // set alert to true to show on page
+                ctrl.$rootScope.alert = true;
+            }, (error) => {
+                ctrl.errorMessage();
+            });
+
+        } // end addGroup()
+
+        ctrl.$rootScope.getGroups = () => {
+            ctrl.groups = apiService.getUserGroups().query({id:window.localStorage.getItem('currentUser')});
+            ctrl.groups.$promise.then( (data) => {
+                ctrl.$rootScope.groups.push(data);
+            })
+        }
+
+
+        // function for joining groups that requires the PIN and group name
+        ctrl.$rootScope.joinGroups = () => {
+            ctrl.joinGroupInputs = {
+              "group_name": $('#join_group_name').val(),
+              "pin": $('#join_pin').val(),
+              "user_id": window.localStorage.getItem('currentUser'),
+            };
+
+            // calling the joinGroup() from resource.services.js - post to API
+            apiService.joinGroup().save({}, ctrl.joinGroupInputs)
+            .$promise
+            .then((data) => {
+                ctrl.$rootScope.message = "You've joined the " + $('#join_group_name').val() + " group!";
+                ctrl.$rootScope.alert = true;
+                $state.go('auth.dashboard');
+            }, (error) => {
+                ctrl.errorMessage();
+            });
+        }
+
+        ctrl.errorMessage = () => {
+                // set message to confirm add
+                ctrl.$rootScope.message = "Looks like that didn't work!";
+
+                // set alert to true to show on page
+                ctrl.$rootScope.alert = true;
+        }
+
 
 
 

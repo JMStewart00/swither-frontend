@@ -11,7 +11,7 @@ class loginController {
             let credentials = {
                 grant_type: 'password',
                 client_id: 1,
-                client_secret: 'pt9akXPp6062bCpBe6uAwkm6byMjWizhTnfeRRAj',
+                client_secret: 'Zlp39UHfaR8Zcoeh3UcXfZnwt1ZEWcchaIjKFObl',
                 username: ctrl.email,
                 password: ctrl.password
             }
@@ -23,6 +23,7 @@ class loginController {
                     $state.go('auth.dashboard');
                     ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
                     ctrl.$rootScope.userId = $auth.getPayload().sub;
+                    window.localStorage.setItem('currentUser', ctrl.$rootScope.userId);
                     ctrl.$rootScope.loginError = '';
 
                 }).catch((error) => {
@@ -41,9 +42,9 @@ class loginController {
                 email: ctrl.email,
                 password: ctrl.password,
                 password_confirmation: ctrl.password_confirmation,
-                grant_type: 'password',
-                client_id: 1,
-                client_secret: 'DKlsxJbWHCctqF99zBDCwFWON7Yb8m73oXXfavLY'
+                // grant_type: 'password',
+                // client_id: 1,
+                // client_secret: 'Zlp39UHfaR8Zcoeh3UcXfZnwt1ZEWcchaIjKFObl'
             };
 
             // satellizer's signup function to send data via http request to server.
@@ -55,6 +56,8 @@ class loginController {
                  
               });
             }
+
+
 
 
 

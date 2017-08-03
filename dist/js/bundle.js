@@ -42,12 +42,17 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
     ctrl.$http = $http;
     ctrl.$rootScope.searchResults = [];
     ctrl.$rootScope.alert = false;
+    ctrl.$rootScope.groups = [];
 
     // global logout function to be able to be called from anywhere.
     ctrl.$rootScope.logout = function () {
         $auth.logout();
         ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
         ctrl.$rootScope.userId = '';
+        window.localStorage.clear();
+        ctrl.$rootScope.alert = false;
+        ctrl.$rootScope.groups = [];
+        ctrl.$rootScope.message = '';
         $state.go('login');
     };
 
@@ -79,7 +84,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         // grabbing variables for the like
         ctrl.like = {
             "user_id": ctrl.$rootScope.userId,
-            "group_id": 1,
+            "group_id": 16,
             "business_info": JSON.stringify(ctrl.$rootScope.searchResults[0][0]),
             "business_id": ctrl.$rootScope.searchResults[0][0].id
         };
@@ -125,6 +130,67 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             $state.go('auth.dashboard');
             ctrl.$rootScope.alert = false;
         }
+    };
+
+    // Adding swipes to the database if it is liked
+    ctrl.$rootScope.newGroup = function () {
+        // grabbing userid for current logged in user
+        ctrl.$rootScope.userId = $auth.getPayload().sub;
+
+        // grabbing variables for the like
+        ctrl.newGroup = {
+            "group_name": $('#group_name').val(),
+            "pin": $('#pin').val(),
+            "user_id": ctrl.$rootScope.userId
+        };
+
+        // calling on the service to do a post request to backend
+        apiService.addGroup().save({}, ctrl.newGroup).$promise.then(function (data) {
+            apiService.addUserToGroup().save({}, ctrl.newGroup);
+
+            // change page
+            $state.go('auth.dashboard');
+            // set message to confirm add
+            ctrl.$rootScope.message = "Added new group!";
+
+            // set alert to true to show on page
+            ctrl.$rootScope.alert = true;
+        }, function (error) {
+            ctrl.errorMessage();
+        });
+    }; // end addGroup()
+
+    ctrl.$rootScope.getGroups = function () {
+        ctrl.groups = apiService.getUserGroups().query({ id: window.localStorage.getItem('currentUser') });
+        ctrl.groups.$promise.then(function (data) {
+            ctrl.$rootScope.groups.push(data);
+        });
+    };
+
+    // function for joining groups that requires the PIN and group name
+    ctrl.$rootScope.joinGroups = function () {
+        ctrl.joinGroupInputs = {
+            "group_name": $('#join_group_name').val(),
+            "pin": $('#join_pin').val(),
+            "user_id": window.localStorage.getItem('currentUser')
+        };
+
+        // calling the joinGroup() from resource.services.js - post to API
+        apiService.joinGroup().save({}, ctrl.joinGroupInputs).$promise.then(function (data) {
+            ctrl.$rootScope.message = "You've joined the " + $('#join_group_name').val() + " group!";
+            ctrl.$rootScope.alert = true;
+            $state.go('auth.dashboard');
+        }, function (error) {
+            ctrl.errorMessage();
+        });
+    };
+
+    ctrl.errorMessage = function () {
+        // set message to confirm add
+        ctrl.$rootScope.message = "Looks like that didn't work!";
+
+        // set alert to true to show on page
+        ctrl.$rootScope.alert = true;
     };
 } // end constructor
 
@@ -180,87 +246,110 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource']).component('app'
 //configuration add-on
 .config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
 
-  // authentication routes definitions
-  $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
-  $authProvider.signupUrl = 'http://localhost:7000/register';
+        // authentication routes definitions
+        $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
+        $authProvider.signupUrl = 'http://localhost:7000/register';
 
-  // says to route to / on unknown or undefined routes.
-  $urlRouterProvider.otherwise('/');
+        // says to route to / on unknown or undefined routes.
+        $urlRouterProvider.otherwise('/');
 
-  // states
-  $stateProvider.state('landing', {
-    url: '/',
-    templateUrl: './app/landing/landing.html',
-    controller: _landing2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('login', {
-    url: '/login',
-    templateUrl: './app/login/login.html',
-    controller: _login2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('register', {
-    url: '/register',
-    templateUrl: './app/login/register.html',
-    controller: _login2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('auth.dashboard', {
-    url: '/dashboard',
-    templateUrl: './app/dashboard/dashboard.html',
-    controller: _dashboard2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('auth.new', {
-    url: '/newevent',
-    templateUrl: './app/newEvent/newEvent.html',
-    controller: _newEvent2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('auth.swipes', {
-    url: '/swipes',
-    templateUrl: './app/swipeScreen/swipeScreen.html',
-    controller: _swipeScreen2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('auth', {
-    resolve: {
-      loginRequired: loginRequired
-    }
-  });
+        // states
+        $stateProvider.state('landing', {
+                url: '/',
+                templateUrl: './app/landing/landing.html',
+                controller: _landing2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('login', {
+                url: '/login',
+                templateUrl: './app/login/login.html',
+                controller: _login2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('register', {
+                url: '/register',
+                templateUrl: './app/login/register.html',
+                controller: _login2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth.dashboard', {
+                url: '/dashboard',
+                templateUrl: './app/dashboard/dashboard.html',
+                controller: _dashboard2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth.new', {
+                url: '/newevent',
+                templateUrl: './app/newEvent/newEvent.html',
+                controller: _newEvent2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth.swipes', {
+                url: '/swipes',
+                templateUrl: './app/swipeScreen/swipeScreen.html',
+                controller: _swipeScreen2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth.addgroup', {
+                url: '/addgroup',
+                templateUrl: './app/dashboard/creategroup.html',
+                controller: _dashboard2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth.joingroup', {
+                url: '/joingroup',
+                templateUrl: './app/dashboard/joingroup.html',
+                controller: _dashboard2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth', {
+                resolve: {
+                        loginRequired: loginRequired
+                }
+        });
 
-  function skipIfLoggedIn($q, $auth) {
-    var deferred = $q.defer();
-    if ($auth.isAuthenticated()) {
-      deferred.reject();
-    } else {
-      deferred.resolve();
-    }
-    return deferred.promise;
-  }
+        function skipIfLoggedIn($q, $auth) {
+                var deferred = $q.defer();
+                if ($auth.isAuthenticated()) {
+                        deferred.reject();
+                } else {
+                        deferred.resolve();
+                }
+                return deferred.promise;
+        }
 
-  function loginRequired($q, $state, $auth) {
-    var deferred = $q.defer();
-    if ($auth.isAuthenticated()) {
-      deferred.resolve();
-    } else {
-      $state.go('login');
-    }
-    return deferred.promise;
-  }
+        function loginRequired($q, $state, $auth) {
+                var deferred = $q.defer();
+                if ($auth.isAuthenticated()) {
+                        deferred.resolve();
+                } else {
+                        $state.go('login');
+                }
+                return deferred.promise;
+        }
 })
 
 // custom angular directive for going to different routes and clicking on any element with ng-click
 .directive('goClick', function ($state) {
-  return function (scope, element, attrs) {
-    var path = void 0;
+        return function (scope, element, attrs) {
+                var path = void 0;
 
-    attrs.$observe('goClick', function (val) {
-      path = val;
-    });
+                attrs.$observe('goClick', function (val) {
+                        path = val;
+                });
 
-    element.bind('click', function () {
-      scope.$apply(function () {
-        $state.go(path);
-      });
-    });
-  };
-});
+                element.bind('click', function () {
+                        scope.$apply(function () {
+                                $state.go(path);
+                        });
+                });
+        };
+})
+
+// custom angular directive for limiting the enterable values into certain fields.
+.directive("limitTo", [function () {
+        return {
+                restrict: "A",
+                link: function link(scope, elem, attrs) {
+                        var limit = parseInt(attrs.limitTo);
+                        angular.element(elem).on("keypress", function (e) {
+                                if (this.value.length == limit) e.preventDefault();
+                        });
+                }
+        };
+}]);
 
 },{"./app.component":1,"./dashboard/dashboard.component":5,"./landing/landing.component":8,"./login/login.component":11,"./navbar/navbar.component":14,"./newEvent/newEvent.component":17,"./resource.services.js":20,"./swipeScreen/swipeScreen.component":21}],5:[function(require,module,exports){
 'use strict';
@@ -302,14 +391,13 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
-    // ctrl.$rootScope.searchYelp();
-
+    ctrl.$rootScope.getGroups();
 };
 
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n\n<form id=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n\t\t<input type=\"text\" name=\"group_name\" placeholder=\"Please add group name...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n\t\t<input type=\"password\" name=\"group_name\" placeholder=\"Please enter 4-digit group PIN...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n\t\t<input type=\"password\" name=\"group_name\" placeholder=\"Please confirm 4-digit PIN\">\n    </div>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\">Add New Group</button>\n\n";
+module.exports = "<div class=\"mt-5\" ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n\n<button class=\"btn btn-info\" go-click=\"auth.addgroup\">Add New Group</button>\n<button class=\"btn btn-info\" go-click=\"auth.joingroup\">Join a Group</button>\n<button class=\"btn btn-info\" go-click=\"auth.new\">New Event</button>\n\n<li ng-repeat=\"group in $ctrl.$rootScope.groups[0]\">{{group.group_name}}</li>\n\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -406,7 +494,7 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
         var credentials = {
             grant_type: 'password',
             client_id: 1,
-            client_secret: 'pt9akXPp6062bCpBe6uAwkm6byMjWizhTnfeRRAj',
+            client_secret: 'Zlp39UHfaR8Zcoeh3UcXfZnwt1ZEWcchaIjKFObl',
             username: ctrl.email,
             password: ctrl.password
 
@@ -416,6 +504,7 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
             $state.go('auth.dashboard');
             ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
             ctrl.$rootScope.userId = $auth.getPayload().sub;
+            window.localStorage.setItem('currentUser', ctrl.$rootScope.userId);
             ctrl.$rootScope.loginError = '';
         }).catch(function (error) {
             ctrl.$rootScope.loginError = error.data.message;
@@ -431,10 +520,10 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
             name: ctrl.name,
             email: ctrl.email,
             password: ctrl.password,
-            password_confirmation: ctrl.password_confirmation,
-            grant_type: 'password',
-            client_id: 1,
-            client_secret: 'DKlsxJbWHCctqF99zBDCwFWON7Yb8m73oXXfavLY'
+            password_confirmation: ctrl.password_confirmation
+            // grant_type: 'password',
+            // client_id: 1,
+            // client_secret: 'Zlp39UHfaR8Zcoeh3UcXfZnwt1ZEWcchaIjKFObl'
         };
 
         // satellizer's signup function to send data via http request to server.
@@ -494,7 +583,7 @@ var navbarController = function navbarController($rootScope, $auth, $http, $stat
 exports.default = navbarController;
 
 },{}],16:[function(require,module,exports){
-module.exports = "<div id=\"navbar\">\n<div class=\"container\">\n\t<div class=\"row mt-5\">\n\t\t<div class=\"col-2 text-center align-middle\">\n\t\t\t<p>logo</p>\n\t\t\t</div>\n\t\t\t\t<div class=\"col-6\"></div>\n\t\t\t\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-right border-right\" go-click=\"register\">Register</a>\n\t\t\t\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-left\" go-click=\"login\">Login</a>\n\t\t\t\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-right border-right\" go-click=\"register\"></a>\n\t\t\t\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" ng-click=\"$ctrl.$rootScope.logout()\" class=\"btn col text-left m-0\">Logout</a>\n\t\t\t</div>\n</div>\n</div>\n\n<!-- \t\t<div class=\"nav-wrapper mb-0\">\n\t\t\t<nav class=\"navbar navbar-toggleable\" style=\"height: 55px\">\n\t\t\t\t\t<div class=\"row w-100 mx-auto\">\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1about\">ABOUT</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1work\">WORK</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1contact\">CONNECT</a>\n\t\t\t\t\t\t<a class=\"col hidden-sm-down text-center py-1 borderYtoX\" href=\"https://jmstewart00.github.io/stewartblog/\" target=\"_blank\">BLOG</a>\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t</div>  -->";
+module.exports = "<div id=\"navbar\">\n<div class=\"container\">\n\t<div class=\"row mt-5\">\n\t\t<div class=\"col-2 text-center align-middle\">\n\t\t\t<p go-click=\"auth.dashboard\">logo</p>\n\t\t\t</div>\n\t\t\t\t<div class=\"col-6\"></div>\n\t\t\t\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-right border-right\" go-click=\"register\">Register</a>\n\t\t\t\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-left\" go-click=\"login\">Login</a>\n\t\t\t\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-right border-right\" go-click=\"register\"></a>\n\t\t\t\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" ng-click=\"$ctrl.$rootScope.logout()\" class=\"btn col text-left m-0\">Logout</a>\n\t\t\t</div>\n</div>\n</div>\n\n<!-- \t\t<div class=\"nav-wrapper mb-0\">\n\t\t\t<nav class=\"navbar navbar-toggleable\" style=\"height: 55px\">\n\t\t\t\t\t<div class=\"row w-100 mx-auto\">\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1about\">ABOUT</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1work\">WORK</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1contact\">CONNECT</a>\n\t\t\t\t\t\t<a class=\"col hidden-sm-down text-center py-1 borderYtoX\" href=\"https://jmstewart00.github.io/stewartblog/\" target=\"_blank\">BLOG</a>\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t</div>  -->";
 
 },{}],17:[function(require,module,exports){
 'use strict';
@@ -554,17 +643,31 @@ Object.defineProperty(exports, "__esModule", {
 function apiService($resource) {
 	var ctrl = this;
 	// All of the site api functions
-	// let getYelp = () => $resource('http://localhost:7000/api/index');
+	var addGroup = function addGroup() {
+		return $resource('http://localhost:7000/api/groups/');
+	};
 	var addLike = function addLike() {
 		return $resource('http://localhost:7000/api/likes/');
+	};
+	var getUserGroups = function getUserGroups() {
+		return $resource('http://localhost:7000/api/findgroups/:id', { id: "@id" });
+	};
+	var addUserToGroup = function addUserToGroup() {
+		return $resource('http://localhost:7000/api/usergroups');
+	};
+	var joinGroup = function joinGroup() {
+		return $resource('http://localhost:7000/api/joingroup');
 	};
 	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
 	//            'update': {method: 'PUT'}
 	//        	});
 
 	return {
-		addLike: addLike
-		// 			searchYelp : searchYelp,
+		addLike: addLike,
+		addGroup: addGroup,
+		getUserGroups: getUserGroups,
+		addUserToGroup: addUserToGroup,
+		joinGroup: joinGroup
 	};
 }
 
