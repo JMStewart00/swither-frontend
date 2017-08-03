@@ -112,11 +112,14 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
     });
   };
 })
-.directive("limitTo", [function() {
+
+
+// custom angular directive for limiting the enterable values into certain fields.
+.directive("limitTo", [ () => {
     return {
         restrict: "A",
-        link: function(scope, elem, attrs) {
-            var limit = parseInt(attrs.limitTo);
+        link: (scope, elem, attrs) => {
+            let limit = parseInt(attrs.limitTo);
             angular.element(elem).on("keypress", function(e) {
                 if (this.value.length == limit) e.preventDefault();
             });

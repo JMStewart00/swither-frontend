@@ -134,6 +134,15 @@ class appCtrl {
             })
         }
 
+        ctrl.$rootScope.joinGroups = () => {
+            ctrl.joinGroupInputs = {
+              "group_name": $('#join_group_name').val(),
+              "pin": $('#join_pin').val(),
+              "user_id": window.localStorage.getItem('currentUser'),
+            };
+            apiService.joinGroup().save({}, ctrl.joinGroupInputs);
+        }
+
 
 
 

@@ -7,6 +7,7 @@ function apiService($resource) {
 	let	addLike = () => $resource('http://localhost:7000/api/likes/');
 	let	getUserGroups = () => $resource('http://localhost:7000/api/findgroups/:id', {id: "@id"});
 	let addUserToGroup = () => $resource('http://localhost:7000/api/usergroups');
+	let joinGroup = () => $resource('http://localhost:7000/api/joingroup');
 	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
  //            'update': {method: 'PUT'}
  //        	});
@@ -15,7 +16,7 @@ function apiService($resource) {
 				addLike : addLike,
 				addGroup : addGroup,
 				getUserGroups: getUserGroups,
-				addUserToGroup: addUserToGroup
+				joinGroup: joinGroup,
 				}
 
 

@@ -158,6 +158,15 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             ctrl.$rootScope.groups.push(data);
         });
     };
+
+    ctrl.$rootScope.joinGroups = function () {
+        ctrl.joinGroupInputs = {
+            "group_name": $('#join_group_name').val(),
+            "pin": $('#join_pin').val(),
+            "user_id": window.localStorage.getItem('currentUser')
+        };
+        apiService.joinGroup().save({}, ctrl.joinGroupInputs);
+    };
 } // end constructor
 
 
@@ -292,7 +301,10 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource']).component('app'
       });
     });
   };
-}).directive("limitTo", [function () {
+})
+
+// custom angular directive for limiting the enterable values into certain fields.
+.directive("limitTo", [function () {
   return {
     restrict: "A",
     link: function link(scope, elem, attrs) {
@@ -350,7 +362,7 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n<div ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n<form id=\"addGroup\" name=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n    <input type=\"text\" name=\"group_name\" id=\"group_name\" placeholder=\"Please add group name...\" required>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n    <input type=\"password\" limit-to=\"4\" equals=\"{{$ctrl.confirm_pin}}\" ng-model=\"$ctrl.pin\" placeholder=\"Please enter 4-digit group PIN...\" required>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n    <input type=\"password\" limit-to=\"4\" equals=\"{{$ctrl.pin}}\" ng-model=\"$ctrl.confirm_pin\"  placeholder=\"Please confirm 4-digit PIN\" required>\n    </div>\n    <p ng-if=\"$ctrl.pin !== $ctrl.confirm_pin\" class=\"mb-2\">PINs do not match.</p>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\" class=\"btn btn-outline-primary\" ng-disabled=\"addGroup.$invalid\">Add New Group</button>\n\n\n<li ng-repeat=\"group in $ctrl.$rootScope.groups[0]\">{{group.group_name}}</li>\n\n";
+module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n<div ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n<form id=\"addGroup\" name=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n    <input type=\"text\" name=\"group_name\" id=\"group_name\" placeholder=\"Please add group name...\" required>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n    <input type=\"password\" limit-to=\"4\" equals=\"{{$ctrl.confirm_pin}}\" ng-model=\"$ctrl.pin\" placeholder=\"Please enter 4-digit group PIN...\" id=\"pin\" required>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n    <input type=\"password\" limit-to=\"4\" equals=\"{{$ctrl.pin}}\" ng-model=\"$ctrl.confirm_pin\"  placeholder=\"Please confirm 4-digit PIN\" required>\n    </div>\n    <p ng-if=\"$ctrl.pin !== $ctrl.confirm_pin\" class=\"mb-2\">PINs do not match.</p>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\" class=\"btn btn-outline-primary\" ng-disabled=\"addGroup.$invalid\">Add New Group</button>\n</div>\n</form>\n\n<hr>\n\n<form id=\"getIntoGroup\" name=\"getIntoGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n    <input type=\"text\" id=\"join_group_name\" ng-minlength=\"4\" placeholder=\"Group Name...\" ng-model=\"joinName\" required>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n    <input type=\"password\" id=\"join_pin\" limit-to=\"4\" placeholder=\"4 Digit PIN...\" ng-minlength=\"4\" ng-model=\"$ctrl.joinPin\" required>\n    </div>\n\n<button ng-click=\"$ctrl.$rootScope.joinGroups()\" class=\"btn btn-outline-primary\" ng-disabled=\"getIntoGroup.$invalid\">Join Group</button>\n</div>\n</form>\n\n\n\n<li ng-repeat=\"group in $ctrl.$rootScope.groups[0]\">{{group.group_name}}</li>\n\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -608,6 +620,9 @@ function apiService($resource) {
 	var addUserToGroup = function addUserToGroup() {
 		return $resource('http://localhost:7000/api/usergroups');
 	};
+	var joinGroup = function joinGroup() {
+		return $resource('http://localhost:7000/api/joingroup');
+	};
 	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
 	//            'update': {method: 'PUT'}
 	//        	});
@@ -616,7 +631,7 @@ function apiService($resource) {
 		addLike: addLike,
 		addGroup: addGroup,
 		getUserGroups: getUserGroups,
-		addUserToGroup: addUserToGroup
+		joinGroup: joinGroup
 	};
 }
 
