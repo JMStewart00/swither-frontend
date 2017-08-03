@@ -1,0 +1,19 @@
+<div ng-show="$ctrl.$rootScope.alert">{{$ctrl.$rootScope.message}}</div>
+<form id="addGroup" name="addGroup">
+  <div class="container main-center">
+    <div class="form-group">
+      <label for="siteSelect">Group Name:</label>
+    <input type="text" name="group_name" id="group_name" placeholder="Please add group name..." required>
+    </div>
+    <div class="form-group">
+      <label for="password">Enter PIN:</label>
+    <input type="password" limit-to="4" equals="{{$ctrl.confirm_pin}}" ng-model="$ctrl.pin" placeholder="Please enter 4-digit group PIN..." id="pin" required>
+    </div>
+    <div class="form-group">
+      <label for="password_confirmation">Confirm PIN:</label>
+    <input type="password" limit-to="4" equals="{{$ctrl.pin}}" ng-model="$ctrl.confirm_pin"  placeholder="Please confirm 4-digit PIN" required>
+    </div>
+    <p ng-if="$ctrl.pin !== $ctrl.confirm_pin" class="mb-2">PINs do not match.</p>
+<button ng-click="$ctrl.$rootScope.newGroup()" class="btn btn-outline-primary" ng-disabled="addGroup.$invalid">Add New Group</button>
+</div>
+</form>

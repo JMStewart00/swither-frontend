@@ -1,43 +1,8 @@
-<!-- <button go-click="auth.swipes">Swipes</button>
-<button go-click="auth.new">New Event</button> -->
-<div ng-show="$ctrl.$rootScope.alert">{{$ctrl.$rootScope.message}}</div>
-<form id="addGroup" name="addGroup">
-  <div class="container main-center">
-    <div class="form-group">
-      <label for="siteSelect">Group Name:</label>
-    <input type="text" name="group_name" id="group_name" placeholder="Please add group name..." required>
-    </div>
-    <div class="form-group">
-      <label for="password">Enter PIN:</label>
-    <input type="password" limit-to="4" equals="{{$ctrl.confirm_pin}}" ng-model="$ctrl.pin" placeholder="Please enter 4-digit group PIN..." id="pin" required>
-    </div>
-    <div class="form-group">
-      <label for="password_confirmation">Confirm PIN:</label>
-    <input type="password" limit-to="4" equals="{{$ctrl.pin}}" ng-model="$ctrl.confirm_pin"  placeholder="Please confirm 4-digit PIN" required>
-    </div>
-    <p ng-if="$ctrl.pin !== $ctrl.confirm_pin" class="mb-2">PINs do not match.</p>
-<button ng-click="$ctrl.$rootScope.newGroup()" class="btn btn-outline-primary" ng-disabled="addGroup.$invalid">Add New Group</button>
-</div>
-</form>
+<div class="mt-5" ng-show="$ctrl.$rootScope.alert">{{$ctrl.$rootScope.message}}</div>
 
-<hr>
-
-<form id="getIntoGroup" name="getIntoGroup">
-  <div class="container main-center">
-    <div class="form-group">
-      <label for="siteSelect">Group Name:</label>
-    <input type="text" id="join_group_name" ng-minlength="4" placeholder="Group Name..." ng-model="joinName" required>
-    </div>
-    <div class="form-group">
-      <label for="password">Enter PIN:</label>
-    <input type="password" id="join_pin" limit-to="4" placeholder="4 Digit PIN..." ng-minlength="4" ng-model="$ctrl.joinPin" required>
-    </div>
-
-<button ng-click="$ctrl.$rootScope.joinGroups()" class="btn btn-outline-primary" ng-disabled="getIntoGroup.$invalid">Join Group</button>
-</div>
-</form>
-
-
+<button class="btn btn-info" go-click="auth.addgroup">Add New Group</button>
+<button class="btn btn-info" go-click="auth.joingroup">Join a Group</button>
+<button class="btn btn-info" go-click="auth.new">New Event</button>
 
 <li ng-repeat="group in $ctrl.$rootScope.groups[0]">{{group.group_name}}</li>
 

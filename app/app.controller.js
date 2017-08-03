@@ -17,6 +17,9 @@ class appCtrl {
             ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
             ctrl.$rootScope.userId = '';
             window.localStorage.clear();
+            ctrl.$rootScope.alert = false;
+            ctrl.$rootScope.groups = [];
+            ctrl.$rootScope.message = '';
             $state.go('login');
         }
 
@@ -116,14 +119,21 @@ class appCtrl {
             };
 
             // calling on the service to do a post request to backend
-            apiService.addGroup().save({}, ctrl.newGroup);
-            apiService.addUserToGroup().save({}, ctrl.newGroup);
+            apiService.addGroup().save({}, ctrl.newGroup)
+            .$promise
+            .then( (data) => {
+                apiService.addUserToGroup().save({}, ctrl.newGroup);
 
-            // set message to confirm add
-            ctrl.$rootScope.message = "Added new group!";
+                // change page
+                $state.go('auth.dashboard');
+                // set message to confirm add
+                ctrl.$rootScope.message = "Added new group!";
 
-            // set alert to true to show on page
-            ctrl.$rootScope.alert = true;
+                // set alert to true to show on page
+                ctrl.$rootScope.alert = true;
+            }, (error) => {
+                ctrl.errorMessage();
+            });
 
         } // end addGroup()
 
@@ -142,12 +152,25 @@ class appCtrl {
               "pin": $('#join_pin').val(),
               "user_id": window.localStorage.getItem('currentUser'),
             };
+
+            // calling the joinGroup() from resource.services.js - post to API
             apiService.joinGroup().save({}, ctrl.joinGroupInputs)
             .$promise
             .then((data) => {
-                ctrl.$rootScope.message = data.message;
+                ctrl.$rootScope.message = "You've joined the " + $('#join_group_name').val() + " group!";
                 ctrl.$rootScope.alert = true;
+                $state.go('auth.dashboard');
+            }, (error) => {
+                ctrl.errorMessage();
             });
+        }
+
+        ctrl.errorMessage = () => {
+                // set message to confirm add
+                ctrl.$rootScope.message = "Looks like that didn't work!";
+
+                // set alert to true to show on page
+                ctrl.$rootScope.alert = true;
         }
 
 

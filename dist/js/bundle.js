@@ -50,6 +50,9 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
         ctrl.$rootScope.userId = '';
         window.localStorage.clear();
+        ctrl.$rootScope.alert = false;
+        ctrl.$rootScope.groups = [];
+        ctrl.$rootScope.message = '';
         $state.go('login');
     };
 
@@ -142,14 +145,19 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         };
 
         // calling on the service to do a post request to backend
-        apiService.addGroup().save({}, ctrl.newGroup);
-        apiService.addUserToGroup().save({}, ctrl.newGroup);
+        apiService.addGroup().save({}, ctrl.newGroup).$promise.then(function (data) {
+            apiService.addUserToGroup().save({}, ctrl.newGroup);
 
-        // set message to confirm add
-        ctrl.$rootScope.message = "Added new group!";
+            // change page
+            $state.go('auth.dashboard');
+            // set message to confirm add
+            ctrl.$rootScope.message = "Added new group!";
 
-        // set alert to true to show on page
-        ctrl.$rootScope.alert = true;
+            // set alert to true to show on page
+            ctrl.$rootScope.alert = true;
+        }, function (error) {
+            ctrl.errorMessage();
+        });
     }; // end addGroup()
 
     ctrl.$rootScope.getGroups = function () {
@@ -166,10 +174,23 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             "pin": $('#join_pin').val(),
             "user_id": window.localStorage.getItem('currentUser')
         };
+
+        // calling the joinGroup() from resource.services.js - post to API
         apiService.joinGroup().save({}, ctrl.joinGroupInputs).$promise.then(function (data) {
-            ctrl.$rootScope.message = data.message;
+            ctrl.$rootScope.message = "You've joined the " + $('#join_group_name').val() + " group!";
             ctrl.$rootScope.alert = true;
+            $state.go('auth.dashboard');
+        }, function (error) {
+            ctrl.errorMessage();
         });
+    };
+
+    ctrl.errorMessage = function () {
+        // set message to confirm add
+        ctrl.$rootScope.message = "Looks like that didn't work!";
+
+        // set alert to true to show on page
+        ctrl.$rootScope.alert = true;
     };
 } // end constructor
 
@@ -225,99 +246,109 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource']).component('app'
 //configuration add-on
 .config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
 
-  // authentication routes definitions
-  $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
-  $authProvider.signupUrl = 'http://localhost:7000/register';
+        // authentication routes definitions
+        $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
+        $authProvider.signupUrl = 'http://localhost:7000/register';
 
-  // says to route to / on unknown or undefined routes.
-  $urlRouterProvider.otherwise('/');
+        // says to route to / on unknown or undefined routes.
+        $urlRouterProvider.otherwise('/');
 
-  // states
-  $stateProvider.state('landing', {
-    url: '/',
-    templateUrl: './app/landing/landing.html',
-    controller: _landing2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('login', {
-    url: '/login',
-    templateUrl: './app/login/login.html',
-    controller: _login2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('register', {
-    url: '/register',
-    templateUrl: './app/login/register.html',
-    controller: _login2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('auth.dashboard', {
-    url: '/dashboard',
-    templateUrl: './app/dashboard/dashboard.html',
-    controller: _dashboard2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('auth.new', {
-    url: '/newevent',
-    templateUrl: './app/newEvent/newEvent.html',
-    controller: _newEvent2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('auth.swipes', {
-    url: '/swipes',
-    templateUrl: './app/swipeScreen/swipeScreen.html',
-    controller: _swipeScreen2.default.controller,
-    controllerAs: '$ctrl'
-  }).state('auth', {
-    resolve: {
-      loginRequired: loginRequired
-    }
-  });
+        // states
+        $stateProvider.state('landing', {
+                url: '/',
+                templateUrl: './app/landing/landing.html',
+                controller: _landing2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('login', {
+                url: '/login',
+                templateUrl: './app/login/login.html',
+                controller: _login2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('register', {
+                url: '/register',
+                templateUrl: './app/login/register.html',
+                controller: _login2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth.dashboard', {
+                url: '/dashboard',
+                templateUrl: './app/dashboard/dashboard.html',
+                controller: _dashboard2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth.new', {
+                url: '/newevent',
+                templateUrl: './app/newEvent/newEvent.html',
+                controller: _newEvent2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth.swipes', {
+                url: '/swipes',
+                templateUrl: './app/swipeScreen/swipeScreen.html',
+                controller: _swipeScreen2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth.addgroup', {
+                url: '/addgroup',
+                templateUrl: './app/dashboard/creategroup.html',
+                controller: _dashboard2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth.joingroup', {
+                url: '/joingroup',
+                templateUrl: './app/dashboard/joingroup.html',
+                controller: _dashboard2.default.controller,
+                controllerAs: '$ctrl'
+        }).state('auth', {
+                resolve: {
+                        loginRequired: loginRequired
+                }
+        });
 
-  function skipIfLoggedIn($q, $auth) {
-    var deferred = $q.defer();
-    if ($auth.isAuthenticated()) {
-      deferred.reject();
-    } else {
-      deferred.resolve();
-    }
-    return deferred.promise;
-  }
+        function skipIfLoggedIn($q, $auth) {
+                var deferred = $q.defer();
+                if ($auth.isAuthenticated()) {
+                        deferred.reject();
+                } else {
+                        deferred.resolve();
+                }
+                return deferred.promise;
+        }
 
-  function loginRequired($q, $state, $auth) {
-    var deferred = $q.defer();
-    if ($auth.isAuthenticated()) {
-      deferred.resolve();
-    } else {
-      $state.go('login');
-    }
-    return deferred.promise;
-  }
+        function loginRequired($q, $state, $auth) {
+                var deferred = $q.defer();
+                if ($auth.isAuthenticated()) {
+                        deferred.resolve();
+                } else {
+                        $state.go('login');
+                }
+                return deferred.promise;
+        }
 })
 
 // custom angular directive for going to different routes and clicking on any element with ng-click
 .directive('goClick', function ($state) {
-  return function (scope, element, attrs) {
-    var path = void 0;
+        return function (scope, element, attrs) {
+                var path = void 0;
 
-    attrs.$observe('goClick', function (val) {
-      path = val;
-    });
+                attrs.$observe('goClick', function (val) {
+                        path = val;
+                });
 
-    element.bind('click', function () {
-      scope.$apply(function () {
-        $state.go(path);
-      });
-    });
-  };
+                element.bind('click', function () {
+                        scope.$apply(function () {
+                                $state.go(path);
+                        });
+                });
+        };
 })
 
 // custom angular directive for limiting the enterable values into certain fields.
 .directive("limitTo", [function () {
-  return {
-    restrict: "A",
-    link: function link(scope, elem, attrs) {
-      var limit = parseInt(attrs.limitTo);
-      angular.element(elem).on("keypress", function (e) {
-        if (this.value.length == limit) e.preventDefault();
-      });
-    }
-  };
+        return {
+                restrict: "A",
+                link: function link(scope, elem, attrs) {
+                        var limit = parseInt(attrs.limitTo);
+                        angular.element(elem).on("keypress", function (e) {
+                                if (this.value.length == limit) e.preventDefault();
+                        });
+                }
+        };
 }]);
 
 },{"./app.component":1,"./dashboard/dashboard.component":5,"./landing/landing.component":8,"./login/login.component":11,"./navbar/navbar.component":14,"./newEvent/newEvent.component":17,"./resource.services.js":20,"./swipeScreen/swipeScreen.component":21}],5:[function(require,module,exports){
@@ -366,7 +397,7 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n<div ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n<form id=\"addGroup\" name=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n    <input type=\"text\" name=\"group_name\" id=\"group_name\" placeholder=\"Please add group name...\" required>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n    <input type=\"password\" limit-to=\"4\" equals=\"{{$ctrl.confirm_pin}}\" ng-model=\"$ctrl.pin\" placeholder=\"Please enter 4-digit group PIN...\" id=\"pin\" required>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n    <input type=\"password\" limit-to=\"4\" equals=\"{{$ctrl.pin}}\" ng-model=\"$ctrl.confirm_pin\"  placeholder=\"Please confirm 4-digit PIN\" required>\n    </div>\n    <p ng-if=\"$ctrl.pin !== $ctrl.confirm_pin\" class=\"mb-2\">PINs do not match.</p>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\" class=\"btn btn-outline-primary\" ng-disabled=\"addGroup.$invalid\">Add New Group</button>\n</div>\n</form>\n\n<hr>\n\n<form id=\"getIntoGroup\" name=\"getIntoGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n    <input type=\"text\" id=\"join_group_name\" ng-minlength=\"4\" placeholder=\"Group Name...\" ng-model=\"joinName\" required>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n    <input type=\"password\" id=\"join_pin\" limit-to=\"4\" placeholder=\"4 Digit PIN...\" ng-minlength=\"4\" ng-model=\"$ctrl.joinPin\" required>\n    </div>\n\n<button ng-click=\"$ctrl.$rootScope.joinGroups()\" class=\"btn btn-outline-primary\" ng-disabled=\"getIntoGroup.$invalid\">Join Group</button>\n</div>\n</form>\n\n\n\n<li ng-repeat=\"group in $ctrl.$rootScope.groups[0]\">{{group.group_name}}</li>\n\n";
+module.exports = "<div class=\"mt-5\" ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n\n<button class=\"btn btn-info\" go-click=\"auth.addgroup\">Add New Group</button>\n<button class=\"btn btn-info\" go-click=\"auth.joingroup\">Join a Group</button>\n<button class=\"btn btn-info\" go-click=\"auth.new\">New Event</button>\n\n<li ng-repeat=\"group in $ctrl.$rootScope.groups[0]\">{{group.group_name}}</li>\n\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -552,7 +583,7 @@ var navbarController = function navbarController($rootScope, $auth, $http, $stat
 exports.default = navbarController;
 
 },{}],16:[function(require,module,exports){
-module.exports = "<div id=\"navbar\">\n<div class=\"container\">\n\t<div class=\"row mt-5\">\n\t\t<div class=\"col-2 text-center align-middle\">\n\t\t\t<p>logo</p>\n\t\t\t</div>\n\t\t\t\t<div class=\"col-6\"></div>\n\t\t\t\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-right border-right\" go-click=\"register\">Register</a>\n\t\t\t\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-left\" go-click=\"login\">Login</a>\n\t\t\t\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-right border-right\" go-click=\"register\"></a>\n\t\t\t\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" ng-click=\"$ctrl.$rootScope.logout()\" class=\"btn col text-left m-0\">Logout</a>\n\t\t\t</div>\n</div>\n</div>\n\n<!-- \t\t<div class=\"nav-wrapper mb-0\">\n\t\t\t<nav class=\"navbar navbar-toggleable\" style=\"height: 55px\">\n\t\t\t\t\t<div class=\"row w-100 mx-auto\">\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1about\">ABOUT</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1work\">WORK</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1contact\">CONNECT</a>\n\t\t\t\t\t\t<a class=\"col hidden-sm-down text-center py-1 borderYtoX\" href=\"https://jmstewart00.github.io/stewartblog/\" target=\"_blank\">BLOG</a>\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t</div>  -->";
+module.exports = "<div id=\"navbar\">\n<div class=\"container\">\n\t<div class=\"row mt-5\">\n\t\t<div class=\"col-2 text-center align-middle\">\n\t\t\t<p go-click=\"auth.dashboard\">logo</p>\n\t\t\t</div>\n\t\t\t\t<div class=\"col-6\"></div>\n\t\t\t\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-right border-right\" go-click=\"register\">Register</a>\n\t\t\t\t<a ng-show=\"!$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-left\" go-click=\"login\">Login</a>\n\t\t\t\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" class=\"btn col-2 m-0 text-right border-right\" go-click=\"register\"></a>\n\t\t\t\t<a ng-show=\"$ctrl.$rootScope.loginStatus\" ng-click=\"$ctrl.$rootScope.logout()\" class=\"btn col text-left m-0\">Logout</a>\n\t\t\t</div>\n</div>\n</div>\n\n<!-- \t\t<div class=\"nav-wrapper mb-0\">\n\t\t\t<nav class=\"navbar navbar-toggleable\" style=\"height: 55px\">\n\t\t\t\t\t<div class=\"row w-100 mx-auto\">\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1about\">ABOUT</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1work\">WORK</a>\n\t\t\t\t\t\t<a class=\"col text-center py-1 borderYtoX\" href=\"#1contact\">CONNECT</a>\n\t\t\t\t\t\t<a class=\"col hidden-sm-down text-center py-1 borderYtoX\" href=\"https://jmstewart00.github.io/stewartblog/\" target=\"_blank\">BLOG</a>\n\t\t\t\t\t\t<div class=\"col text-center hidden-md-down\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t</div>  -->";
 
 },{}],17:[function(require,module,exports){
 'use strict';
@@ -635,6 +666,7 @@ function apiService($resource) {
 		addLike: addLike,
 		addGroup: addGroup,
 		getUserGroups: getUserGroups,
+		addUserToGroup: addUserToGroup,
 		joinGroup: joinGroup
 	};
 }

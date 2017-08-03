@@ -16,6 +16,7 @@ function apiService($resource) {
 				addLike : addLike,
 				addGroup : addGroup,
 				getUserGroups: getUserGroups,
+				addUserToGroup: addUserToGroup,
 				joinGroup: joinGroup,
 				}
 

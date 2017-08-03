@@ -67,6 +67,18 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
                         controller: swipeScreenComponent.controller,
                         controllerAs: '$ctrl'
                 })
+                .state('auth.addgroup', {
+                        url: '/addgroup',
+                        templateUrl: './app/dashboard/creategroup.html',
+                        controller: dashboardComponent.controller,
+                        controllerAs: '$ctrl'
+                })
+                .state('auth.joingroup', {
+                        url: '/joingroup',
+                        templateUrl: './app/dashboard/joingroup.html',
+                        controller: dashboardComponent.controller,
+                        controllerAs: '$ctrl'
+                })
                 .state('auth', {
                         resolve: {
                               loginRequired: loginRequired
