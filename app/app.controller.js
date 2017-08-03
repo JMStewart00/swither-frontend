@@ -134,13 +134,20 @@ class appCtrl {
             })
         }
 
+
+        // function for joining groups that requires the PIN and group name
         ctrl.$rootScope.joinGroups = () => {
             ctrl.joinGroupInputs = {
               "group_name": $('#join_group_name').val(),
               "pin": $('#join_pin').val(),
               "user_id": window.localStorage.getItem('currentUser'),
             };
-            apiService.joinGroup().save({}, ctrl.joinGroupInputs);
+            apiService.joinGroup().save({}, ctrl.joinGroupInputs)
+            .$promise
+            .then((data) => {
+                ctrl.$rootScope.message = data.message;
+                ctrl.$rootScope.alert = true;
+            });
         }
 
 
