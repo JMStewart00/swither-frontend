@@ -52,7 +52,7 @@ class appCtrl {
             // grabbing variables for the like
             ctrl.like = {
               "user_id": ctrl.$rootScope.userId,
-              "group_id": 1,
+              "group_id": 16,
               "business_info": JSON.stringify(ctrl.$rootScope.searchResults[0][0]),
               "business_id": ctrl.$rootScope.searchResults[0][0].id
             };

@@ -81,7 +81,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         // grabbing variables for the like
         ctrl.like = {
             "user_id": ctrl.$rootScope.userId,
-            "group_id": 1,
+            "group_id": 16,
             "business_info": JSON.stringify(ctrl.$rootScope.searchResults[0][0]),
             "business_id": ctrl.$rootScope.searchResults[0][0].id
         };
@@ -292,7 +292,17 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource']).component('app'
       });
     });
   };
-});
+}).directive("limitTo", [function () {
+  return {
+    restrict: "A",
+    link: function link(scope, elem, attrs) {
+      var limit = parseInt(attrs.limitTo);
+      angular.element(elem).on("keypress", function (e) {
+        if (this.value.length == limit) e.preventDefault();
+      });
+    }
+  };
+}]);
 
 },{"./app.component":1,"./dashboard/dashboard.component":5,"./landing/landing.component":8,"./login/login.component":11,"./navbar/navbar.component":14,"./newEvent/newEvent.component":17,"./resource.services.js":20,"./swipeScreen/swipeScreen.component":21}],5:[function(require,module,exports){
 'use strict';
@@ -340,7 +350,7 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n<div ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n<form id=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n\t\t<input type=\"text\" name=\"group_name\" id=\"group_name\" placeholder=\"Please add group name...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n\t\t<input type=\"password\" name=\"pin\" id=\"pin\" placeholder=\"Please enter 4-digit group PIN...\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n\t\t<input type=\"password\" name=\"confirm_pin\" id=\"confirm_pin\" placeholder=\"Please confirm 4-digit PIN\">\n    </div>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\">Add New Group</button>\n\n\n<li ng-repeat=\"group in $ctrl.$rootScope.groups[0]\">{{group.group_name}}</li>\n\n";
+module.exports = "<!-- <button go-click=\"auth.swipes\">Swipes</button>\n<button go-click=\"auth.new\">New Event</button> -->\n<div ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n<form id=\"addGroup\" name=\"addGroup\">\n  <div class=\"container main-center\">\n    <div class=\"form-group\">\n      <label for=\"siteSelect\">Group Name:</label>\n    <input type=\"text\" name=\"group_name\" id=\"group_name\" placeholder=\"Please add group name...\" required>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password\">Enter PIN:</label>\n    <input type=\"password\" limit-to=\"4\" equals=\"{{$ctrl.confirm_pin}}\" ng-model=\"$ctrl.pin\" placeholder=\"Please enter 4-digit group PIN...\" required>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"password_confirmation\">Confirm PIN:</label>\n    <input type=\"password\" limit-to=\"4\" equals=\"{{$ctrl.pin}}\" ng-model=\"$ctrl.confirm_pin\"  placeholder=\"Please confirm 4-digit PIN\" required>\n    </div>\n    <p ng-if=\"$ctrl.pin !== $ctrl.confirm_pin\" class=\"mb-2\">PINs do not match.</p>\n<button ng-click=\"$ctrl.$rootScope.newGroup()\" class=\"btn btn-outline-primary\" ng-disabled=\"addGroup.$invalid\">Add New Group</button>\n\n\n<li ng-repeat=\"group in $ctrl.$rootScope.groups[0]\">{{group.group_name}}</li>\n\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
