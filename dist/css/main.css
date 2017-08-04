@@ -1,28 +1,28 @@
+@import url("https://fonts.googleapis.com/css?family=Alegreya+Sans:900|Roboto");
 html, body {
   padding: 0;
   margin: 0;
-  margin-bottom: 10%; }
+  margin-bottom: 10%;
+  background-color: #577c28;
+  font-family: 'Roboto', sans-serif;
+  color: white; }
+
+#dashboard span {
+  color: black; }
 
 
-@import url("https://fonts.googleapis.com/css?family=Raleway");
-@import url("https://fonts.googleapis.com/css?family=Alex+Brush");
-@import url("https://fonts.googleapis.com/css?family=PT+Sans");
-@import url("https://fonts.googleapis.com/css?family=Montserrat:800");
-#maincontent {
-  background-image: url(./food.jpg);
-  background-image-opacity: .5;
+#landing #maincontent {
+  background-image: url(./banner.jpeg);
   -webkit-background-size: cover;
   background-size: cover;
   background-attachment: fixed;
-  background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  height: 100%;
+  height: 400px;
   display: table;
-  width: 100%;
-  padding: 10%; }
+  width: 100%; }
 
-#title {
+#landing #title {
   position: relative;
   -webkit-animation: mymove 1s;
   -o-animation: mymove 1s;
@@ -30,17 +30,32 @@ html, body {
   font-weight: bold;
   color: white; }
 
-#title {
+#landing #title {
   -webkit-animation-timing-function: ease-out; }
 
-#title {
+#landing #title {
   -webkit-animation-timing-function: ease-out;
        -o-animation-timing-function: ease-out;
           animation-timing-function: ease-out; }
 
+#landing .pull-bottom {
+  position: absolute;
+  bottom: 0;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0)), color-stop(90%, white));
+  background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), white 90%);
+  background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0), white 90%);
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), white 90%);
+  margin-bottom: -5px; }
+
+#landing h1, #landing h3 {
+  font-family: 'Alegreya Sans', sans-serif;
+  text-shadow: 3px 3px 2px #969696; }
 
 #navbar .container {
   background-color: transparent; }
+
+#navbar h3 {
+  font-family: 'Alegreya Sans', sans-serif; }
 
 
 #swipeScreen #like {

@@ -1,41 +1,47 @@
-@import url('https://fonts.googleapis.com/css?family=Raleway');
+#landing {
+    #maincontent {
+        background-image: url(./banner.jpeg); 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 400px;
+        display:table;
+        width: 100%;
 
-@import url('https://fonts.googleapis.com/css?family=Alex+Brush');
+    }
 
-@import url('https://fonts.googleapis.com/css?family=PT+Sans');
+    #title {
+        position: relative;
+        -webkit-animation: mymove 1s;
+        animation: mymove 1s;
+        font-weight: bold;
+        color: white;
+    }
 
-@import url('https://fonts.googleapis.com/css?family=Montserrat:800');
+    #title {
+        -webkit-animation-timing-function: ease-out;
+    }
 
-#maincontent {
-    background-image: url(./food.jpg);
-    background-image-opacity: .5; 
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height:100%;
-    display:table;
-    width: 100%;
-    padding: 10%;
+    #title {
+        animation-timing-function: ease-out;
+    }
 
-}
+    .pull-bottom {
+        position: absolute;
+        bottom: 0;
+        background-image : linear-gradient(to bottom, 
+                        rgba(255,255,255, 0), 
+                        rgba(255,255,255, 1) 90%);
+        margin-bottom: -5px;
+    }
 
-#title {
-    position: relative;
-    -webkit-animation: mymove 1s;
-    animation: mymove 1s;
-    font-weight: bold;
-    color: white;
-}
-
-#title {
-    -webkit-animation-timing-function: ease-out;
-}
-
-#title {
-    animation-timing-function: ease-out;
+    h1, h3 {
+        font-family: 'Alegreya Sans', sans-serif;
+        text-shadow: 3px 3px 2px rgba(150, 150, 150, 1);
+    }
+    
 }

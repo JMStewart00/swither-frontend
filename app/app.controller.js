@@ -10,7 +10,6 @@ class appCtrl {
         ctrl.$rootScope.alert = false;
         ctrl.$rootScope.groups = [];
 
-
         // global logout function to be able to be called from anywhere.
         ctrl.$rootScope.logout = () => {
             $auth.logout();
@@ -170,7 +169,7 @@ class appCtrl {
 
         ctrl.$rootScope.viewMatches = () => {
             ctrl.matchQuery = {
-                "group_id": 40
+                "group_id": 39
                 }
             ctrl.$rootScope.matches = [];
             $http.post('http://localhost:7000/api/matches', ctrl.matchQuery)
