@@ -67,6 +67,8 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             "sort_by": 'rating'
         };
 
+        ctrl.$rootScope.selectedGroup = $('#groupSelect option:selected').val();
+
         // simple post request to the backend to send search parameters.
         // creating an array of searchResults with the data for use in Swipes
         $http.post('http://localhost:7000/api/index', ctrl.searchParameters).then(function (response) {
@@ -84,7 +86,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         // grabbing variables for the like
         ctrl.like = {
             "user_id": ctrl.$rootScope.userId,
-            "group_id": 16,
+            "group_id": ctrl.$rootScope.selectedGroup,
             "business_info": JSON.stringify(ctrl.$rootScope.searchResults[0][0]),
             "business_id": ctrl.$rootScope.searchResults[0][0].id
         };
@@ -182,6 +184,18 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             $state.go('auth.dashboard');
         }, function (error) {
             ctrl.errorMessage();
+        });
+    };
+
+    ctrl.$rootScope.viewMatches = function () {
+        ctrl.matchQuery = {
+            "group_id": 40
+        };
+        ctrl.$rootScope.matches = [];
+        $http.post('http://localhost:7000/api/matches', ctrl.matchQuery).then(function (response) {
+            for (var i = 0; i < response.data.length; i++) {
+                ctrl.$rootScope.matches.push(JSON.parse(response.data[i].business_info));
+            }
         });
     };
 
@@ -397,7 +411,7 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<div class=\"mt-5\" ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n\n<button class=\"btn btn-info\" go-click=\"auth.addgroup\">Add New Group</button>\n<button class=\"btn btn-info\" go-click=\"auth.joingroup\">Join a Group</button>\n<button class=\"btn btn-info\" go-click=\"auth.new\">New Event</button>\n\n<li ng-repeat=\"group in $ctrl.$rootScope.groups[0]\">{{group.group_name}}</li>\n\n";
+module.exports = "<div class=\"mt-5\" ng-show=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n\n<button class=\"btn btn-info\" go-click=\"auth.addgroup\">Add New Group</button>\n<button class=\"btn btn-info\" go-click=\"auth.joingroup\">Join a Group</button>\n<button class=\"btn btn-info\" go-click=\"auth.new\">New Event</button>\n<br>\n<br>\n<button class=\"btn btn-info\" ng-click=\"$ctrl.$rootScope.viewMatches()\">retrieve matches</button>\n<li ng-repeat=\"match in $ctrl.$rootScope.matches\">{{match.name}}</li>\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -625,12 +639,13 @@ var newEventController = function newEventController($rootScope, $auth, $http, $
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
+    ctrl.$rootScope.getGroups();
 };
 
 exports.default = newEventController;
 
 },{}],19:[function(require,module,exports){
-module.exports = "<div class=\"row\">\n    <div class=\"col\">\n        <form name=\"search\">\n            <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"Type of place\" name=\"term\" id=\"term\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"City, State or ZipCode\" name=\"location\" id=\"location\">\n            </div>\n            <button class=\"btn btn-outline-primary\" ng-click=\"$ctrl.$rootScope.searchYelp()\">Submit</button>\n        </form>\n    </div>\n</div>";
+module.exports = "<div class=\"row\">\n    <div class=\"col\">\n        <form name=\"search\">\n            <div class=\"form-group\">\n              <label for=\"groupSelect\">Select Group:</label>\n              <select class=\"form-control\" id=\"groupSelect\">\n                <option>Please select a group...</option>\n                <option ng-repeat=\"group in $ctrl.$rootScope.groups[0]\" value=\"{{group.id}}\">{{group.group_name}}</option>\n              </select>\n            </div>\n            <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"Type of place\" name=\"term\" id=\"term\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"City, State or ZipCode\" name=\"location\" id=\"location\">\n            </div>\n            <button class=\"btn btn-outline-primary\" ng-click=\"$ctrl.$rootScope.searchYelp()\">Submit</button>\n        </form>\n    </div>\n</div>";
 
 },{}],20:[function(require,module,exports){
 'use strict';
@@ -658,6 +673,12 @@ function apiService($resource) {
 	var joinGroup = function joinGroup() {
 		return $resource('http://localhost:7000/api/joingroup');
 	};
+	var refreshMatches = function refreshMatches() {
+		return $resource('http://localhost:7000/api/matches/:id', { id: "@id" });
+	};
+	var getMatches = function getMatches() {
+		return $resource('http://localhost:7000/api/matches/:id', { id: "@id" });
+	};
 	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
 	//            'update': {method: 'PUT'}
 	//        	});
@@ -667,7 +688,10 @@ function apiService($resource) {
 		addGroup: addGroup,
 		getUserGroups: getUserGroups,
 		addUserToGroup: addUserToGroup,
-		joinGroup: joinGroup
+		joinGroup: joinGroup,
+		refreshMatches: refreshMatches,
+		getMatches: getMatches
+
 	};
 }
 
@@ -713,10 +737,10 @@ var swipeScreenController = function swipeScreenController($rootScope, $auth, $h
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
+    console.log(ctrl.$rootScope.selectedGroup);
 
     // don't allow the swipes screen to be seen if there are no search results.
     ctrl.$rootScope.$watch('searchResults', function () {
-        console.log(ctrl.$rootScope.searchResults[0]);
         if (ctrl.$rootScope.searchResults[0] === undefined || ctrl.$rootScope.searchResults.length === 0) {
             $state.go('auth.new');
         }

@@ -34,6 +34,8 @@ class appCtrl {
               "sort_by": 'rating'
             };
 
+            ctrl.$rootScope.selectedGroup = $('#groupSelect option:selected').val();
+
             // simple post request to the backend to send search parameters.
             // creating an array of searchResults with the data for use in Swipes
             $http.post('http://localhost:7000/api/index', ctrl.searchParameters)
@@ -55,7 +57,7 @@ class appCtrl {
             // grabbing variables for the like
             ctrl.like = {
               "user_id": ctrl.$rootScope.userId,
-              "group_id": 16,
+              "group_id": ctrl.$rootScope.selectedGroup,
               "business_info": JSON.stringify(ctrl.$rootScope.searchResults[0][0]),
               "business_id": ctrl.$rootScope.searchResults[0][0].id
             };
@@ -163,6 +165,20 @@ class appCtrl {
             }, (error) => {
                 ctrl.errorMessage();
             });
+        }
+
+
+        ctrl.$rootScope.viewMatches = () => {
+            ctrl.matchQuery = {
+                "group_id": 40
+                }
+            ctrl.$rootScope.matches = [];
+            $http.post('http://localhost:7000/api/matches', ctrl.matchQuery)
+                .then( (response) => {
+                    for (var i = 0; i < response.data.length; i++) {
+                        ctrl.$rootScope.matches.push(JSON.parse(response.data[i].business_info));
+                    }
+            })
         }
 
         ctrl.errorMessage = () => {
