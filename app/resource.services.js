@@ -8,6 +8,8 @@ function apiService($resource) {
 	let	getUserGroups = () => $resource('http://localhost:7000/api/findgroups/:id', {id: "@id"});
 	let addUserToGroup = () => $resource('http://localhost:7000/api/usergroups');
 	let joinGroup = () => $resource('http://localhost:7000/api/joingroup');
+	let refreshMatches = () => $resource('http://localhost:7000/api/matches/:id', {id:"@id"});
+	let getMatches = () => $resource('http://localhost:7000/api/matches/:id', {id:"@id"});
 	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
  //            'update': {method: 'PUT'}
  //        	});
@@ -18,6 +20,9 @@ function apiService($resource) {
 				getUserGroups: getUserGroups,
 				addUserToGroup: addUserToGroup,
 				joinGroup: joinGroup,
+				refreshMatches: refreshMatches,
+				getMatches: getMatches,
+
 				}
 
 

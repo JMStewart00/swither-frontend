@@ -3,6 +3,7 @@
 <button class="btn btn-info" go-click="auth.addgroup">Add New Group</button>
 <button class="btn btn-info" go-click="auth.joingroup">Join a Group</button>
 <button class="btn btn-info" go-click="auth.new">New Event</button>
-
-<li ng-repeat="group in $ctrl.$rootScope.groups[0]">{{group.group_name}}</li>
-
+<br>
+<br>
+<button class="btn btn-info" ng-click="$ctrl.$rootScope.viewMatches()">retrieve matches</button>
+<li ng-repeat="match in $ctrl.$rootScope.matches">{{match.name}}</li>
