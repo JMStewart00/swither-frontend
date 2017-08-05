@@ -2,7 +2,6 @@ class swipeScreenController {
     constructor($rootScope, $auth, $http, $state, apiService) {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
-        console.log(ctrl.$rootScope.selectedGroup);
 
         // don't allow the swipes screen to be seen if there are no search results.
         ctrl.$rootScope.$watch('searchResults', () => {

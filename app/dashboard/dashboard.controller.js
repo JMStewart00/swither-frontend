@@ -5,7 +5,6 @@ class dashboardController {
         ctrl.$rootScope.getGroups();
 
 
-
     };
 }
 

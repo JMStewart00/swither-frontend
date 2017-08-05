@@ -1,0 +1,40 @@
+<div id="matchesHTML">
+	<div class="container w-75">
+		<div class="row m-5">
+			<div class="col">
+				<div class="mt-5 text-center" ng-show="$ctrl.$rootScope.alert">
+					{{$ctrl.$rootScope.message}}
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col hidden-lg-down"></div>
+			<div class="col">
+				<div class="form-group">
+					<select class="form-control custom-select" id="groupSelect">
+						<option>Please select a group...</option>
+						<option ng-repeat="group in $ctrl.$rootScope.groups[0]" value="{{group.id}}">{{group.group_name}}</option>
+					</select>
+				</div>
+				
+			</div>
+			<div class="col hidden-lg-down"></div>
+		</div>
+		<div class="row text-center">
+			<div class="col">
+				<button class="btn btn-outline-primary" ng-click="$ctrl.$rootScope.viewMatches()">retrieve matches</button>
+			</div>
+		</div>
+		<div class="card-columns mt-2">
+			<div class="card mb-2 animated zoomInUp" ng-repeat="match in $ctrl.$rootScope.matches">
+				<img class="card-img-top img-fluid" src="{{match.image_url}}" alt="Card image cap">
+				<div class="card-block">
+					<h5 class="card-title" style="color: #d2731f">{{match.name}}</h5>
+					<p class="card-text">{{match.display_phone}} <br>
+						{{match.location.display_address[0]}} <br>
+					{{match.location.display_address[1]}} </p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

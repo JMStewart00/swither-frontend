@@ -6,10 +6,11 @@ class appCtrl {
         ctrl.$rootScope = $rootScope;
         ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
         ctrl.$http = $http;
-        ctrl.$rootScope.searchResults = [];
+        ctrl.$rootScope.searchResults = [
+                
+        ];
         ctrl.$rootScope.alert = false;
         ctrl.$rootScope.groups = [];
-
 
         // global logout function to be able to be called from anywhere.
         ctrl.$rootScope.logout = () => {
@@ -170,7 +171,7 @@ class appCtrl {
 
         ctrl.$rootScope.viewMatches = () => {
             ctrl.matchQuery = {
-                "group_id": 40
+                "group_id": $('#groupSelect option:selected').val()
                 }
             ctrl.$rootScope.matches = [];
             $http.post('http://localhost:7000/api/matches', ctrl.matchQuery)

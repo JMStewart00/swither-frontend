@@ -79,6 +79,12 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
                         controller: dashboardComponent.controller,
                         controllerAs: '$ctrl'
                 })
+                .state('auth.matches', {
+                    url: '/matches',
+                    templateUrl: './app/dashboard/matches.html',
+                    controller: dashboardComponent.controller,
+                    controllerAs: '$ctrl'
+                })
                 .state('auth', {
                         resolve: {
                               loginRequired: loginRequired

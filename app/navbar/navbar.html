@@ -1,27 +1,25 @@
-<div id="navbar">
-<div class="container">
-	<div class="row mt-5">
-		<div class="col-2 text-center align-middle">
-			<p go-click="auth.dashboard">logo</p>
-			</div>
-				<div class="col-6"></div>
-				<a ng-show="!$ctrl.$rootScope.loginStatus" class="btn col-2 m-0 text-right border-right" go-click="register">Register</a>
-				<a ng-show="!$ctrl.$rootScope.loginStatus" class="btn col-2 m-0 text-left" go-click="login">Login</a>
-				<a ng-show="$ctrl.$rootScope.loginStatus" class="btn col-2 m-0 text-right border-right" go-click="register"></a>
-				<a ng-show="$ctrl.$rootScope.loginStatus" ng-click="$ctrl.$rootScope.logout()" class="btn col text-left m-0">Logout</a>
-			</div>
-</div>
+<div id="navbar" class="hidden-sm-down">
+	<div class="container w-100 py-auto text-white">
+		<div class="row">
+			<a class="col-2 text-right my-auto pt-2 pr-0" go-click="landing"><h3>SWiTHER</h3></a>
+			<div class="col text-left my-auto pl-1 pt-2"><i class="fa fa-cutlery"></i></div>
+			<a class="col-5 text-left"></a>
+			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-2 my-auto text-right" go-click="register">Register</a>
+			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-2 my-auto text-left" go-click="login">Login</a>
+			<a ng-show="$ctrl.$rootScope.loginStatus" class="col-2 my-auto text-right" go-click="auth.dashboard">Home</a>
+			<a ng-show="$ctrl.$rootScope.loginStatus" ng-click="$ctrl.$rootScope.logout()" class="col-2 text-left my-auto">Logout</a>
+		</div>
+	</div>
 </div>
 
-<!-- 		<div class="nav-wrapper mb-0">
-			<nav class="navbar navbar-toggleable" style="height: 55px">
-					<div class="row w-100 mx-auto">
-						<div class="col text-center hidden-md-down"></div>
-						<a class="col text-center py-1 borderYtoX" href="#1about">ABOUT</a>
-						<a class="col text-center py-1 borderYtoX" href="#1work">WORK</a>
-						<a class="col text-center py-1 borderYtoX" href="#1contact">CONNECT</a>
-						<a class="col hidden-sm-down text-center py-1 borderYtoX" href="https://jmstewart00.github.io/stewartblog/" target="_blank">BLOG</a>
-						<div class="col text-center hidden-md-down"></div>
-					</div>
-				</nav>
-		</div>  -->
+<div id="navbar" class="hidden-md-up">
+	<div class="container py-2">
+		<div class="row">
+			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-6 text-left m-0" go-click="auth.dashboard"><h3>SWiTHER</h3></a>
+			<a ng-show="$ctrl.$rootScope.loginStatus" class="col-8 text-left m-0" go-click="auth.dashboard"><h3>SWiTHER</h3></a>
+			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-3 m-0 text-right" go-click="register">Register</a>
+			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-3 m-0 text-right" go-click="login">Login</a>
+			<a ng-show="$ctrl.$rootScope.loginStatus" ng-click="$ctrl.$rootScope.logout()" class="col-4 text-right m-0">Logout</a>
+		</div>
+	</div>
+</div>

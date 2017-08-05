@@ -1,5 +1,31 @@
+@import url('https://fonts.googleapis.com/css?family=Alegreya+Sans:900|Roboto');
+@import './_variables.scss';
+@import 'node_modules/bootstrap/scss/bootstrap.scss';
+
+html {
+		height: 100vh;
+		overflow: scroll;
+}
+
+
 html, body {
 	padding: 0;
 	margin: 0;
-	margin-bottom: 10%;
+	padding-bottom: 10%;
+	bottom: 0;
+	font-family: 'Roboto', sans-serif;
+	background: url('./food.jpg') no-repeat fixed;
+	-webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
 }
+
+.color-overlay {
+	background: rgba(255,255,255,0.65);
+	height: 100%;
+	width: 100%;
+	position: fixed;
+}
+
