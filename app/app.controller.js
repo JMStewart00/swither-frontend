@@ -6,7 +6,9 @@ class appCtrl {
         ctrl.$rootScope = $rootScope;
         ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
         ctrl.$http = $http;
-        ctrl.$rootScope.searchResults = [];
+        ctrl.$rootScope.searchResults = [
+                
+        ];
         ctrl.$rootScope.alert = false;
         ctrl.$rootScope.groups = [];
 
@@ -169,7 +171,7 @@ class appCtrl {
 
         ctrl.$rootScope.viewMatches = () => {
             ctrl.matchQuery = {
-                "group_id": 39
+                "group_id": $('#groupSelect option:selected').val()
                 }
             ctrl.$rootScope.matches = [];
             $http.post('http://localhost:7000/api/matches', ctrl.matchQuery)

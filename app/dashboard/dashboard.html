@@ -1,20 +1,22 @@
 <div id="dashboard">
-  <div class="container mt-3">
+  <div class="container pt-3">
 
 
     <div class="row mt-5">
       <div class="col-lg-3 hidden-lg-down"></div>
-      <div class="col-md-6 col-lg-3 text-center">
+      <div class="col-md-6 col-lg-3 text-center mt-3 animated zoomInUp">
         <div class="col">
-          <i class="ion-plus display-1" go-click="auth.new"></i>
+          <i class="px-3 ion-plus display-1 hidden-md-up" go-click="auth.new"></i>
+          <i class="px-3 ion-plus display-1 hidden-sm-down" style="font-size: 200px" go-click="auth.new"></i>
         </div>
         <div class="col text-center">
           <sub>New Night Out</sub>
         </div>
       </div>
-      <div class="col-md-6 col-lg-3 text-center">
+      <div class="col-md-6 col-lg-3 text-center mt-3 animated zoomInUp">
         <div class="col">
-          <i class="ion-android-star-outline display-1" go-click="auth.matches"></i>
+          <i class="px-3 ion-android-star-outline display-1 hidden-md-up" go-click="auth.matches"></i>
+          <i class="px-3 ion-android-star-outline display-1 hidden-sm-down" style="font-size: 200px" go-click="auth.matches"></i>
         </div>
         <div class="col text-center">
           <sub>View Matches</sub>
@@ -22,17 +24,19 @@
       </div>
       <div class="col-lg-3 hidden-lg-down"></div>
       <div class="col-lg-3 hidden-lg-down"></div>
-      <div class="col-md-6 col-lg-3 text-center">
+      <div class="col-md-6 col-lg-3 text-center mt-3 animated zoomInUp">
         <div class="col">
-          <i class="ion-ios-people display-1" go-click="auth.new"></i>
+          <i class="px-3 ion-ios-people display-1 hidden-md-up" go-click="auth.addgroup"></i>
+          <i class="px-3 ion-ios-people display-1 hidden-sm-down" style="font-size: 200px" go-click="auth.addgroup"></i>
         </div>
         <div class="col text-center">
           <sub>New Group</sub>
         </div>
       </div>
-      <div class="col-md-6 col-lg-3 text-center">
+      <div class="col-md-6 col-lg-3 text-center mt-3 animated zoomInUp">
         <div class="col">
-          <i class="ion-android-star-outline display-1" go-click="auth.matches"></i>
+          <i class="px-3 ion-ios-personadd display-1 hidden-md-up" go-click="auth.joingroup"></i>
+          <i class="px-3 ion-ios-personadd display-1 hidden-sm-down" style="font-size: 200px" go-click="auth.joingroup"></i>
         </div>
         <div class="col text-center">
           <sub>Join Group</sub>
@@ -44,39 +48,3 @@
 
   </div>  <!-- container -->
 </div> <!--id wrapper-->
-
-
-
-<!-- <div class="mt-5" ng-show="$ctrl.$rootScope.alert">{{$ctrl.$rootScope.message}}</div>
-<button class="btn btn-info" go-click="auth.addgroup">Add New Group</button>
-<button class="btn btn-info" go-click="auth.joingroup">Join a Group</button>
-<button class="btn btn-info" go-click="auth.new">New Event</button>
-<br>
-<br>
-<button class="btn btn-info" ng-click="$ctrl.$rootScope.viewMatches()">retrieve matches</button>
-<div class="form-group">
-  <label for="groupSelect">Select Group:</label>
-  <select class="form-control" id="groupSelect">
-    <option>Please select a group...</option>
-    <option ng-repeat="group in $ctrl.$rootScope.groups[0]" value="{{group.id}}">{{group.group_name}}</option>
-  </select>
-</div>
-<li ng-repeat="match in $ctrl.$rootScope.matches">{{match.name}}</li> -->
-
-
-
-
-<!--     <div class="row p-4">
-      <div class="col-3 hidden-sm-down"></div>
-      <div class="col-md-6 col-12 mx-0">
-        <div class="form-group">
-          <select class="form-control custom-select" id="groupSelect">
-            <option>Please select a group...</option>
-            <option ng-repeat="group in $ctrl.$rootScope.groups[0]" value="{{group.id}}">{{group.group_name}}</option>
-          </select>
-        </div>
-      </div>
-      <div class="col-3 hidden-sm-down"></div>
-    </div> -->
-
-
