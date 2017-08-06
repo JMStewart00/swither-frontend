@@ -23,8 +23,8 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
 .config(($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) => {
 
         // authentication routes definitions
-        $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
-        $authProvider.signupUrl = 'http://localhost:7000/register';
+        $authProvider.loginUrl = 'https://swither.herokuapp.com/oauth/token';
+        $authProvider.signupUrl = 'https://swither.herokuapp.com/register';
 
         // says to route to / on unknown or undefined routes.
         $urlRouterProvider.otherwise('/');

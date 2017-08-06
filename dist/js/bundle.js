@@ -71,7 +71,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
 
         // simple post request to the backend to send search parameters.
         // creating an array of searchResults with the data for use in Swipes
-        $http.post('http://localhost:7000/api/index', ctrl.searchParameters).then(function (response) {
+        $http.post('https://swither.herokuapp.com/api/index', ctrl.searchParameters).then(function (response) {
             ctrl.$rootScope.searchResults.push(response.data);
             $state.go('auth.swipes');
         });
@@ -187,7 +187,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             "group_id": $('#groupSelect option:selected').val()
         };
         ctrl.$rootScope.matches = [];
-        $http.post('http://localhost:7000/api/matches', ctrl.matchQuery).then(function (response) {
+        $http.post('https://swither.herokuapp.com/api/matches', ctrl.matchQuery).then(function (response) {
             for (var i = 0; i < response.data.length; i++) {
                 ctrl.$rootScope.matches.push(JSON.parse(response.data[i].business_info));
             }
@@ -256,8 +256,8 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource']).component('app'
 .config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
 
         // authentication routes definitions
-        $authProvider.loginUrl = 'http://localhost:7000/oauth/token';
-        $authProvider.signupUrl = 'http://localhost:7000/register';
+        $authProvider.loginUrl = 'https://swither.herokuapp.com/oauth/token';
+        $authProvider.signupUrl = 'https://swither.herokuapp.com/register';
 
         // says to route to / on unknown or undefined routes.
         $urlRouterProvider.otherwise('/');
@@ -521,7 +521,7 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
         var credentials = {
             grant_type: 'password',
             client_id: 1,
-            client_secret: 'Zlp39UHfaR8Zcoeh3UcXfZnwt1ZEWcchaIjKFObl',
+            client_secret: 'ZmBkz0htbNnejtjZZGplCwu6gYknRGctKBGUG0Xh',
             username: ctrl.email,
             password: ctrl.password
 
@@ -671,25 +671,25 @@ function apiService($resource) {
 	var ctrl = this;
 	// All of the site api functions
 	var addGroup = function addGroup() {
-		return $resource('http://localhost:7000/api/groups/');
+		return $resource('https://swither.herokuapp.com/api/groups/');
 	};
 	var addLike = function addLike() {
-		return $resource('http://localhost:7000/api/likes/');
+		return $resource('https://swither.herokuapp.com/api/likes/');
 	};
 	var getUserGroups = function getUserGroups() {
-		return $resource('http://localhost:7000/api/findgroups/:id', { id: "@id" });
+		return $resource('https://swither.herokuapp.com/api/findgroups/:id', { id: "@id" });
 	};
 	var addUserToGroup = function addUserToGroup() {
-		return $resource('http://localhost:7000/api/usergroups');
+		return $resource('https://swither.herokuapp.com/api/usergroups');
 	};
 	var joinGroup = function joinGroup() {
-		return $resource('http://localhost:7000/api/joingroup');
+		return $resource('https://swither.herokuapp.com/api/joingroup');
 	};
 	var refreshMatches = function refreshMatches() {
-		return $resource('http://localhost:7000/api/matches/:id', { id: "@id" });
+		return $resource('https://swither.herokuapp.com/api/matches/:id', { id: "@id" });
 	};
 	var getMatches = function getMatches() {
-		return $resource('http://localhost:7000/api/matches/:id', { id: "@id" });
+		return $resource('https://swither.herokuapp.com/api/matches/:id', { id: "@id" });
 	};
 	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
 	//            'update': {method: 'PUT'}

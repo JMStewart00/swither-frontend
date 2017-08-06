@@ -3,13 +3,13 @@
 function apiService($resource) {
 	let ctrl = this;
 	// All of the site api functions
-	let addGroup = () => $resource('http://localhost:7000/api/groups/');
-	let	addLike = () => $resource('http://localhost:7000/api/likes/');
-	let	getUserGroups = () => $resource('http://localhost:7000/api/findgroups/:id', {id: "@id"});
-	let addUserToGroup = () => $resource('http://localhost:7000/api/usergroups');
-	let joinGroup = () => $resource('http://localhost:7000/api/joingroup');
-	let refreshMatches = () => $resource('http://localhost:7000/api/matches/:id', {id:"@id"});
-	let getMatches = () => $resource('http://localhost:7000/api/matches/:id', {id:"@id"});
+	let addGroup = () => $resource('https://swither.herokuapp.com/api/groups/');
+	let	addLike = () => $resource('https://swither.herokuapp.com/api/likes/');
+	let	getUserGroups = () => $resource('https://swither.herokuapp.com/api/findgroups/:id', {id: "@id"});
+	let addUserToGroup = () => $resource('https://swither.herokuapp.com/api/usergroups');
+	let joinGroup = () => $resource('https://swither.herokuapp.com/api/joingroup');
+	let refreshMatches = () => $resource('https://swither.herokuapp.com/api/matches/:id', {id:"@id"});
+	let getMatches = () => $resource('https://swither.herokuapp.com/api/matches/:id', {id:"@id"});
 	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
  //            'update': {method: 'PUT'}
  //        	});

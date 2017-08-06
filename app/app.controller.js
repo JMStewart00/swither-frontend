@@ -37,7 +37,7 @@ class appCtrl {
 
             // simple post request to the backend to send search parameters.
             // creating an array of searchResults with the data for use in Swipes
-            $http.post('http://localhost:7000/api/index', ctrl.searchParameters)
+            $http.post('https://swither.herokuapp.com/api/index', ctrl.searchParameters)
                 .then( (response) => {
                     ctrl.$rootScope.searchResults.push(response.data);
                     $state.go('auth.swipes');
@@ -168,7 +168,7 @@ class appCtrl {
                 "group_id": $('#groupSelect option:selected').val()
                 }
             ctrl.$rootScope.matches = [];
-            $http.post('http://localhost:7000/api/matches', ctrl.matchQuery)
+            $http.post('https://swither.herokuapp.com/api/matches', ctrl.matchQuery)
                 .then( (response) => {
                     for (var i = 0; i < response.data.length; i++) {
                         ctrl.$rootScope.matches.push(JSON.parse(response.data[i].business_info));

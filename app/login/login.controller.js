@@ -11,7 +11,7 @@ class loginController {
             let credentials = {
                 grant_type: 'password',
                 client_id: 1,
-                client_secret: 'Zlp39UHfaR8Zcoeh3UcXfZnwt1ZEWcchaIjKFObl',
+                client_secret: 'ZmBkz0htbNnejtjZZGplCwu6gYknRGctKBGUG0Xh',
                 username: ctrl.email,
                 password: ctrl.password
             }
