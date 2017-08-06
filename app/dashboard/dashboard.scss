@@ -1,9 +1,9 @@
 #dashboard {
 	color: #7f0c0b;
 	i:hover {
-		-webkit-box-shadow: 25px 25px 50px 25px #929292;
+		-webkit-box-shadow: 25px 25px 25px 25px #929292;
 		box-shadow: 25px 25px 50px 5px #929292;
-		transition: all .5s;
+		transition: .5s;
 	}
 
 	i {
@@ -22,7 +22,7 @@
 
 }
 
-#createGroup {
+#createGroup, #joinGroupPage {
 	h1 {
 		font-family: 'Alegreya Sans', sans-serif;
 		color: #7f0c0b;

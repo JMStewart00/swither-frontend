@@ -52,7 +52,7 @@
         <div class="col-md-6 offset-md-3 col-sm-12">
           <div class="form-group row">
             <div class="col">
-              <input type="password" limit-to="4" class="form-control" equals="{{$ctrl.pin}}" ng-model="$ctrl.confirm_pin"  placeholder="Confirm PIN" required>
+              <input type="password" limit-to="4" ng-minlength="4" class="form-control" equals="{{$ctrl.pin}}" ng-model="$ctrl.confirm_pin"  placeholder="Confirm PIN" required>
             </div>
           </div>
         </div>
