@@ -149,7 +149,6 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         // calling on the service to do a post request to backend
         apiService.addGroup().save({}, ctrl.newGroup).$promise.then(function (data) {
             apiService.addUserToGroup().save({}, ctrl.newGroup);
-
             // change page
             $state.go('auth.dashboard');
             // set message to confirm add
@@ -157,15 +156,13 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
 
             // set alert to true to show on page
             ctrl.$rootScope.alert = true;
-        }, function (error) {
-            ctrl.errorMessage();
+            // ctrl.$rootScope.groups.push(ctrl.newGroup);
         });
     }; // end addGroup()
 
     ctrl.$rootScope.getGroups = function () {
-        ctrl.groups = apiService.getUserGroups().query({ id: window.localStorage.getItem('currentUser') });
-        ctrl.groups.$promise.then(function (data) {
-            ctrl.$rootScope.groups.push(data);
+        apiService.getUserGroups().query({ id: window.localStorage.getItem('currentUser') }).$promise.then(function (data) {
+            $rootScope.groups.push(data);
         });
     };
 
@@ -182,8 +179,6 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             ctrl.$rootScope.message = "You've joined the " + $('#join_group_name').val() + " group!";
             ctrl.$rootScope.alert = true;
             $state.go('auth.dashboard');
-        }, function (error) {
-            ctrl.errorMessage();
         });
     };
 
@@ -287,12 +282,18 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource']).component('app'
                 url: '/dashboard',
                 templateUrl: './app/dashboard/dashboard.html',
                 controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl'
+                controllerAs: '$ctrl',
+                onExit: function onExit($rootScope) {
+                        $rootScope.getGroups();
+                }
         }).state('auth.new', {
                 url: '/newevent',
                 templateUrl: './app/newEvent/newEvent.html',
                 controller: _newEvent2.default.controller,
-                controllerAs: '$ctrl'
+                controllerAs: '$ctrl',
+                onEnter: function onEnter($rootScope) {
+                        $rootScope.searchResults = [];
+                }
         }).state('auth.swipes', {
                 url: '/swipes',
                 templateUrl: './app/swipeScreen/swipeScreen.html',
@@ -307,7 +308,14 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource']).component('app'
                 url: '/joingroup',
                 templateUrl: './app/dashboard/joingroup.html',
                 controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl'
+                controllerAs: '$ctrl',
+                onEnter: function onEnter() {
+                        console.log('hey');
+                },
+                onExit: function onExit() {
+                        console.log('exit');
+                }
+
         }).state('auth.matches', {
                 url: '/matches',
                 templateUrl: './app/dashboard/matches.html',
@@ -360,11 +368,10 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource']).component('app'
 // custom angular directive for limiting the enterable values into certain fields.
 .directive("limitTo", [function () {
         return {
-                restrict: "A",
                 link: function link(scope, elem, attrs) {
                         var limit = parseInt(attrs.limitTo);
                         angular.element(elem).on("keypress", function (e) {
-                                if (this.value.length == limit) e.preventDefault();
+                                if (elem[0].value.length == limit) e.preventDefault();
                         });
                 }
         };
@@ -410,7 +417,8 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
-    ctrl.$rootScope.getGroups();
+    // ctrl.$rootScope.getGroups();
+
 };
 
 exports.default = dashboardController;
@@ -463,7 +471,7 @@ var landingController = function landingController($rootScope, $auth, $http, $st
 exports.default = landingController;
 
 },{}],10:[function(require,module,exports){
-module.exports = "<div id=\"landing\">\n\t\n\t\n\t<!------------------------------------------------------------------------\n\t\t\t\t\t\t\t\tHeader Content\n\t------------------------------------------------------------------------>\n\t\t\t<div class=\"container-fluid\" id=\"maincontent\">\n\t\t\t\t<div class=\"row pt-5\">\n\t\t\t\t\t<!-- larger screen title -->\n\t\t\t\t\t<div class=\"hidden-sm-down col text-center\">\n\t\t\t\t\t\t<h1 class=\"text-left display-3 my-3 pl-5\" id=\"title\">Date night just got a little easier!</h1>\n\t\t\t\t\t</div>\n\t\t\t\t\t<!-- Small screen title -->\n\t\t\t\t\t<div class=\"hidden-md-up col text-left mt-5\">\n\t\t\t\t\t\t<h1 class=\"pb-0\" id=\"title\">Date night just got a little easier!</h1>\n\t\t\t\t\t</div>\n\t\t\t\t</div> <!-- row -->\n\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\n\t\t\t\t<img src=\"dist/css/whitetear.png\" class=\"pull-bottom\">\n\t\t\t\t</div>\n\t\t\t</div> <!-- container -->\n\t\n\t<!------------------------------------------------------------------------\n\t                    Skills Breakdown\n\t------------------------------------------------------------------------>\n\t\n\t\t\t<div class=\"container-fluid px-5\">\n\t\t\t\t<h2 class=\"text-center col my-4 text-uppercase\">Development Tools</h2>\n\t\t\t\t<div class=\"row overview\">\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"img-fluid fa fa-cutlery fa-5x\"></i>\n\t\t\t\t\t\t\t<figcaption class=\"figure-caption text-center pt-3\">Coming Soon!</figcaption>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2\">Ut interdum sagittis sem nec suscipit. Integer lacus risus, mollis a lorem ut, tincidunt commodo dolor. Nulla libero est, lobortis at metus ac, commodo pulvinar velit. Donec quis bibendum ante.</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end first column -->\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"img-fluid fa fa-cutlery fa-5x\"></i>\n\t\t\t\t\t\t\t<figcaption class=\"figure-caption text-center pt-3\">Coming Soon!</figcaption>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2\">Ut interdum sagittis sem nec suscipit. Integer lacus risus, mollis a lorem ut, tincidunt commodo dolor. Nulla libero est, lobortis at metus ac, commodo pulvinar velit. Donec quis bibendum ante.</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end second column -->\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"img-fluid fa fa-cutlery fa-5x\" ></i>\n\t\t\t\t\t\t\t<figcaption class=\"figure-caption text-center pt-3\">Coming Soon!</figcaption>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2\">Ut interdum sagittis sem nec suscipit. Integer lacus risus, mollis a lorem ut, tincidunt commodo dolor. Nulla libero est, lobortis at metus ac, commodo pulvinar velit. Donec quis bibendum ante.</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end third column -->\n\t\t\t\t</div> <!-- end row -->\n\t\t\t</div> <!-- end container -->\n\t\n\t\n\t<!------------------------------------------------------------------------\n\t                  Contact Section\n\t------------------------------------------------------------------------>\n\t\n\t\t\t\t    <section id=\"1contact\">\n\t\t\t\t        <div class=\"container py-5\">\n\t\t\t\t            <div class=\"row\">\n\t\t\t\t                <div class=\"col-sm col-md-8 offset-md-2 text-center\">\n\t\t\t\t                    <h2 class=\"section-heading\">Let's Get In Touch!</h2>\n\t\t\t\t                    <hr class=\"primary\">\n\t\t\t\t                    <p>Please feel free to contact me via the email below or on any of my social media platforms!</p>\n\t\t\t\t                </div>\n\t\t\t\t            </div>\n\t\t\t\t         </div>\n\t\t\t\t    </section>\n</div>";
+module.exports = "<div id=\"landing\">\n\t\n\t\n\t<!------------------------------------------------------------------------\n\t\t\t\t\t\t\t\tHeader Content\n\t------------------------------------------------------------------------>\n\t\t\t<div class=\"container-fluid\" id=\"maincontent\">\n\t\t\t\t<div class=\"row pt-5\">\n\t\t\t\t\t<!-- larger screen title -->\n\t\t\t\t\t<div class=\"hidden-sm-down col text-center\">\n\t\t\t\t\t\t<h1 class=\"text-left display-3 my-3 pl-5\" id=\"title\">Date night just got a little easier!</h1>\n\t\t\t\t\t</div>\n\t\t\t\t\t<!-- Small screen title -->\n\t\t\t\t\t<div class=\"hidden-md-up col text-left mt-5\">\n\t\t\t\t\t\t<h1 class=\"pb-0\" id=\"title\">Date night just got a little easier!</h1>\n\t\t\t\t\t</div>\n\t\t\t\t</div> <!-- row -->\n\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\n\t\t\t\t<img src=\"dist/css/whitetear.png\" class=\"pull-bottom img-fluid\">\n\t\t\t\t</div>\n\t\t\t</div> <!-- container -->\n\t\n\t<!------------------------------------------------------------------------\n\t                    Skills Breakdown\n\t------------------------------------------------------------------------>\n\t\n\t\t\t<div class=\"container-fluid px-5\">\n\t\t\t\t<div class=\"row mb-5\">\n\t\t\t\t\t<div class=\"col-md-6 col-sm-12 text-left\">\n\t\t\t\t\t\t<h1 class=\"text-left col my-2 pl-0\">WHAT IS SWiTHER?</h1>\n\t\t\t\t\t\t<p>SWiTHER solves a lifelong debacle of figuring out where to go to eat. \n\t\t\t\t\t\t</p>\n\t\t\t\t\t\t<p>\n\t\t\t\t\t\tIt's a timeless, exhausting, and frustrating struggle. You're with a friends or your significant other and you're so hungry you start to wonder what the other person would taste like with a little ranch. Before resorting to murder and cannibalism, try SWiTHER. We'll keep you from eating your friends, and find a happy place to eat instead.</p>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"col-md-6 col-sm-12 pt-5 hidden-sm-down\">\n\t\t\t\t\t\t<img src=\"dist/css/SwitherRespDesign.png\" alt=\"\" class=\"img-fluid\">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"row w-100 overview p-4\">\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"ion-thumbsdown display-1\"></i>\n\t\t\t\t\t\t\t<figcaption class=\"figure-caption text-center pt-3\">What You Don't Want</figcaption>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2 text-left\">It sounds crazy, but lets bring some logic into the equation. There are a lot of ways you can at least narrow down this life-changing decision. First, decide what you don't want. You know when something doesn't sound that great, so you can save yourself a whole lot of work by having all parties eliminate what they aren't \"in the mood for.\" Here's a few other guidelines that can narrow it down further:</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end first column -->\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"img-fluid ion-alert display-1\"></i>\n\t\t\t\t\t\t\t<figcaption class=\"figure-caption text-center pt-3\">Don't fight!</figcaption>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2 text-left\">You know the fight. How do you not know what you want?! You can tell me about hundreds of \"things\" that you want, but you have no idea what you want to eat at this moment?! Turns out it's a pretty basic decision making problem and you're getting hangry. Add in the fact that you're with at least one other person going through the same process and things get pretty complicated. You suggest pizza, but the other person just had that last night. They suggest Chinese, but you were planning on having Chinese with family later on in the day.</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end second column -->\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"img-fluid ion-checkmark display-1\" ></i>\n\t\t\t\t\t\t\t<figcaption class=\"figure-caption text-center pt-3\">Match it!</figcaption>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2 text-left\">After going through SWiTHER you and you're significant other or group of friends will have a list of matches of places that you're all willing to go to. Decision made. No one became a cannibal and everyone is happy.We trasnferred power to someone else and put the mighty power of food choosing in another's hands. Sometimes people just need a leader, and other times people just need to succomb to their destiny. SWiTHER is now your leader. You're welcome.</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end third column -->\n\t\t\t\t</div> <!-- end row -->\n\t\t\t</div> <!-- end container -->\n\t\n\t\n\t<!------------------------------------------------------------------------\n\t                  Contact Section\n\t------------------------------------------------------------------------>\n\t\n\t\t\t\t    <section id=\"1contact\">\n\t\t\t\t        <div class=\"container py-5\">\n\t\t\t\t            <div class=\"row\">\n\t\t\t\t                <div class=\"col-sm col-md-8 offset-md-2 text-center\">\n\t\t\t\t                    <h2 class=\"section-heading\">Let's Get In Touch!</h2>\n\t\t\t\t                    <hr class=\"primary\">\n\t\t\t\t                    <p>Please feel free to contact me via the email below or on any of my social media platforms!</p>\n\t\t\t\t                </div>\n\t\t\t\t            </div>\n\t\t\t\t         </div>\n\t\t\t\t    </section>\n</div>";
 
 },{}],11:[function(require,module,exports){
 'use strict';
@@ -555,7 +563,7 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
 exports.default = loginController;
 
 },{}],13:[function(require,module,exports){
-module.exports = "<div class=\"col-sm-4 col-sm-offset-4\">\n    <div class=\"well\">\n        <h3>Login</h3>\n        <form>\n            <div ng-if=\"$ctrl.$rootScope.loginError\" class=\"alert-danger\">{{$ctrl.$rootScope.loginError}}</div>\n            <div class=\"form-group\">\n                <input type=\"email\" class=\"form-control\" placeholder=\"Email\" ng-model=\"$ctrl.email\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"password\" class=\"form-control\" placeholder=\"Password\" ng-model=\"$ctrl.password\">\n            </div>\n            <button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.login()\">Submit</button>\n        </form>\n    </div>\n</div>";
+module.exports = "<div id=\"login\">\n    <div class=\"container text-center mt-3 py-3 w-75\">\n\n        <div class=\"row\">\n            <div class=\"col\">\n                <h1>SWiTHER</h1>\n            </div>\n        </div>\n        \n\n        <div class=\"row\">\n            <div class=\"col-6 offset-3 mb-3\">\n                <div ng-if=\"$ctrl.$rootScope.loginError\" class=\"alert-danger\">{{$ctrl.$rootScope.loginError}}</div>\n            </div>\n        </div>\n\n\n        <form>\n\n            <div class=\"row\">\n                <div class=\"col\">\n                    <div class=\"form-group row\">\n                        <label for=\"email-input\" class=\"col-2 col-form-label text-right pr-0\">Email</label>\n                        <div class=\"col-10\">\n                            <input class=\"form-control\" type=\"email\" placeholder=\"Email\" ng-model=\"$ctrl.email\" id=\"email-input\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n\n            <div class=\"row\">\n                <div class=\"col\">\n                    <div class=\"form-group row\">\n                        <label for=\"password-input\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Password</label>\n                        <label for=\"password-input\" class=\"col-2 col-form-label text-right pr-0 hidden-md-up\">PW</label>\n                        <div class=\"col-10\">\n                            <input class=\"form-control\" type=\"password\" placeholder=\"Password\" ng-model=\"$ctrl.password\" id=\"password-input\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n\n            <div class=\"row\">      \n                <div class=\"col\">\n                    <button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.login()\">Submit</button>\n                </div>\n            </div>\n\n        </form>\n        \n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->";
 
 },{}],14:[function(require,module,exports){
 'use strict';
@@ -644,13 +652,12 @@ var newEventController = function newEventController($rootScope, $auth, $http, $
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
-    ctrl.$rootScope.getGroups();
 };
 
 exports.default = newEventController;
 
 },{}],19:[function(require,module,exports){
-module.exports = "<div class=\"row\">\n    <div class=\"col-6\">\n        <form name=\"search\">\n            <div class=\"form-group\">\n              <label for=\"groupSelect\">Select Group:</label>\n              <select class=\"form-control\" id=\"groupSelect\">\n                <option>Please select a group...</option>\n                <option ng-repeat=\"group in $ctrl.$rootScope.groups[0]\" value=\"{{group.id}}\">{{group.group_name}}</option>\n              </select>\n            </div>\n            <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"Type of place\" name=\"term\" id=\"term\">\n            </div>\n            <div class=\"forcolm-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"City, State or ZipCode\" name=\"location\" id=\"location\">\n            </div>\n            <button class=\"btn btn-outline-primary\" ng-click=\"$ctrl.$rootScope.searchYelp()\">Submit</button>\n        </form>\n    </div>\n</div>";
+module.exports = "<div id=\"newEvent\">\n    <div class=\"container text-center mt-3 py-3 w-75 px-2\">\n        <div class=\"row\">\n            <div class=\"col\">\n                <h1>Headed out tonight?</h1>\n                <!-- <p>Choose your group below, enter a search term like \"Tacos\" and a general location and hit Get Results!</p> -->\n                <ul class=\"p-0\" style=\"list-style: none;\">\n                    <li>Choose your group.</li>\n                    <li>Enter a search term. (i.e. \"Tacos\")</li>\n                    <li>Enter a location (i.e. \"Lexington, KY\")</li>\n                    <li>Hit Go!</li>\n                </ul>\n\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group row\">\n                    <label for=\"groupSelect\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Select Group</label>\n                    <div class=\"col-sm-12 col-md-10\">              \n                        <select class=\"form-control custom-select\" id=\"groupSelect\">\n                            <option>Please select one</option>\n                            <option ng-repeat=\"group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1]\" value=\"{{group.id}}\">{{group.group_name}}</option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group row\">\n                    <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Search</label>\n                    <div class=\"col-sm-12 col-md-10\">\n                        <input class=\"form-control\" placeholder=\"Enter destination...\" name=\"term\" id=\"term\">\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group row\">\n                    <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Location</label>\n                    <div class=\"col-sm-12 col-md-10\">\n                        <input type=\"text\" class=\"form-control\" placeholder=\"City, State or ZipCode\" name=\"location\" id=\"location\">\n                    </div>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row\">      \n            <div class=\"col\">\n                <button class=\"btn btn-outline-primary btn-lg\" ng-click=\"$ctrl.$rootScope.searchYelp()\">Go!</button>\n            </div>\n        </div>\n\n\n    </div>\n</div>";
 
 },{}],20:[function(require,module,exports){
 'use strict';

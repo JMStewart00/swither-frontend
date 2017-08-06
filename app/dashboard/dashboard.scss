@@ -1,9 +1,9 @@
 #dashboard {
 	color: #7f0c0b;
 	i:hover {
-		-webkit-box-shadow: 25px 25px 50px 25px #929292;
+		-webkit-box-shadow: 25px 25px 25px 25px #929292;
 		box-shadow: 25px 25px 50px 5px #929292;
-		transition: all .5s;
+		transition: .5s;
 	}
 
 	i {
@@ -20,4 +20,20 @@
 	}
 
 
+}
+
+#createGroup, #joinGroupPage {
+	h1 {
+		font-family: 'Alegreya Sans', sans-serif;
+		color: #7f0c0b;
+	}
+
+	.container > * {
+		opacity: 1;
+	}
+
+	.container {
+		background: rgba(255, 255, 255, 0.6);
+		box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
+	} 
 }

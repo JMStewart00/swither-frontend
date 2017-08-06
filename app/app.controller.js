@@ -6,9 +6,7 @@ class appCtrl {
         ctrl.$rootScope = $rootScope;
         ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
         ctrl.$http = $http;
-        ctrl.$rootScope.searchResults = [
-                
-        ];
+        ctrl.$rootScope.searchResults = [];
         ctrl.$rootScope.alert = false;
         ctrl.$rootScope.groups = [];
 
@@ -126,7 +124,6 @@ class appCtrl {
             .$promise
             .then( (data) => {
                 apiService.addUserToGroup().save({}, ctrl.newGroup);
-
                 // change page
                 $state.go('auth.dashboard');
                 // set message to confirm add
@@ -134,16 +131,15 @@ class appCtrl {
 
                 // set alert to true to show on page
                 ctrl.$rootScope.alert = true;
-            }, (error) => {
-                ctrl.errorMessage();
+                // ctrl.$rootScope.groups.push(ctrl.newGroup);
             });
 
         } // end addGroup()
 
         ctrl.$rootScope.getGroups = () => {
-            ctrl.groups = apiService.getUserGroups().query({id:window.localStorage.getItem('currentUser')});
-            ctrl.groups.$promise.then( (data) => {
-                ctrl.$rootScope.groups.push(data);
+            apiService.getUserGroups().query({id:window.localStorage.getItem('currentUser')})
+            .$promise.then( (data) => {
+                $rootScope.groups.push(data);
             })
         }
 
@@ -163,9 +159,7 @@ class appCtrl {
                 ctrl.$rootScope.message = "You've joined the " + $('#join_group_name').val() + " group!";
                 ctrl.$rootScope.alert = true;
                 $state.go('auth.dashboard');
-            }, (error) => {
-                ctrl.errorMessage();
-            });
+            })
         }
 
 

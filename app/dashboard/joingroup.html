@@ -1,17 +1,44 @@
+<div id="joinGroupPage">
+	<div class="container text-center mt-3 py-3 w-75 px-2">
+		<div class="row">
+			<div class="col">
+                <h1>Know a group you wanna join?</h1>
+                <ul class="p-0" style="list-style: none;">
+                    <li>Enter the name of the group</li>
+                    <li>Enter the secret PIN for the group</li>
+                    <li>Hit Join! and you're done!</li>
+                </ul>
+			</div>
+		</div>
+		<div class="my-2 alert-danger" ng-show="$ctrl.$rootScope.alert">{{$ctrl.$rootScope.message}}</div>
 
-<div class="mt-5" ng-show="$ctrl.$rootScope.alert">{{$ctrl.$rootScope.message}}</div>
-
-<form id="getIntoGroup" name="getIntoGroup">
-  <div class="container main-center">
-    <div class="form-group">
-      <label for="siteSelect">Group Name:</label>
-    <input type="text" id="join_group_name" ng-minlength="4" placeholder="Group Name..." ng-model="joinName" required>
-    </div>
-    <div class="form-group">
-      <label for="password">Enter PIN:</label>
-    <input type="password" id="join_pin" limit-to="4" placeholder="4 Digit PIN..." ng-minlength="4" ng-model="$ctrl.joinPin" required>
-    </div>
-
-<button ng-click="$ctrl.$rootScope.joinGroups()" class="btn btn-outline-primary" ng-disabled="getIntoGroup.$invalid">Join Group</button>
+		<div class="row">
+			<div class="col">
+				<div class="form-group row">
+					<label for="join_group_name" class="col-2 col-form-label text-right pr-0 hidden-sm-down">Group Name</label>
+					<div class="col-sm-12 col-md-10"><input type="text" class="form-control" id="join_group_name" ng-minlength="4" placeholder="Group Name..." ng-model="joinName" required></div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<div class="form-group row">
+					<label for="join_pin" class="col-2 col-form-label text-right pr-0 hidden-sm-down">Enter PIN</label>
+					<div class="col-sm-12 col-md-10"><input class="form-control" type="password" id="join_pin" limit-to="4" placeholder="4 Digit PIN..." ng-minlength="4" ng-model="$ctrl.joinPin" required></div>
+				</div>
+			</div>
+		</div>
+        <div class="row">      
+            <div class="col">
+                <button ng-click="$ctrl.$rootScope.joinGroups()" class="btn btn-outline-primary" ng-disabled="getIntoGroup.$invalid">Join Group!</button>
+            </div>
+        </div>
+	</div>
 </div>
-</form>
+
+
+
+
+
+
+

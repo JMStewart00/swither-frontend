@@ -1,22 +1,117 @@
-<div class="row">
-    <div class="col">
-        <h3>Register</h3>
-        <form name="registration">
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Name" ng-model="$ctrl.name" required>
+<div id="register">
+    <div class="container w-75 text-center mt-3 py-3">
+
+<form>
+    <div class="row">
+        <div class="col">
+            <h1>SWiTHER</h1>
+        </div>
+    </div>
+    
+    
+    
+    
+    <div class="row">
+        <div class="col-6 offset-3 mb-3">
+            <div ng-if="$ctrl.password !== $ctrl.password_confirmation" class="alert-danger">Passwords do not match.</div>
+        </div>
+    </div>
+    
+    
+    
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label for="newUserName" class="col-2 hidden-sm-down col-form-label text-right">Name</label>
+                <div class="col-md-10 col-sm-12">
+                    <input type="text" class="form-control" placeholder="Name" ng-model="$ctrl.name" id="newUserName" required>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="email" class="form-control" placeholder="Email" ng-model="$ctrl.email" required>
+        </div>
+    </div>
+    
+    
+    
+    
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label for="newUserEmail" class="col-2 hidden-sm-down col-form-label text-right">Email</label>
+                <div class="col-md-10 col-sm-12">
+                <input type="email" class="form-control" placeholder="Email" ng-model="$ctrl.email" id="newUserEmail" required>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="password"  equals="{{$ctrl.password_confirmation}}" ng-model="$ctrl.password" required>
+        </div>
+    </div>
+    
+    
+    
+    
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label for="newUserPW" class="col-2 hidden-sm-down col-form-label text-right">Password</label>
+                <div class="col-md-10 col-sm-12">
+                    <input type="password" class="form-control" placeholder="Enter Password" equals="{{$ctrl.password_confirmation}}" ng-model="$ctrl.password" id="newUserPW" required>
+                </div>
             </div>
-            <div class="form-group mb-1">
-                <input type="password" ng-model="$ctrl.password_confirmation" equals="{{$ctrl.password}}" required>
+        </div>
+    </div>
+    
+    
+    
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label for="newUserPWConfirm" class="col-2 hidden-sm-down col-form-label text-right">Confirm</label>
+                <div class="col-md-10 col-sm-12">
+                    <input class="form-control" placeholder="Confirm password" type="password" ng-model="$ctrl.password_confirmation" equals="{{$ctrl.password}}" id="newUserPWConfirm" required>
+                </div>
             </div>
-            <p ng-if="$ctrl.password !== $ctrl.password_confirmation" class="mb-2">Passwords do not match.</p>
-            <br>
+        </div>
+    </div>
+    
+    
+    
+    
+        <div class="row">      
+            <div class="col">
             <button class="btn btn-outline-primary" ng-disabled="registration.$invalid" ng-click="$ctrl.$rootScope.signup()">Submit</button>
-        </form>
+            </div>
+        </div>
+</form>
+
+
     </div>
 </div>
+
+
+
+
+
+<!-- 
+
+
+
+    <div class="row">
+        <div class="col">
+            <h3>Register</h3>
+            <form name="registration">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Name" ng-model="$ctrl.name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" placeholder="Email" ng-model="$ctrl.email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password"  equals="{{$ctrl.password_confirmation}}" ng-model="$ctrl.password" required>
+                </div>
+                <div class="form-group mb-1">
+                    <input type="password" ng-model="$ctrl.password_confirmation" equals="{{$ctrl.password}}" required>
+                </div>
+                <p ng-if="$ctrl.password !== $ctrl.password_confirmation" class="mb-2">Passwords do not match.</p>
+                <br>
+                <button class="btn btn-outline-primary" ng-disabled="registration.$invalid" ng-click="$ctrl.$rootScope.signup()">Submit</button>
+            </form>
+        </div>
+    </div> -->

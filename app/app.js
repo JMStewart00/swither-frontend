@@ -53,13 +53,19 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
                         url: '/dashboard',
                         templateUrl: './app/dashboard/dashboard.html',
                         controller: dashboardComponent.controller,
-                        controllerAs: '$ctrl'
+                        controllerAs: '$ctrl',
+                        onExit: ($rootScope) => {
+                            $rootScope.getGroups();
+                        }
                 })
                 .state('auth.new', {
                         url: '/newevent',
                         templateUrl: './app/newEvent/newEvent.html',
                         controller: newEventComponent.controller,
-                        controllerAs: '$ctrl'
+                        controllerAs: '$ctrl',
+                        onEnter: ($rootScope) => {
+                            $rootScope.searchResults = [];
+                        }
                 })
                 .state('auth.swipes', {
                         url: '/swipes',
@@ -77,7 +83,14 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
                         url: '/joingroup',
                         templateUrl: './app/dashboard/joingroup.html',
                         controller: dashboardComponent.controller,
-                        controllerAs: '$ctrl'
+                        controllerAs: '$ctrl',
+                        onEnter: () => {
+                            console.log('hey');
+                        },
+                        onExit: () => {
+                            console.log('exit');
+                        },
+                          
                 })
                 .state('auth.matches', {
                     url: '/matches',
@@ -135,16 +148,14 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
 // custom angular directive for limiting the enterable values into certain fields.
 .directive("limitTo", [ () => {
     return {
-        restrict: "A",
         link: (scope, elem, attrs) => {
             let limit = parseInt(attrs.limitTo);
-            angular.element(elem).on("keypress", function(e) {
-                if (this.value.length == limit) e.preventDefault();
+            angular.element(elem).on("keypress", (e) => {
+                if (elem[0].value.length == limit) e.preventDefault();
             });
         }
     }
 }]);
-
 
 
 
