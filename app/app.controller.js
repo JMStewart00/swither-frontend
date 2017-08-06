@@ -126,7 +126,6 @@ class appCtrl {
             .$promise
             .then( (data) => {
                 apiService.addUserToGroup().save({}, ctrl.newGroup);
-
                 // change page
                 $state.go('auth.dashboard');
                 // set message to confirm add
@@ -134,8 +133,7 @@ class appCtrl {
 
                 // set alert to true to show on page
                 ctrl.$rootScope.alert = true;
-            }, (error) => {
-                ctrl.errorMessage();
+                ctrl.$rootScope.groups.push(ctrl.newGroup);
             });
 
         } // end addGroup()
@@ -143,7 +141,7 @@ class appCtrl {
         ctrl.$rootScope.getGroups = () => {
             ctrl.groups = apiService.getUserGroups().query({id:window.localStorage.getItem('currentUser')});
             ctrl.groups.$promise.then( (data) => {
-                ctrl.$rootScope.groups.push(data);
+                // ctrl.$rootScope.groups.push(data);
             })
         }
 

@@ -1,19 +1,75 @@
-<div ng-show="$ctrl.$rootScope.alert">{{$ctrl.$rootScope.message}}</div>
-<form id="addGroup" name="addGroup">
-  <div class="container main-center">
-    <div class="form-group">
-      <label for="siteSelect">Group Name:</label>
-    <input type="text" name="group_name" id="group_name" placeholder="Please add group name..." required>
-    </div>
-    <div class="form-group">
-      <label for="password">Enter PIN:</label>
-    <input type="password" limit-to="4" equals="{{$ctrl.confirm_pin}}" ng-model="$ctrl.pin" placeholder="Please enter 4-digit group PIN..." id="pin" required>
-    </div>
-    <div class="form-group">
-      <label for="password_confirmation">Confirm PIN:</label>
-    <input type="password" limit-to="4" equals="{{$ctrl.pin}}" ng-model="$ctrl.confirm_pin"  placeholder="Please confirm 4-digit PIN" required>
-    </div>
-    <p ng-if="$ctrl.pin !== $ctrl.confirm_pin" class="mb-2">PINs do not match.</p>
-<button ng-click="$ctrl.$rootScope.newGroup()" class="btn btn-outline-primary" ng-disabled="addGroup.$invalid">Add New Group</button>
+<div id="createGroup">
+  <div class="container text-center mt-3 py-4 w-75">
+    <form id="addGroup" name="addGroup">
+
+      <div class="row">
+          <div class="col">
+              <h1>Add and Join a New Group!</h1>
+              <div ng-show="$ctrl.$rootScope.alert" class="alert-danger py-2">{{$ctrl.$rootScope.message}}</div>
+              <p>Create a new group for you and your friends or family! Remember the PIN and name to send to them so they can join!</p>
+              <p style="font-size: 12px;"><em>Note: Once you create a group, you will automatically be added to the group on success.</em></p>
+          </div>
+      </div>
+
+      <div class="row">
+          <div class="col">
+              <p class="mb-1"><strong>Enter a unique group name.</strong></p>
+          </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col">
+          <div class="form-group row">
+<!--             <label for="group_name" class="col-2 col-form-label text-right hidden-sm-down">Name</label> -->
+            <div class="col-md-6 offset-md-3 col-sm-12">
+              <input type="text" class="form-control" name="group_name" id="group_name" placeholder="Please add group name..." required>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+          <div class="col">
+              <p class="mb-1"><strong>Enter a 4-digit PIN Number.</strong></p>
+          </div>
+      </div>
+
+
+
+      <div class="row">
+        <!-- <div class="col-1"></div> -->
+        <div class="col">
+          <div class="form-group row">
+            <div class="col-md-6 offset-md-3 col-sm-12">
+              <input type="password" limit-to="4" class="form-control" equals="{{$ctrl.confirm_pin}}" ng-model="$ctrl.pin" placeholder="Enter PIN..." id="pin" required>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        
+        <div class="col-md-6 offset-md-3 col-sm-12">
+          <div class="form-group row">
+            <div class="col">
+              <input type="password" limit-to="4" class="form-control" equals="{{$ctrl.pin}}" ng-model="$ctrl.confirm_pin"  placeholder="Confirm PIN" required>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="col-1"></div> -->
+      </div>
+      <div class="row">
+        <div class="col-6 offset-3 mb-2 alert-danger" ng-if="$ctrl.pin !== $ctrl.confirm_pin">
+          PINs do not match.
+        </div>
+      </div>
+    
+        <div class="row">      
+            <div class="col">
+            <button ng-click="$ctrl.$rootScope.newGroup()" class="btn btn-outline-primary btn-lg" ng-disabled="addGroup.$invalid">Add New Group</button>
+            </div>
+        </div>
+    </form>
+
+  </div>
 </div>
-</form>

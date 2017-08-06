@@ -7086,13 +7086,17 @@ html, body {
 #matchesHTML p {
   color: #7f0c0b; }
 
-#navbar {
-  color: white; }
-  #navbar .container {
-    background-color: #7f0c0b; }
-  #navbar h3 {
-    font-family: 'Alegreya Sans', sans-serif; }
+#createGroup h1 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
 
+#createGroup .container > * {
+  opacity: 1; }
+
+#createGroup .container {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
+          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
 
 #landing {
   color: #7f0c0b;
@@ -7132,9 +7136,51 @@ html, body {
     font-family: 'Alegreya Sans', sans-serif;
     text-shadow: 3px 3px 2px #969696; }
 
+#login h1 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+#login .container > * {
+  opacity: 1; }
+
+#login .container {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
+          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
+
+#register h1 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+#register .container > * {
+  opacity: 1; }
+
+#register .container {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
+          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
+
+#newEvent h1 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+#newEvent .container > * {
+  opacity: 1; }
+
+#newEvent .container {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
+          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
 
 #swipeScreen #like {
   color: green; }
 
 #swipeScreen #dislike {
   color: red; }
+
+#navbar {
+  color: white; }
+  #navbar .container {
+    background-color: #7f0c0b; }
+  #navbar h3 {
+    font-family: 'Alegreya Sans', sans-serif; }

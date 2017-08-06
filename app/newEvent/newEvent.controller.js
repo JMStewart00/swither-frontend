@@ -4,6 +4,11 @@ class newEventController {
         ctrl.$rootScope = $rootScope;
         ctrl.$rootScope.getGroups();
 
+        ctrl.$rootScope.$watch('groups', () => {
+        	console.log('groups changed');
+            ctrl.$rootScope.getGroups();
+        });
+
 }
 
 }

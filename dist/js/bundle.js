@@ -149,7 +149,6 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         // calling on the service to do a post request to backend
         apiService.addGroup().save({}, ctrl.newGroup).$promise.then(function (data) {
             apiService.addUserToGroup().save({}, ctrl.newGroup);
-
             // change page
             $state.go('auth.dashboard');
             // set message to confirm add
@@ -157,15 +156,14 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
 
             // set alert to true to show on page
             ctrl.$rootScope.alert = true;
-        }, function (error) {
-            ctrl.errorMessage();
+            ctrl.$rootScope.groups.push(ctrl.newGroup);
         });
     }; // end addGroup()
 
     ctrl.$rootScope.getGroups = function () {
         ctrl.groups = apiService.getUserGroups().query({ id: window.localStorage.getItem('currentUser') });
         ctrl.groups.$promise.then(function (data) {
-            ctrl.$rootScope.groups.push(data);
+            // ctrl.$rootScope.groups.push(data);
         });
     };
 
@@ -555,7 +553,7 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
 exports.default = loginController;
 
 },{}],13:[function(require,module,exports){
-module.exports = "<div class=\"col-sm-4 col-sm-offset-4\">\n    <div class=\"well\">\n        <h3>Login</h3>\n        <form>\n            <div ng-if=\"$ctrl.$rootScope.loginError\" class=\"alert-danger\">{{$ctrl.$rootScope.loginError}}</div>\n            <div class=\"form-group\">\n                <input type=\"email\" class=\"form-control\" placeholder=\"Email\" ng-model=\"$ctrl.email\">\n            </div>\n            <div class=\"form-group\">\n                <input type=\"password\" class=\"form-control\" placeholder=\"Password\" ng-model=\"$ctrl.password\">\n            </div>\n            <button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.login()\">Submit</button>\n        </form>\n    </div>\n</div>";
+module.exports = "<div id=\"login\">\n    <div class=\"container text-center mt-3 py-3 w-75\">\n\n        <div class=\"row\">\n            <div class=\"col\">\n                <h1>SWiTHER</h1>\n            </div>\n        </div>\n        \n\n        <div class=\"row\">\n            <div class=\"col-6 offset-3 mb-3\">\n                <div ng-if=\"$ctrl.$rootScope.loginError\" class=\"alert-danger\">{{$ctrl.$rootScope.loginError}}</div>\n            </div>\n        </div>\n\n\n        <form>\n\n            <div class=\"row\">\n                <div class=\"col\">\n                    <div class=\"form-group row\">\n                        <label for=\"email-input\" class=\"col-2 col-form-label text-right pr-0\">Email</label>\n                        <div class=\"col-10\">\n                            <input class=\"form-control\" type=\"email\" placeholder=\"Email\" ng-model=\"$ctrl.email\" id=\"email-input\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n\n            <div class=\"row\">\n                <div class=\"col\">\n                    <div class=\"form-group row\">\n                        <label for=\"password-input\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Password</label>\n                        <label for=\"password-input\" class=\"col-2 col-form-label text-right pr-0 hidden-md-up\">PW</label>\n                        <div class=\"col-10\">\n                            <input class=\"form-control\" type=\"password\" placeholder=\"Password\" ng-model=\"$ctrl.password\" id=\"password-input\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n\n            <div class=\"row\">      \n                <div class=\"col\">\n                    <button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.login()\">Submit</button>\n                </div>\n            </div>\n\n        </form>\n        \n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->";
 
 },{}],14:[function(require,module,exports){
 'use strict';
@@ -631,7 +629,7 @@ var newEventComponent = {
 exports.default = newEventComponent;
 
 },{"./newEvent.controller":18,"./newEvent.html":19}],18:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -645,12 +643,17 @@ var newEventController = function newEventController($rootScope, $auth, $http, $
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
     ctrl.$rootScope.getGroups();
+
+    ctrl.$rootScope.$watch('groups', function () {
+        console.log('groups changed');
+        ctrl.$rootScope.getGroups();
+    });
 };
 
 exports.default = newEventController;
 
 },{}],19:[function(require,module,exports){
-module.exports = "<div class=\"row\">\n    <div class=\"col-6\">\n        <form name=\"search\">\n            <div class=\"form-group\">\n              <label for=\"groupSelect\">Select Group:</label>\n              <select class=\"form-control\" id=\"groupSelect\">\n                <option>Please select a group...</option>\n                <option ng-repeat=\"group in $ctrl.$rootScope.groups[0]\" value=\"{{group.id}}\">{{group.group_name}}</option>\n              </select>\n            </div>\n            <div class=\"form-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"Type of place\" name=\"term\" id=\"term\">\n            </div>\n            <div class=\"forcolm-group\">\n                <input type=\"text\" class=\"form-control\" placeholder=\"City, State or ZipCode\" name=\"location\" id=\"location\">\n            </div>\n            <button class=\"btn btn-outline-primary\" ng-click=\"$ctrl.$rootScope.searchYelp()\">Submit</button>\n        </form>\n    </div>\n</div>";
+module.exports = "<div id=\"newEvent\">\n    <div class=\"container text-center mt-3 py-3 w-75 px-2\">\n        <div class=\"row\">\n            <div class=\"col\">\n                <h1>Headed out tonight?</h1>\n                <!-- <p>Choose your group below, enter a search term like \"Tacos\" and a general location and hit Get Results!</p> -->\n                <ul class=\"p-0\" style=\"list-style: none;\">\n                    <li>Choose your group.</li>\n                    <li>Enter a search term. (i.e. \"Tacos\")</li>\n                    <li>Enter a location (i.e. \"Lexington, KY\")</li>\n                    <li>Hit Go!</li>\n                </ul>\n\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group row\">\n                    <label for=\"groupSelect\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Select Group</label>\n                    <div class=\"col-sm-12 col-md-10\">              \n                        <select class=\"form-control custom-select\" id=\"groupSelect\">\n                            <option>Please select one</option>\n                            <option ng-repeat=\"group in $ctrl.$rootScope.groups[0]\" value=\"{{group.id}}\">{{group.group_name}}</option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group row\">\n                    <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Search</label>\n                    <div class=\"col-sm-12 col-md-10\">\n                        <input class=\"form-control\" placeholder=\"Enter destination...\" name=\"term\" id=\"term\">\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group row\">\n                    <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Location</label>\n                    <div class=\"col-sm-12 col-md-10\">\n                        <input type=\"text\" class=\"form-control\" placeholder=\"City, State or ZipCode\" name=\"location\" id=\"location\">\n                    </div>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row\">      \n            <div class=\"col\">\n                <button class=\"btn btn-outline-primary btn-lg\" ng-click=\"$ctrl.$rootScope.searchYelp()\">Go!</button>\n            </div>\n        </div>\n\n\n    </div>\n</div>";
 
 },{}],20:[function(require,module,exports){
 'use strict';

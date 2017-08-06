@@ -1,0 +1,15 @@
+#newEvent {
+	h1 {
+		font-family: 'Alegreya Sans', sans-serif;
+		color: #7f0c0b;
+	}
+
+	.container > * {
+		opacity: 1;
+	}
+
+	.container {
+		background: rgba(255, 255, 255, 0.6);
+		box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
+	} 
+}
