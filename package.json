@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "postinstall": "gulp"
+    "postinstall": "gulp default"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,14 @@
   },
   "homepage": "https://github.com/JMStewart00/swither-frontend#readme",
   "devDependencies": {
+
+  },
+  "dependencies": {
+    "angular-resource": "^1.6.5",
+    "angular-ui-router": "^1.0.3",
+    "bootstrap": "^4.0.0-alpha.6",
+    "express": "^4.15.3",
+    "start": "^5.1.0",
     "angular": "^1.5.6",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",
@@ -36,12 +44,5 @@
     "stringify": "^5.1.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.9.0"
-  },
-  "dependencies": {
-    "angular-resource": "^1.6.5",
-    "angular-ui-router": "^1.0.3",
-    "bootstrap": "^4.0.0-alpha.6",
-    "express": "^4.15.3",
-    "start": "^5.1.0"
   }
 }
