@@ -29,6 +29,11 @@ html, body {
 	position: fixed;
 }
 
+h1, i {
+	font-family: 'Alegreya Sans', sans-serif;
+	color: #7f0c0b;
+}
+
 main {
     &.ng-enter {
 	    /* start 'enter' transition */
@@ -49,21 +54,21 @@ main {
 
 }
 
-#joinGroupPage > * {
-	    &.ng-enter {
-		    /* start 'enter' transition */
+a {
+	cursor: hand;
+}
 
-	        /* transition on enter for .5s */
-	        transition: .5s;
-	 
-	        /* start with opacity 0 (invisible) */
-	        opacity: 0;
+#loadScreen{
+	z-index:50;
+	height: 100vh;
+	width: 100%;
+	transition: all linear 1s;
+	margin: auto;
+	padding-top: 25%;
 
-	    	}
-	 
-	    /* end 'enter' transition */
-	    &.ng-enter-active {
-	        /* end with opacity 1 (fade in) */
-	        opacity: 1;
-	    }
+
+}
+
+#loadScreen.ng-hide {
+	opacity: 0;
 }

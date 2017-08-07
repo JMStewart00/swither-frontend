@@ -9,6 +9,7 @@ class appCtrl {
         ctrl.$rootScope.searchResults = [];
         ctrl.$rootScope.alert = false;
         ctrl.$rootScope.groups = [];
+        ctrl.$rootScope.loadScreen = false;
 
         // global logout function to be able to be called from anywhere.
         ctrl.$rootScope.logout = () => {
@@ -24,7 +25,8 @@ class appCtrl {
 
         // search yelp with a form
         ctrl.$rootScope.searchYelp = () => {
-
+            ctrl.$rootScope.alert = false;
+            ctrl.$rootScope.loadScreen = true;
         // instantiate new search JSON
             ctrl.searchParameters = {
                 // grab values with JQuery from form
@@ -41,6 +43,10 @@ class appCtrl {
                 .then( (response) => {
                     ctrl.$rootScope.searchResults.push(response.data);
                     $state.go('auth.swipes');
+                    ctrl.$rootScope.loadScreen = false;
+            }, (error) => {
+                ctrl.$rootScope.loadScreen = false;
+                ctrl.errorMessage();
             })
             
         } //end searchYelp
@@ -178,7 +184,6 @@ class appCtrl {
                     if (response.data.length >= 1) {
                         for (var i = 0; i < response.data.length; i++) {
                             ctrl.$rootScope.matches.push(JSON.parse(response.data[i].business_info));
-                            console.log(ctrl.$rootScope.matches);
                         }
                     } else {
                         ctrl.$rootScope.matches.push(ctrl.incompatible);
