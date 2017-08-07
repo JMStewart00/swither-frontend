@@ -7070,6 +7070,34 @@ html, body {
   width: 100%;
   position: fixed; }
 
+#dashboard {
+  color: #7f0c0b; }
+  #dashboard i:hover {
+    -webkit-box-shadow: 25px 25px 25px 25px #929292;
+    box-shadow: 25px 25px 50px 5px #929292;
+    -webkit-transition: .5s;
+    -o-transition: .5s;
+    transition: .5s; }
+  #dashboard i {
+    -webkit-transition: .5s;
+    -o-transition: .5s;
+    transition: .5s; }
+
+#matchesHTML p {
+  color: #7f0c0b; }
+
+#createGroup h1, #joinGroupPage h1, #dashboard h1, #matchesHTML h1 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+#createGroup .container > *, #joinGroupPage .container > *, #dashboard .container > *, #matchesHTML .container > * {
+  opacity: 1; }
+
+#createGroup .container, #joinGroupPage .container, #dashboard .container, #matchesHTML .container {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
+          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
+
 #login h1 {
   font-family: 'Alegreya Sans', sans-serif;
   color: #7f0c0b; }
@@ -7094,30 +7122,24 @@ html, body {
   -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
           box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
 
-#dashboard {
-  color: #7f0c0b; }
-  #dashboard i:hover {
-    -webkit-box-shadow: 25px 25px 25px 25px #929292;
-    box-shadow: 25px 25px 50px 5px #929292;
-    -webkit-transition: .5s;
-    -o-transition: .5s;
-    transition: .5s; }
-  #dashboard i {
-    -webkit-transition: .5s;
-    -o-transition: .5s;
-    transition: .5s; }
+#navbar {
+  color: white; }
+  #navbar .container {
+    background-color: #7f0c0b; }
+  #navbar h3 {
+    font-family: 'Alegreya Sans', sans-serif; }
 
-#matchesHTML p {
-  color: #7f0c0b; }
-
-#createGroup h1, #joinGroupPage h1 {
+#newEvent h1 {
   font-family: 'Alegreya Sans', sans-serif;
   color: #7f0c0b; }
 
-#createGroup .container > *, #joinGroupPage .container > * {
+#newEvent p {
+  color: #7f0c0b; }
+
+#newEvent .container > * {
   opacity: 1; }
 
-#createGroup .container, #joinGroupPage .container {
+#newEvent .container {
   background: rgba(255, 255, 255, 0.6);
   -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
           box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
@@ -7161,25 +7183,6 @@ html, body {
     text-shadow: 3px 3px 2px #969696; }
   #landing #whatIsSwither {
     background-color: #f1f1f1; }
-
-#navbar {
-  color: white; }
-  #navbar .container {
-    background-color: #7f0c0b; }
-  #navbar h3 {
-    font-family: 'Alegreya Sans', sans-serif; }
-
-#newEvent h1 {
-  font-family: 'Alegreya Sans', sans-serif;
-  color: #7f0c0b; }
-
-#newEvent .container > * {
-  opacity: 1; }
-
-#newEvent .container {
-  background: rgba(255, 255, 255, 0.6);
-  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
-          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
 
 #swipeScreen #like {
   color: green; }

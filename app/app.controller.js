@@ -167,11 +167,21 @@ class appCtrl {
             ctrl.matchQuery = {
                 "group_id": $('#groupSelect option:selected').val()
                 }
+            ctrl.incompatible = {
+              "image_url": "./dist/css/wrong.png",
+              "name": "No matches!!",
+              "display_phone": "You're apparently incompatible with your group!"
+            };
             ctrl.$rootScope.matches = [];
             $http.post('https://swither.herokuapp.com/api/matches', ctrl.matchQuery)
                 .then( (response) => {
-                    for (var i = 0; i < response.data.length; i++) {
-                        ctrl.$rootScope.matches.push(JSON.parse(response.data[i].business_info));
+                    if (response.data.length >= 1) {
+                        for (var i = 0; i < response.data.length; i++) {
+                            ctrl.$rootScope.matches.push(JSON.parse(response.data[i].business_info));
+                            console.log(ctrl.$rootScope.matches);
+                        }
+                    } else {
+                        ctrl.$rootScope.matches.push(ctrl.incompatible);
                     }
             })
         }
