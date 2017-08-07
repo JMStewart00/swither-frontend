@@ -9,7 +9,7 @@ import apiService from './resource.services.js';
 
 
 // instantiation of the module of app, where injections will go.
-angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
+angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
 .component('app', appComponent)
 .component('login', loginComponent)
 .component('navbar', navbarComponent)
@@ -83,20 +83,18 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
                         url: '/joingroup',
                         templateUrl: './app/dashboard/joingroup.html',
                         controller: dashboardComponent.controller,
-                        controllerAs: '$ctrl',
-                        onEnter: () => {
-                            console.log('hey');
-                        },
-                        onExit: () => {
-                            console.log('exit');
-                        },
+                        controllerAs: '$ctrl'
                           
                 })
                 .state('auth.matches', {
                     url: '/matches',
                     templateUrl: './app/dashboard/matches.html',
                     controller: dashboardComponent.controller,
-                    controllerAs: '$ctrl'
+                    controllerAs: '$ctrl',
+                    onExit: ($rootScope) => {
+                        $rootScope.matches = [];
+                    },
+
                 })
                 .state('auth', {
                         resolve: {

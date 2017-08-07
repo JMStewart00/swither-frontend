@@ -7070,6 +7070,34 @@ html, body {
   width: 100%;
   position: fixed; }
 
+main {
+  /* end 'enter' transition */ }
+  main.ng-enter {
+    /* start 'enter' transition */
+    /* transition on enter for .5s */
+    -webkit-transition: .5s;
+    -o-transition: .5s;
+    transition: .5s;
+    /* start with opacity 0 (invisible) */
+    opacity: 0; }
+  main.ng-enter-active {
+    /* end with opacity 1 (fade in) */
+    opacity: 1; }
+
+#joinGroupPage > * {
+  /* end 'enter' transition */ }
+  #joinGroupPage > *.ng-enter {
+    /* start 'enter' transition */
+    /* transition on enter for .5s */
+    -webkit-transition: .5s;
+    -o-transition: .5s;
+    transition: .5s;
+    /* start with opacity 0 (invisible) */
+    opacity: 0; }
+  #joinGroupPage > *.ng-enter-active {
+    /* end with opacity 1 (fade in) */
+    opacity: 1; }
+
 #dashboard {
   color: #7f0c0b; }
   #dashboard i:hover {
@@ -7094,52 +7122,6 @@ html, body {
   opacity: 1; }
 
 #createGroup .container, #joinGroupPage .container, #dashboard .container, #matchesHTML .container {
-  background: rgba(255, 255, 255, 0.6);
-  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
-          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
-
-#login h1 {
-  font-family: 'Alegreya Sans', sans-serif;
-  color: #7f0c0b; }
-
-#login .container > * {
-  opacity: 1; }
-
-#login .container {
-  background: rgba(255, 255, 255, 0.6);
-  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
-          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
-
-#register h1 {
-  font-family: 'Alegreya Sans', sans-serif;
-  color: #7f0c0b; }
-
-#register .container > * {
-  opacity: 1; }
-
-#register .container {
-  background: rgba(255, 255, 255, 0.6);
-  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
-          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
-
-#navbar {
-  color: white; }
-  #navbar .container {
-    background-color: #7f0c0b; }
-  #navbar h3 {
-    font-family: 'Alegreya Sans', sans-serif; }
-
-#newEvent h1 {
-  font-family: 'Alegreya Sans', sans-serif;
-  color: #7f0c0b; }
-
-#newEvent p {
-  color: #7f0c0b; }
-
-#newEvent .container > * {
-  opacity: 1; }
-
-#newEvent .container {
   background: rgba(255, 255, 255, 0.6);
   -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
           box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
@@ -7183,6 +7165,79 @@ html, body {
     text-shadow: 3px 3px 2px #969696; }
   #landing #whatIsSwither {
     background-color: #f1f1f1; }
+
+#login h1 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+#login .container > * {
+  opacity: 1; }
+
+#login .container {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
+          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
+
+#register h1 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+#register .container > * {
+  opacity: 1; }
+
+#register .container {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
+          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
+
+#navbar {
+  color: white;
+  cursor: pointer;
+  cursor: hand; }
+  #navbar .container {
+    background-color: #7f0c0b; }
+  #navbar h3 {
+    font-family: 'Alegreya Sans', sans-serif; }
+  #navbar .cl-effect-5 a {
+    overflow: hidden;
+    padding: 0 4px;
+    height: 1em; }
+  #navbar .cl-effect-5 a span {
+    position: relative;
+    display: inline-block;
+    -webkit-transition: -webkit-transform 0.3s;
+    transition: -webkit-transform 0.3s;
+    -o-transition: -o-transform 0.3s;
+    transition: transform 0.3s;
+    transition: transform 0.3s, -webkit-transform 0.3s, -o-transform 0.3s; }
+  #navbar .cl-effect-5 a span::before {
+    position: absolute;
+    top: 100%;
+    content: attr(data-hover);
+    font-weight: 700;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0); }
+  #navbar .cl-effect-5 a:hover span,
+  #navbar .cl-effect-5 a:focus span {
+    -webkit-transform: translateY(-100%);
+    -ms-transform: translateY(-100%);
+     -o-transform: translateY(-100%);
+        transform: translateY(-100%); }
+
+#newEvent h1 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+#newEvent p {
+  color: #7f0c0b; }
+
+#newEvent .container > * {
+  opacity: 1; }
+
+#newEvent .container {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
+          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
 
 #swipeScreen #like {
   color: green; }
