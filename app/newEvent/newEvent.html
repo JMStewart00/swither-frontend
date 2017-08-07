@@ -7,6 +7,7 @@
         </div>
         <div class="row">
             <div class="col">
+                <div ng-show="$ctrl.$rootScope.alert" class="alert-danger py-2">{{$ctrl.$rootScope.message}}</div>
                 <h1>Headed out tonight?</h1>
                 <!-- <p>Choose your group below, enter a search term like "Tacos" and a general location and hit Get Results!</p> -->
                 <ul class="p-0" style="list-style: none;">

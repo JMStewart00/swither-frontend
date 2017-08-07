@@ -96,6 +96,9 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
                     },
 
                 })
+                .state('auth.load', {
+                    templateUrl: './app/loadscreen.html',
+                })
                 .state('auth', {
                         resolve: {
                               loginRequired: loginRequired
@@ -153,7 +156,8 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
             });
         }
     }
-}]);
+}])
+
 
 
 
