@@ -1,30 +1,37 @@
 <div id="matchesHTML">
-	<div class="container w-75">
-		<div class="row m-5">
-			<div class="col">
-				<div class="mt-5 text-center" ng-show="$ctrl.$rootScope.alert">
-					{{$ctrl.$rootScope.message}}
-				</div>
+	<div class="container w-75 mt-3 py-3">
+	<div class="row">
+	    <div class="col text-left pl-3">
+	        <p go-click="auth.dashboard"><i class="ion-android-arrow-back"></i> BACK</p>
+	    </div>
+	</div>
+	<div class="row">
+	    <div class="col text-center">
+	        <h1>Get Group Matches</h1>
+	        <p>First, select the group you want to see your matches for and then hit 'Retrive Matches' to see all you're matches!</p>
+	    </div>
+	</div>
+	
+<form id="retrieveMatches">
+	<div class="row">
+		<div class="col hidden-lg-down"></div>
+		<div class="col">
+			<div class="form-group">
+				<select class="form-control custom-select" name="groupSelect" id="groupSelect" required>
+					<option>Please select a group...</option>
+					<option ng-repeat="group in $ctrl.$rootScope.groups[0]" value="{{group.id}}">{{group.group_name}}</option>
+				</select>
 			</div>
+			
 		</div>
-		<div class="row">
-			<div class="col hidden-lg-down"></div>
-			<div class="col">
-				<div class="form-group">
-					<select class="form-control custom-select" id="groupSelect">
-						<option>Please select a group...</option>
-						<option ng-repeat="group in $ctrl.$rootScope.groups[0]" value="{{group.id}}">{{group.group_name}}</option>
-					</select>
-				</div>
-				
-			</div>
-			<div class="col hidden-lg-down"></div>
+		<div class="col hidden-lg-down"></div>
+	</div>
+	<div class="row text-center">
+		<div class="col">
+			<button class="btn btn-outline-primary" ng-click="$ctrl.$rootScope.viewMatches()" ng-disabled="groupSelect.$invalid">Retrieve Matches</button>
 		</div>
-		<div class="row text-center">
-			<div class="col">
-				<button class="btn btn-outline-primary" ng-click="$ctrl.$rootScope.viewMatches()">retrieve matches</button>
-			</div>
-		</div>
+	</div>
+</form>
 		<div class="card-columns mt-2">
 			<div class="card mb-2 animated zoomInUp" ng-repeat="match in $ctrl.$rootScope.matches">
 				<img class="card-img-top img-fluid" src="{{match.image_url}}" alt="Card image cap">
