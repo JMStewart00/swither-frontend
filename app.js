@@ -1,11 +1,16 @@
-const express = require('express')
-const app = express()
+const cool = require('cool-ascii-faces');
+const express = require('express');
+const app = express();
 
-//app.get('/', function (req, res) {
-//    res.send('Hello IPAM!')
-//})
+app.set('port', (process.env.PORT || 5000));
+
+app.get('/cool', function(request, response) {
+  response.send(cool());
+});
+
+
 app.use(express.static(__dirname + '/'));
 
-app.listen(8000, function() {
-    console.log('Demo is listening on port 8000!')
-})
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});
