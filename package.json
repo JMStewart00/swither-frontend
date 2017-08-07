@@ -5,8 +5,7 @@
   "main": "gulpfile.babel.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "postinstall": "gulp bundle"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
