@@ -40,9 +40,10 @@
         <div class="col">
             <div class="form-group row">
                 <label for="location" class="col-2 col-form-label text-right pr-0 hidden-sm-down">Location</label>
-                <div class="col-sm-12 col-md-10">
-                    <input type="text" class="form-control" placeholder="Enter a City, ST or Zip Code" name="location" id="location" ng-model="location" required ng-required="true">
+                <div class="col-10 col-md-8 pr-0">
+                    <input type="text" class="form-control" placeholder="Enter a City, ST or Zip Code" name="location" id="location" required ng-required="true" onfocus="this.removeAttribute('readonly');">
                 </div>
+                <div class="col-2 pl-0"><button class="btn btn-primary" ng-click="$ctrl.$rootScope.setLocation()"><i class="fa fa-map-marker text-white"></i></button></div>
             </div>
         </div>
     </div>

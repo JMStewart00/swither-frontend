@@ -100,6 +100,16 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
                     },
 
                 })
+                .state('auth.likes', {
+                    url: '/likes',
+                    templateUrl: './app/dashboard/likes.html',
+                    controller: dashboardComponent.controller,
+                    controllerAs: '$ctrl',
+                    onExit: ($rootScope) => {
+                        $rootScope.likes = [];
+                    },
+
+                })
                 .state('auth.load', {
                     templateUrl: './app/loadscreen.html',
                 })

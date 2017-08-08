@@ -1,14 +1,67 @@
 #swipeScreen {
 	#like {
-		color: green;
+		color: #7f0c0b;
 	}
 
 	#dislike {
-		color: red;
+		color: #7f0c0b;
 	}
 
 	.card {
 		max-width: 500px;
 	}
 
+	.big-screen {
+	    position: relative;
+	    overflow: hidden;
+	    height: 150px;
+	    padding: 0;
+	}
+
+	.absolute {
+	    position: absolute;
+	    margin: auto;
+	    padding: 0;
+
+	}
+
+	h5 {
+		color: #7f0c0b;
+	}
+
+	.rotate {
+		color: white !important;
+		transition: linear .5s ease-in;
+	}
+
+	#likeMessage {
+		z-index: 1000;
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		padding-top: 30%;
+		color: green;
+		transform: rotate(19deg);
+		text-shadow: 3px 2px 5px rgba(150, 150, 150, 1);
+
+	}
+
+	#skipMessage {
+		z-index: 1000;
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		padding-top: 30%;
+		color: white;
+		transform: rotate(19deg);
+		text-shadow: 3px 2px 5px rgba(150, 150, 150, 1);
+		color: red;
+
+	}
+
+		
 }

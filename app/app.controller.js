@@ -1,6 +1,6 @@
 class appCtrl {
 
-    constructor($rootScope, $http, $location, $auth, $state, apiService) {
+    constructor($rootScope, $http, $location, $auth, $state, $timeout, apiService) {
 
         let ctrl = this;
         ctrl.$rootScope = $rootScope;
@@ -10,6 +10,25 @@ class appCtrl {
         ctrl.$rootScope.alert = false;
         ctrl.$rootScope.groups = [];
         ctrl.$rootScope.loadScreen = false;
+        ctrl.$rootScope.likeAlert = false;
+        ctrl.$rootScope.skipAlert = false;
+        ctrl.$rootScope = $rootScope;
+        ctrl.$rootScope.currentLocation = '';
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            ctrl.$rootScope.latitude = position.coords.latitude;
+        });
+        navigator.geolocation.getCurrentPosition((position) => {
+            ctrl.$rootScope.longitude = position.coords.longitude;
+        });
+
+        ctrl.$rootScope.setLocation = () => {
+            $('#location').prop('readonly', true);
+            ctrl.$rootScope.currentLocation = ctrl.$rootScope.latitude + ", " + ctrl.$rootScope.longitude;
+            $('#location').val(ctrl.$rootScope.currentLocation);
+
+
+        }
 
         // global logout function to be able to be called from anywhere.
         ctrl.$rootScope.logout = () => {
@@ -23,16 +42,23 @@ class appCtrl {
             $state.go('login');
         }
 
+        ctrl.$rootScope.seeLikesinGroup = () => {
+            console.log('yo');
+        }
+
         // search yelp with a form
         ctrl.$rootScope.searchYelp = () => {
             ctrl.$rootScope.alert = false;
             ctrl.$rootScope.loadScreen = true;
+
+        
         // instantiate new search JSON
             ctrl.searchParameters = {
                 // grab values with JQuery from form
               "term": $('#term').val(),
               "location": $('#location').val(),
-              "sort_by": 'rating'
+              "sort_by": 'rating',
+              "limit": 10
             };
 
             ctrl.$rootScope.selectedGroup = $('#groupSelect option:selected').val();
@@ -56,6 +82,7 @@ class appCtrl {
 
         // Adding swipes to the database if it is liked
         ctrl.$rootScope.saveLike = () => {
+            ctrl.$rootScope.likeAlert = true;
             // grabbing userid for current logged in user
             ctrl.$rootScope.userId = $auth.getPayload().sub;
 
@@ -70,46 +97,50 @@ class appCtrl {
             // calling on the service to do a post request to backend
             apiService.addLike().save({}, ctrl.like);
 
-            // taking the first result off the array to cycle through results
-            ctrl.$rootScope.searchResults[0].splice(0, 1);
 
             // set message to confirm add
-            ctrl.$rootScope.message = "Added to likes!";
+            ctrl.$rootScope.message = "LIKED!";
 
             // set alert to true to show on page
-            ctrl.$rootScope.alert = true;
-            
+            $timeout(() => {
+                    // taking the first result off the array to cycle through results
+                    ctrl.$rootScope.searchResults[0].splice(0, 1);
+                    ctrl.$rootScope.likeAlert = false;
+                    ctrl.$rootScope.message = '';
             // checks the results length to decide whether or not to redirect
             if (ctrl.$rootScope.searchResults[0].length === 0) {
 
                 // redirect statement
                 $state.go('auth.dashboard');
 
-
-                ctrl.$rootScope.alert = false;
+                ctrl.$rootScope.likeAlert = false;
             } // end if
+                }, 750);
         } // end saveLike()
 
 
 
         // skips a Place in results and discards it
         ctrl.$rootScope.skipPlace = () => {
-            // removes first element in the array
-            ctrl.$rootScope.searchResults[0].splice(0, 1);
 
             // sets message to skipped! 
-            ctrl.$rootScope.message = "Skipped!";
+            ctrl.$rootScope.skipAlert = true;
+            ctrl.$rootScope.message = "NOPE!";
 
-            // sets alert to true to show
-            ctrl.$rootScope.alert = true;
+            $timeout(() => {
+                // taking the first result off the array to cycle through results
+                ctrl.$rootScope.searchResults[0].splice(0, 1);
+                ctrl.$rootScope.skipAlert = false;
+                ctrl.$rootScope.message = '';
 
             // checks the results length to decide whether or not to redirect
             if (ctrl.$rootScope.searchResults[0].length === 0) {
 
                 // redirect statement 
                 $state.go('auth.dashboard');
-                ctrl.$rootScope.alert = false;
+                ctrl.$rootScope.likeAlert = false;
             }
+            }, 750);
         }
 
 
@@ -171,7 +202,7 @@ class appCtrl {
 
         ctrl.$rootScope.viewMatches = () => {
             ctrl.matchQuery = {
-                "group_id": $('#groupSelect option:selected').val()
+                "group_id": $('#matchRetrieve option:selected').val()
                 }
             ctrl.incompatible = {
               "image_url": "./dist/css/wrong.png",
