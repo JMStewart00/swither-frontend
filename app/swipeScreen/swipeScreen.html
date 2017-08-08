@@ -1,43 +1,42 @@
-<div id="swipeScreen">
-    <div class="container">
 
-    <div class="row">
-        <div class="col">
-            <div class="alert" ng-if="$ctrl.$rootScope.alert">{{$ctrl.$rootScope.message}}</div>
-        </div>
-    </div>
-    <div class="card card-default mt-2">
+<div id="swipeScreen">
+
+    <h1 id="likeMessage" class="display-1" ng-show="$ctrl.$rootScope.likeAlert">{{$ctrl.$rootScope.message}}</h1>
+    <h1 id="skipMessage" class="display-1" ng-show="$ctrl.$rootScope.skipAlert">{{$ctrl.$rootScope.message}}</h1>
+    <div class="container" id="swipeContainer">
+    <!-- {{$ctrl.$rootScope.searchResults[0].length}} -->
+    <div class="card card-default mt-2 mx-auto">
         <div class="container-fluid m-0">
-            <div class="row bg-inverse pt-5 pb-2">
-                <div class="col-6 mx-auto">
-                    <img class="img-fluid" src="{{$ctrl.$rootScope.searchResults[0][0].image_url}}">
+            <div class="row bg-inverse py-3">
+                <div class="col-6 mx-auto big-screen">
+                    <img class="absolute img-fluid mx-auto" src="{{$ctrl.$rootScope.searchResults[0][0].image_url}}">
                 </div>
                 <div class="col-12 text-center text-white mt-3 mb-0">
                     <h3>{{$ctrl.$rootScope.searchResults[0][0].name}}</h3>
-                    <p>{{$ctrl.$rootScope.searchResults[0][0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0][0].location.display_address[1]}}</p>
-                    <sub class="align-text-top">{{$ctrl.$rootScope.searchResults[0][0].phone}}</sub>
+                    <hr class="w-50" style="background-color: white;">
+                    <p class="text-white mb-1">{{$ctrl.$rootScope.searchResults[0][0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0][0].location.display_address[1]}}</p>
+                    <sub class="align-text-top my-0">{{$ctrl.$rootScope.searchResults[0][0].display_phone}}</sub>
                 </div>
             </div>
             <div class="row my-2 justify-content-center">
                 <div class="col hidden-sm-down"></div>
                 <div class="col text-center">
-                    <i class="fa fa-money"></i>
-                    <br> Price
-                    <h4>{{$ctrl.$rootScope.searchResults[0][0].price}}</h4>
+                    <i class="fa fa-3x fa-money"></i>
+                    <br><p class="mb-1"> Price</p> 
+                    <hr class="my-1 w-100">                   
+                    <h5>{{$ctrl.$rootScope.searchResults[0][0].price}}</h5>
                 </div>
                 <div class="col text-center">
-                    <i class="fa fa-star"></i>
-                    <br> Rating
-                    <h4>{{$ctrl.$rootScope.searchResults[0][0].rating}}</h4>
+                    <i class="fa fa-3x fa-star"></i>
+                    <br><p class="mb-1"> Rating</p>
+                    <hr class="my-1 w-100">
+                    <h5>{{$ctrl.$rootScope.searchResults[0][0].rating}}</h5>
                 </div>
                 <div class="col text-center">
-                    <i class="fa fa-cutlery"></i>
-                    <br>Cuisine
-                    <h5>{{$ctrl.$rootScope.searchResults[0][0].categories[0].title}}</h5>
-                </div>
-                <div class="col text-center hidden-sm-down">
-                    <i class="fa fa-laptop"></i>
-                    <br><a href="{{$ctrl.$rootScope.searchResults[0][0].url}}" target="_blank">Website</a>
+                    <i class="fa fa-3x fa-laptop"></i>
+                    <br><p class="mb-1">Website</p>
+                    <hr class="my-1 w-100">
+                    <a href="{{$ctrl.$rootScope.searchResults[0][0].url}}" target="_blank"><h5>Visit</h5></a>
                 </div>
                 <div class="col hidden-sm-down"></div>
             </div>
@@ -46,17 +45,14 @@
 
     <!-- like/pass buttons -->
 
-    <div class="row justify-content-center mt-2">
-        <div class="col"></div>
-        <div class="col text-center">
-                <i id="dislike" class="fa fa-times-circle-o fa-5x" style="font-size: 8em;"  ng-click="$ctrl.$rootScope.skipPlace()"></i>
+    <div class="row">
+        <div class="col text-right">
+                <i id="dislike" class="ion-thumbsdown mt-1" style="font-size: 6em;"  ng-click="$ctrl.$rootScope.skipPlace()"></i>
         </div>
-        <div class="col text-center">
-                <i id="like" class="fa fa-plus-circle fa-5x" style="font-size: 8em;" ng-click="$ctrl.$rootScope.saveLike()"></i>
+        <div class="col text-left">
+                <i id="like" class="ion-heart mt-1" style="font-size: 6em;" ng-click="$ctrl.$rootScope.saveLike()"></i>
         </div>
-        <div class="col"></div>
     </div>
-
 
     </div> <!-- end container -->
 </div> <!-- end id wrapper -->

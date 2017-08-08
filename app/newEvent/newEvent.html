@@ -7,56 +7,53 @@
         </div>
         <div class="row">
             <div class="col">
+                <div ng-show="$ctrl.$rootScope.alert" class="alert-danger py-2">{{$ctrl.$rootScope.message}}</div>
                 <h1>Headed out tonight?</h1>
-                <!-- <p>Choose your group below, enter a search term like "Tacos" and a general location and hit Get Results!</p> -->
-                <ul class="p-0" style="list-style: none;">
-                    <li>Choose your group.</li>
-                    <li>Enter a search term. (i.e. "Tacos")</li>
-                    <li>Enter a location (i.e. "Lexington, KY")</li>
-                    <li>Hit Go!</li>
-                </ul>
-
+                <p>Choose your group below, enter a search term like "Tacos" and a general location and hit Get Results!</p>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <div class="form-group row">
-                    <label for="groupSelect" class="col-2 col-form-label text-right pr-0 hidden-sm-down">Select Group</label>
-                    <div class="col-sm-12 col-md-10">              
-                        <select class="form-control custom-select" id="groupSelect">
-                            <option>Please select one</option>
-                            <option ng-repeat="group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1]" value="{{group.id}}">{{group.group_name}}</option>
-                        </select>
-                    </div>
+<form name="newEventForm" novalidate>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label for="groupSelect" class="col-2 col-form-label text-right pr-0 hidden-sm-down">Select Group</label>
+                <div class="col-sm-12 col-md-10">              
+                    <select class="form-control custom-select" id="groupSelect" name="groupSelect" ng-model="groupSelect" required
+    ng-options="group.id as group.group_name for group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1] track by group.id" >
+                        <option value="">-- Select Group --</option>
+                    </select>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <div class="form-group row">
-                    <label for="" class="col-2 col-form-label text-right pr-0 hidden-sm-down">Search</label>
-                    <div class="col-sm-12 col-md-10">
-                        <input class="form-control" placeholder="Enter destination..." name="term" id="term">
-                    </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label for="" class="col-2 col-form-label text-right pr-0 hidden-sm-down">Search</label>
+                <div class="col-sm-12 col-md-10">
+                    <input class="form-control" placeholder="Enter a search term (i.e. Restaurants)" name="term" id="term" ng-model="term" required ng-required="true">
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <div class="form-group row">
-                    <label for="" class="col-2 col-form-label text-right pr-0 hidden-sm-down">Location</label>
-                    <div class="col-sm-12 col-md-10">
-                        <input type="text" class="form-control" placeholder="City, State or ZipCode" name="location" id="location">
-                    </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label for="location" class="col-2 col-form-label text-right pr-0 hidden-sm-down">Location</label>
+                <div class="col-10 col-md-8 pr-0">
+                    <input type="text" class="form-control" placeholder="Enter a City, ST or Zip Code" name="location" id="location" required ng-required="true" onfocus="this.removeAttribute('readonly');">
                 </div>
+                <div class="col-2 pl-0"><button class="btn btn-primary" ng-click="$ctrl.$rootScope.setLocation()"><i class="fa fa-map-marker text-white"></i></button></div>
             </div>
         </div>
-
-        <div class="row">      
-            <div class="col">
-                <button class="btn btn-outline-primary btn-lg" ng-click="$ctrl.$rootScope.searchYelp()">Go!</button>
-            </div>
+    </div>
+    
+    <div class="row">      
+        <div class="col">
+            <button class="btn btn-outline-primary btn-lg" ng-click="$ctrl.$rootScope.searchYelp()" ng-disabled="newEventForm.$invalid">Go!</button>
         </div>
+    </div>
+</form>
 
 
     </div>

@@ -15,7 +15,7 @@ var _app4 = _interopRequireDefault(_app3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_app4.default.$inject = ['$rootScope', '$http', '$location', '$auth', '$state', 'apiService'];
+_app4.default.$inject = ['$rootScope', '$http', '$location', '$auth', '$state', '$timeout', 'apiService'];
 
 var appComponent = {
 	template: _app2.default,
@@ -33,7 +33,7 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiService) {
+var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $timeout, apiService) {
     _classCallCheck(this, appCtrl);
 
     var ctrl = this;
@@ -43,6 +43,24 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
     ctrl.$rootScope.searchResults = [];
     ctrl.$rootScope.alert = false;
     ctrl.$rootScope.groups = [];
+    ctrl.$rootScope.loadScreen = false;
+    ctrl.$rootScope.likeAlert = false;
+    ctrl.$rootScope.skipAlert = false;
+    ctrl.$rootScope = $rootScope;
+    ctrl.$rootScope.currentLocation = '';
+
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.latitude = position.coords.latitude;
+    });
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.longitude = position.coords.longitude;
+    });
+
+    ctrl.$rootScope.setLocation = function () {
+        $('#location').prop('readonly', true);
+        ctrl.$rootScope.currentLocation = ctrl.$rootScope.latitude + ", " + ctrl.$rootScope.longitude;
+        $('#location').val(ctrl.$rootScope.currentLocation);
+    };
 
     // global logout function to be able to be called from anywhere.
     ctrl.$rootScope.logout = function () {
@@ -56,15 +74,22 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         $state.go('login');
     };
 
+    ctrl.$rootScope.seeLikesinGroup = function () {
+        console.log('yo');
+    };
+
     // search yelp with a form
     ctrl.$rootScope.searchYelp = function () {
+        ctrl.$rootScope.alert = false;
+        ctrl.$rootScope.loadScreen = true;
 
         // instantiate new search JSON
         ctrl.searchParameters = {
             // grab values with JQuery from form
             "term": $('#term').val(),
             "location": $('#location').val(),
-            "sort_by": 'rating'
+            "sort_by": 'rating',
+            "limit": 10
         };
 
         ctrl.$rootScope.selectedGroup = $('#groupSelect option:selected').val();
@@ -74,12 +99,17 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         $http.post('https://swither.herokuapp.com/api/index', ctrl.searchParameters).then(function (response) {
             ctrl.$rootScope.searchResults.push(response.data);
             $state.go('auth.swipes');
+            ctrl.$rootScope.loadScreen = false;
+        }, function (error) {
+            ctrl.$rootScope.loadScreen = false;
+            ctrl.errorMessage();
         });
     }; //end searchYelp
 
 
     // Adding swipes to the database if it is liked
     ctrl.$rootScope.saveLike = function () {
+        ctrl.$rootScope.likeAlert = true;
         // grabbing userid for current logged in user
         ctrl.$rootScope.userId = $auth.getPayload().sub;
 
@@ -94,44 +124,48 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         // calling on the service to do a post request to backend
         apiService.addLike().save({}, ctrl.like);
 
-        // taking the first result off the array to cycle through results
-        ctrl.$rootScope.searchResults[0].splice(0, 1);
-
         // set message to confirm add
-        ctrl.$rootScope.message = "Added to likes!";
+        ctrl.$rootScope.message = "LIKED!";
 
         // set alert to true to show on page
-        ctrl.$rootScope.alert = true;
+        $timeout(function () {
+            // taking the first result off the array to cycle through results
+            ctrl.$rootScope.searchResults[0].splice(0, 1);
+            ctrl.$rootScope.likeAlert = false;
+            ctrl.$rootScope.message = '';
+            // checks the results length to decide whether or not to redirect
+            if (ctrl.$rootScope.searchResults[0].length === 0) {
 
-        // checks the results length to decide whether or not to redirect
-        if (ctrl.$rootScope.searchResults[0].length === 0) {
+                // redirect statement
+                $state.go('auth.dashboard');
 
-            // redirect statement
-            $state.go('auth.dashboard');
-
-            ctrl.$rootScope.alert = false;
-        } // end if
+                ctrl.$rootScope.likeAlert = false;
+            } // end if
+        }, 750);
     }; // end saveLike()
 
 
     // skips a Place in results and discards it
     ctrl.$rootScope.skipPlace = function () {
-        // removes first element in the array
-        ctrl.$rootScope.searchResults[0].splice(0, 1);
 
         // sets message to skipped! 
-        ctrl.$rootScope.message = "Skipped!";
+        ctrl.$rootScope.skipAlert = true;
+        ctrl.$rootScope.message = "NOPE!";
 
-        // sets alert to true to show
-        ctrl.$rootScope.alert = true;
+        $timeout(function () {
+            // taking the first result off the array to cycle through results
+            ctrl.$rootScope.searchResults[0].splice(0, 1);
+            ctrl.$rootScope.skipAlert = false;
+            ctrl.$rootScope.message = '';
 
-        // checks the results length to decide whether or not to redirect
-        if (ctrl.$rootScope.searchResults[0].length === 0) {
+            // checks the results length to decide whether or not to redirect
+            if (ctrl.$rootScope.searchResults[0].length === 0) {
 
-            // redirect statement 
-            $state.go('auth.dashboard');
-            ctrl.$rootScope.alert = false;
-        }
+                // redirect statement 
+                $state.go('auth.dashboard');
+                ctrl.$rootScope.likeAlert = false;
+            }
+        }, 750);
     };
 
     // Adding swipes to the database if it is liked
@@ -184,7 +218,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
 
     ctrl.$rootScope.viewMatches = function () {
         ctrl.matchQuery = {
-            "group_id": $('#groupSelect option:selected').val()
+            "group_id": $('#matchRetrieve option:selected').val()
         };
         ctrl.incompatible = {
             "image_url": "./dist/css/wrong.png",
@@ -196,7 +230,6 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
             if (response.data.length >= 1) {
                 for (var i = 0; i < response.data.length; i++) {
                     ctrl.$rootScope.matches.push(JSON.parse(response.data[i].business_info));
-                    console.log(ctrl.$rootScope.matches);
                 }
             } else {
                 ctrl.$rootScope.matches.push(ctrl.incompatible);
@@ -220,7 +253,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
 exports.default = appCtrl;
 
 },{}],3:[function(require,module,exports){
-module.exports = "<div class=\"color-overlay\">\n</div>\n\t<navbar></navbar>\n\t<div ui-view></div>";
+module.exports = "<div class=\"color-overlay\">\n</div>\n\t<navbar></navbar>\n\t<div id=\"loadScreen\" ng-hide=\"!$ctrl.$rootScope.loadScreen\" class=\"text-center\">\n\t\t<div class=\"container\">\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col text-center\">\n\t\t\t\t\t<h1>Loading...</h1>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col\">\n\t\t\t\t\t\n\t\t<i class=\"fa fa-refresh fa-5x fa-spin\"></i>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n\n\t<main ui-view ng-hide=\"$ctrl.$rootScope.loadScreen\"></main>";
 
 },{}],4:[function(require,module,exports){
 'use strict';
@@ -260,131 +293,144 @@ var _resourceServices2 = _interopRequireDefault(_resourceServices);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // instantiation of the module of app, where injections will go.
-angular.module('app', ['ui.router', 'satellizer', 'ngResource']).component('app', _app2.default).component('login', _login2.default).component('navbar', _navbar2.default).component('dashboard', _dashboard2.default).component('landing', _landing2.default).component('newEvent', _newEvent2.default).component('swipeScreen', _swipeScreen2.default).factory('apiService', _resourceServices2.default)
+angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate']).component('app', _app2.default).component('login', _login2.default).component('navbar', _navbar2.default).component('dashboard', _dashboard2.default).component('landing', _landing2.default).component('newEvent', _newEvent2.default).component('swipeScreen', _swipeScreen2.default).factory('apiService', _resourceServices2.default)
 
 //configuration add-on
 .config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
 
-        // authentication routes definitions
-        $authProvider.loginUrl = 'https://swither.herokuapp.com/oauth/token';
-        $authProvider.signupUrl = 'https://swither.herokuapp.com/register';
+    // authentication routes definitions
+    $authProvider.loginUrl = 'https://swither.herokuapp.com/oauth/token';
+    $authProvider.signupUrl = 'https://swither.herokuapp.com/register';
 
-        // says to route to / on unknown or undefined routes.
-        $urlRouterProvider.otherwise('/');
+    // says to route to / on unknown or undefined routes.
+    $urlRouterProvider.otherwise('/');
 
-        // states
-        $stateProvider.state('landing', {
-                url: '/',
-                templateUrl: './app/landing/landing.html',
-                controller: _landing2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('login', {
-                url: '/login',
-                templateUrl: './app/login/login.html',
-                controller: _login2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('register', {
-                url: '/register',
-                templateUrl: './app/login/register.html',
-                controller: _login2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('auth.dashboard', {
-                url: '/dashboard',
-                templateUrl: './app/dashboard/dashboard.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl',
-                onExit: function onExit($rootScope) {
-                        $rootScope.getGroups();
-                }
-        }).state('auth.new', {
-                url: '/newevent',
-                templateUrl: './app/newEvent/newEvent.html',
-                controller: _newEvent2.default.controller,
-                controllerAs: '$ctrl',
-                onEnter: function onEnter($rootScope) {
-                        $rootScope.searchResults = [];
-                }
-        }).state('auth.swipes', {
-                url: '/swipes',
-                templateUrl: './app/swipeScreen/swipeScreen.html',
-                controller: _swipeScreen2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('auth.addgroup', {
-                url: '/addgroup',
-                templateUrl: './app/dashboard/creategroup.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('auth.joingroup', {
-                url: '/joingroup',
-                templateUrl: './app/dashboard/joingroup.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl',
-                onEnter: function onEnter() {
-                        console.log('hey');
-                },
-                onExit: function onExit() {
-                        console.log('exit');
-                }
+    // states
+    $stateProvider.state('landing', {
+        url: '/',
+        templateUrl: './app/landing/landing.html',
+        controller: _landing2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('login', {
+        url: '/login',
+        templateUrl: './app/login/login.html',
+        controller: _login2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('register', {
+        url: '/register',
+        templateUrl: './app/login/register.html',
+        controller: _login2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('auth.dashboard', {
+        url: '/dashboard',
+        templateUrl: './app/dashboard/dashboard.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.getGroups();
+        }
+    }).state('auth.new', {
+        url: '/newevent',
+        templateUrl: './app/newEvent/newEvent.html',
+        controller: _newEvent2.default.controller,
+        controllerAs: '$ctrl',
+        onEnter: function onEnter($rootScope) {
+            $rootScope.searchResults = [];
+        }
+    }).state('auth.swipes', {
+        url: '/swipes',
+        templateUrl: './app/swipeScreen/swipeScreen.html',
+        controller: _swipeScreen2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.alert = false;
+            $rootScope.message = '';
+        }
+    }).state('auth.addgroup', {
+        url: '/addgroup',
+        templateUrl: './app/dashboard/creategroup.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('auth.joingroup', {
+        url: '/joingroup',
+        templateUrl: './app/dashboard/joingroup.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl'
 
-        }).state('auth.matches', {
-                url: '/matches',
-                templateUrl: './app/dashboard/matches.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('auth', {
-                resolve: {
-                        loginRequired: loginRequired
-                }
-        });
-
-        function skipIfLoggedIn($q, $auth) {
-                var deferred = $q.defer();
-                if ($auth.isAuthenticated()) {
-                        deferred.reject();
-                } else {
-                        deferred.resolve();
-                }
-                return deferred.promise;
+    }).state('auth.matches', {
+        url: '/matches',
+        templateUrl: './app/dashboard/matches.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.matches = [];
         }
 
-        function loginRequired($q, $state, $auth) {
-                var deferred = $q.defer();
-                if ($auth.isAuthenticated()) {
-                        deferred.resolve();
-                } else {
-                        $state.go('login');
-                }
-                return deferred.promise;
+    }).state('auth.likes', {
+        url: '/likes',
+        templateUrl: './app/dashboard/likes.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.likes = [];
         }
+
+    }).state('auth.load', {
+        templateUrl: './app/loadscreen.html'
+    }).state('auth', {
+        resolve: {
+            loginRequired: loginRequired
+        }
+    });
+
+    function skipIfLoggedIn($q, $auth) {
+        var deferred = $q.defer();
+        if ($auth.isAuthenticated()) {
+            deferred.reject();
+        } else {
+            deferred.resolve();
+        }
+        return deferred.promise;
+    }
+
+    function loginRequired($q, $state, $auth) {
+        var deferred = $q.defer();
+        if ($auth.isAuthenticated()) {
+            deferred.resolve();
+        } else {
+            $state.go('login');
+        }
+        return deferred.promise;
+    }
 })
 
 // custom angular directive for going to different routes and clicking on any element with ng-click
 .directive('goClick', function ($state) {
-        return function (scope, element, attrs) {
-                var path = void 0;
+    return function (scope, element, attrs) {
+        var path = void 0;
 
-                attrs.$observe('goClick', function (val) {
-                        path = val;
-                });
+        attrs.$observe('goClick', function (val) {
+            path = val;
+        });
 
-                element.bind('click', function () {
-                        scope.$apply(function () {
-                                $state.go(path);
-                        });
-                });
-        };
+        element.bind('click', function () {
+            scope.$apply(function () {
+                $state.go(path);
+            });
+        });
+    };
 })
 
 // custom angular directive for limiting the enterable values into certain fields.
 .directive("limitTo", [function () {
-        return {
-                link: function link(scope, elem, attrs) {
-                        var limit = parseInt(attrs.limitTo);
-                        angular.element(elem).on("keypress", function (e) {
-                                if (elem[0].value.length == limit) e.preventDefault();
-                        });
-                }
-        };
+    return {
+        link: function link(scope, elem, attrs) {
+            var limit = parseInt(attrs.limitTo);
+            angular.element(elem).on("keypress", function (e) {
+                if (elem[0].value.length == limit) e.preventDefault();
+            });
+        }
+    };
 }]);
 
 },{"./app.component":1,"./dashboard/dashboard.component":5,"./landing/landing.component":8,"./login/login.component":11,"./navbar/navbar.component":14,"./newEvent/newEvent.component":17,"./resource.services.js":20,"./swipeScreen/swipeScreen.component":21}],5:[function(require,module,exports){
@@ -433,7 +479,7 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<div id=\"dashboard\">\n  <div class=\"container mt-3 py-5 w-75\">\n\n\n    <div class=\"row\">\n      <div class=\"col-lg-3 hidden-lg-down\"></div>\n      <div class=\"col-md-6 col-lg-3 text-center animated zoomInUp\">\n        <div class=\"col\">\n          <i class=\"px-3 ion-plus display-1 hidden-md-up\" go-click=\"auth.new\"></i>\n          <i class=\"px-3 ion-plus display-1 hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.new\"></i>\n        </div>\n        <div class=\"col text-center\">\n          <sub>New Night Out</sub>\n        </div>\n      </div>\n      <div class=\"col-md-6 col-lg-3 text-center animated zoomInUp\">\n        <div class=\"col\">\n          <i class=\"px-3 ion-android-star-outline display-1 hidden-md-up\" go-click=\"auth.matches\"></i>\n          <i class=\"px-3 ion-android-star-outline display-1 hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.matches\"></i>\n        </div>\n        <div class=\"col text-center\">\n          <sub>View Matches</sub>\n        </div>\n      </div>\n      <div class=\"col-lg-3 hidden-lg-down\"></div>\n      <div class=\"col-lg-3 hidden-lg-down\"></div>\n      <div class=\"col-md-6 col-lg-3 text-center animated zoomInUp\">\n        <div class=\"col\">\n          <i class=\"px-3 ion-ios-people display-1 hidden-md-up\" go-click=\"auth.addgroup\"></i>\n          <i class=\"px-3 ion-ios-people display-1 hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.addgroup\"></i>\n        </div>\n        <div class=\"col text-center\">\n          <sub>New Group</sub>\n        </div>\n      </div>\n      <div class=\"col-md-6 col-lg-3 text-center animated zoomInUp\">\n        <div class=\"col\">\n          <i class=\"px-3 ion-ios-personadd display-1 hidden-md-up\" go-click=\"auth.joingroup\"></i>\n          <i class=\"px-3 ion-ios-personadd display-1 hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.joingroup\"></i>\n        </div>\n        <div class=\"col text-center\">\n          <sub>Join Group</sub>\n        </div>\n      </div>\n      <div class=\"col-lg-3 hidden-lg-down\"></div>\n    </div>\n\n\n  </div>  <!-- container -->\n</div> <!--id wrapper-->\n";
+module.exports = "<div id=\"dashboard\">\n    <div class=\"container mt-3 py-4 w-75\">\n        <div class=\"row\">\n            <div class=\"col text-center\">\n                <h1 class=\"display-4\">Dashboard</h1>\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n            </div>\n        </div>\n        <div class=\"row text-center\">\n            <div class=\"col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-plus display-4 hidden-md-up\" go-click=\"auth.new\"></i>\n                    <i class=\"ion-plus hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.new\"></i>\n                    <h2 class=\"hidden-sm-down\">Find New Places!</h2>\n                    <h4 class=\"hidden-md-up\">Find New Places!</h4>\n                </div>\n            </div>\n            <div class=\"col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-android-star-outline display-4 hidden-md-up\" go-click=\"auth.matches\"></i>\n                    <i class=\"ion-android-star-outline hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.matches\"></i>\n                    <h2 class=\"hidden-sm-down\">View Matches</h2>\n                    <h4 class=\"hidden-md-up\">View Matches</h4>\n                </div>\n            </div>\n            <div class=\"col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-ios-people display-4 hidden-md-up\" go-click=\"auth.addgroup\"></i>\n                    <i class=\"ion-ios-people hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.addgroup\"></i>\n                    <h2 class=\"hidden-sm-down\">New Group</h2>\n                    <h4 class=\"hidden-md-up\">New Group</h4>\n                </div>\n            </div>\n            <div class=\"col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-ios-personadd display-4 hidden-md-up\" go-click=\"auth.joingroup\"></i>\n                    <i class=\"ion-ios-personadd hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.joingroup\"></i>\n                    <h2 class=\"hidden-sm-down\">Join Group</h2>\n                    <h4 class=\"hidden-md-up\">Join Group</h4>\n                </div>\n            </div>\n        </div>\n        </div>  <!-- container -->\n        </div> <!--id wrapper-->\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -480,7 +526,7 @@ var landingController = function landingController($rootScope, $auth, $http, $st
 exports.default = landingController;
 
 },{}],10:[function(require,module,exports){
-module.exports = "<div id=\"landing\">\n\t\n\t\n\t<!------------------------------------------------------------------------\n\t\t\t\t\t\t\t\tHeader Content\n\t------------------------------------------------------------------------>\n\t\t\t<div class=\"container-fluid\" id=\"maincontent\">\n\t\t\t\t<div class=\"row pt-5\">\n\t\t\t\t\t<!-- larger screen title -->\n\t\t\t\t\t<div class=\"hidden-sm-down col text-center\">\n\t\t\t\t\t\t<h1 class=\"text-left display-3 my-3 pl-5\" id=\"title\">Date night just got a little easier!</h1>\n\t\t\t\t\t</div>\n\t\t\t\t\t<!-- Small screen title -->\n\t\t\t\t\t<div class=\"hidden-md-up col text-left mt-5\">\n\t\t\t\t\t\t<h1 class=\"pb-0\" id=\"title\">Date night just got a little easier!</h1>\n\t\t\t\t\t</div>\n\t\t\t\t</div> <!-- row -->\n\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\n\t\t\t\t<img src=\"dist/css/whitetear.png\" class=\"pull-bottom img-fluid\">\n\t\t\t\t</div>\n\t\t\t</div> <!-- container -->\n\t\n\t<!------------------------------------------------------------------------\n\t                    Skills Breakdown\n\t------------------------------------------------------------------------>\n\t\n\t\t\t<div class=\"container-fluid px-5\">\n\t\t\t\t<div class=\"row mb-5\">\n\t\t\t\t\t<div class=\"col-md-6 col-sm-12 text-left\">\n\t\t\t\t\t\t<h1 class=\"text-left col my-2 pl-0\">WHAT IS SWiTHER?</h1>\n\t\t\t\t\t\t<p>SWiTHER solves a lifelong debacle of figuring out where to go to eat. \n\t\t\t\t\t\t</p>\n\t\t\t\t\t\t<p>\n\t\t\t\t\t\tIt's a timeless, exhausting, and frustrating struggle. You're with a friends or your significant other and you're so hungry you start to wonder what the other person would taste like with a little ranch. Before resorting to murder and cannibalism, try SWiTHER. We'll keep you from eating your friends, and find a happy place to eat instead.</p>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"col-md-6 col-sm-12 pt-5 hidden-sm-down\">\n\t\t\t\t\t\t<img src=\"dist/css/SwitherRespDesign.png\" alt=\"\" class=\"img-fluid\">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"row w-100 overview p-4\">\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"ion-thumbsdown display-1\"></i>\n\t\t\t\t\t\t\t<figcaption class=\"figure-caption text-center pt-3\">What You Don't Want</figcaption>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2 text-left\">It sounds crazy, but lets bring some logic into the equation.  First, decide what you don't want. You know when something doesn't sound that great, so you can save yourself a whole lot of work by having all parties eliminate what they aren't \"in the mood for.\"</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end first column -->\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"img-fluid ion-alert display-1\"></i>\n\t\t\t\t\t\t\t<figcaption class=\"figure-caption text-center pt-3\">Don't fight!</figcaption>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2 text-left\">You know the fight. How do you not know what you want?! You can tell me about hundreds of \"things\" that you want, but you have no idea what you want to eat at this moment?! You suggest pizza, but the other person just had that last night. They suggest Chinese, but you were planning on having Chinese with family later on in the day.</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end second column -->\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"img-fluid ion-checkmark display-1\" ></i>\n\t\t\t\t\t\t\t<figcaption class=\"figure-caption text-center pt-3\">Match it!</figcaption>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2 text-left\">After going through SWiTHER you'll have a list of matches. Decisions made easier. No one became a cannibal and everyone is happy. Sometimes people just need a leader, and other times people just need to succomb to their destiny. SWiTHER is now your leader. You're welcome.</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end third column -->\n\t\t\t\t</div> <!-- end row -->\n\t\t\t</div> <!-- end container -->\n\t\n\t\n\t<!------------------------------------------------------------------------\n\t                  Contact Section\n\t------------------------------------------------------------------------>\n\t\n\t\t\t\t    <section id=\"1contact\">\n\t\t\t\t        <div class=\"container py-5\">\n\t\t\t\t            <div class=\"row\">\n\t\t\t\t                <div class=\"col-sm col-md-8 offset-md-2 text-center\">\n\t\t\t\t                    <h2 class=\"section-heading\">Let's Get In Touch!</h2>\n\t\t\t\t                    <hr class=\"primary\">\n\t\t\t\t                    <p>Please feel free to contact me via the email below or on any of my social media platforms!</p>\n\t\t\t\t                </div>\n\t\t\t\t            </div>\n\t\t\t\t         </div>\n\t\t\t\t    </section>\n</div>";
+module.exports = "<div id=\"landing\">\n\t <script type=\"text/javascript\">\n    let text = [\"Ladies\", \"Date\", \"Family\", \"Dudes\"];\n    let counter = 0;\n    let elem = document.getElementById(\"changeText\");\n    setInterval(change, 2000);\n    function change() {\n     elem.innerHTML = text[counter];\n        counter++;\n        if(counter >= text.length) { counter = 0; }\n    }\n    </script>\n\t\n\t<!------------------------------------------------------------------------\n\t\t\t\t\t\t\t\tHeader Content\n\t------------------------------------------------------------------------>\n\t\t\t<div class=\"container-fluid\" id=\"maincontent\">\n\t\t\t\t<div class=\"row pt-5 ml-2\">\n\t\t\t\t\t<h1 id=\"changeText\" class=\"display-3\">Dudes</h1><h1 class=\"display-3\">&nbspnight just got a little easier!</h1>\n\t\t\t\t</div> <!-- row -->\n\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\n\t\t\t\t<img src=\"dist/css/whitetear.png\" class=\"pull-bottom img-fluid\">\n\t\t\t\t</div>\n\t\t\t</div> <!-- container -->\n\t\n\t<!------------------------------------------------------------------------\n\t                    Skills Breakdown\n\t------------------------------------------------------------------------>\n\t\n\t\t\t<div class=\"container-fluid px-5\">\n\t\t\t\t<div class=\"row mb-5\">\n\t\t\t\t\t<div class=\"col-md-6 col-sm-12 text-left\">\n\t\t\t\t\t\t<h1 class=\"text-left col my-2 pl-0\">WHAT IS SWiTHER?</h1>\n\t\t\t\t\t\t<p>SWiTHER is a web-based application that solves the hassle that follows the question \"Where do you want to go?\" \n\t\t\t\t\t\t</p>\n\t\t\t\t\t\t<p>\n\t\t\t\t\t\tIt's a timeless, exhausting, and frustrating struggle. You're with a group of friends or your significant other and you're so hungry you start to wonder what the other person would taste like with a little ranch. Before resorting to cannibalism, try SWiTHER. We'll keep you from eating your friends, and find a happy place to dine or go out for drinks instead.</p>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"col-md-6 col-sm-12 pt-5 hidden-sm-down\">\n\t\t\t\t\t\t<img src=\"dist/css/SwitherRespDesign.png\" alt=\"\" class=\"img-fluid\">\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"row w-100 overview p-4\">\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"ion-thumbsdown display-1\"></i>\n\t\t\t\t\t\t\t<h4 class=\"text-center pt-3\">What You Don't Want</h4>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2 text-left\">It sounds crazy, but lets bring some logic into the equation.  First, decide what you don't want. You know when something doesn't sound that great, so you can save yourself a whole lot of work by having all parties eliminate what they aren't \"in the mood for.\"</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end first column -->\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"img-fluid ion-alert display-1\"></i>\n\t\t\t\t\t\t\t<h4 class=\"text-center pt-3\">Don't fight!</h4>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2 text-left\">You know the fight. How do you not know what you want?! You can tell me about hundreds of \"things\" that you want, but you have no idea what you want to eat at this moment?! You suggest pizza, but the other person just had that last night. They suggest Chinese, but you were planning on having Chinese with family later on in the day.</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end second column -->\n\t\t\t\t\t<div class=\"col-12 col-md-4 col-lg-4 text-center\">\n\t\t\t\t\t\t<figure class=\"figure\">\n\t\t\t\t\t\t\t<i class=\"img-fluid ion-checkmark display-1\" ></i>\n\t\t\t\t\t\t\t<h4 class=\"text-center pt-3\">Match it!</h4>\n\t\t\t\t\t\t\t<hr class=\"w-50 mt-2\">\n\t\t\t\t\t\t\t<p class=\"p-2 text-left\">After going through SWiTHER you'll have a list of matches. Decisions made easier. No one became a cannibal and everyone is happy. Sometimes people just need a leader, and other times people just need to succomb to their destiny. SWiTHER is now your leader. You're welcome.</p>\n\t\t\t\t\t\t</figure>\n\t\t\t\t\t</div> <!-- end third column -->\n\t\t\t\t</div> <!-- end row -->\n\t\t\t</div> <!-- end container -->\n\t\n\n</div>";
 
 },{}],11:[function(require,module,exports){
 'use strict';
@@ -658,12 +704,18 @@ var newEventController = function newEventController($rootScope, $auth, $http, $
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.latitude = position.coords.latitude;
+    });
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.longitude = position.coords.longitude;
+    });
 };
 
 exports.default = newEventController;
 
 },{}],19:[function(require,module,exports){
-module.exports = "<div id=\"newEvent\">\n    <div class=\"container text-center mt-3 py-3 w-75 px-2\">\n        <div class=\"row\">\n            <div class=\"col text-left pl-3\">\n                <p go-click=\"auth.dashboard\"><i class=\"ion-android-arrow-back\"></i> BACK</p>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <h1>Headed out tonight?</h1>\n                <!-- <p>Choose your group below, enter a search term like \"Tacos\" and a general location and hit Get Results!</p> -->\n                <ul class=\"p-0\" style=\"list-style: none;\">\n                    <li>Choose your group.</li>\n                    <li>Enter a search term. (i.e. \"Tacos\")</li>\n                    <li>Enter a location (i.e. \"Lexington, KY\")</li>\n                    <li>Hit Go!</li>\n                </ul>\n\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group row\">\n                    <label for=\"groupSelect\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Select Group</label>\n                    <div class=\"col-sm-12 col-md-10\">              \n                        <select class=\"form-control custom-select\" id=\"groupSelect\">\n                            <option>Please select one</option>\n                            <option ng-repeat=\"group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1]\" value=\"{{group.id}}\">{{group.group_name}}</option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group row\">\n                    <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Search</label>\n                    <div class=\"col-sm-12 col-md-10\">\n                        <input class=\"form-control\" placeholder=\"Enter destination...\" name=\"term\" id=\"term\">\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div class=\"form-group row\">\n                    <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Location</label>\n                    <div class=\"col-sm-12 col-md-10\">\n                        <input type=\"text\" class=\"form-control\" placeholder=\"City, State or ZipCode\" name=\"location\" id=\"location\">\n                    </div>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row\">      \n            <div class=\"col\">\n                <button class=\"btn btn-outline-primary btn-lg\" ng-click=\"$ctrl.$rootScope.searchYelp()\">Go!</button>\n            </div>\n        </div>\n\n\n    </div>\n</div>";
+module.exports = "<div id=\"newEvent\">\n    <div class=\"container text-center mt-3 py-3 w-75 px-2\">\n        <div class=\"row\">\n            <div class=\"col text-left pl-3\">\n                <p go-click=\"auth.dashboard\"><i class=\"ion-android-arrow-back\"></i> BACK</p>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n                <h1>Headed out tonight?</h1>\n                <p>Choose your group below, enter a search term like \"Tacos\" and a general location and hit Get Results!</p>\n            </div>\n        </div>\n<form name=\"newEventForm\" novalidate>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"groupSelect\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Select Group</label>\n                <div class=\"col-sm-12 col-md-10\">              \n                    <select class=\"form-control custom-select\" id=\"groupSelect\" name=\"groupSelect\" ng-model=\"groupSelect\" required\n    ng-options=\"group.id as group.group_name for group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1] track by group.id\" >\n                        <option value=\"\">-- Select Group --</option>\n                    </select>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Search</label>\n                <div class=\"col-sm-12 col-md-10\">\n                    <input class=\"form-control\" placeholder=\"Enter a search term (i.e. Restaurants)\" name=\"term\" id=\"term\" ng-model=\"term\" required ng-required=\"true\">\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"location\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Location</label>\n                <div class=\"col-10 col-md-8 pr-0\">\n                    <input type=\"text\" class=\"form-control\" placeholder=\"Enter a City, ST or Zip Code\" name=\"location\" id=\"location\" required ng-required=\"true\" onfocus=\"this.removeAttribute('readonly');\">\n                </div>\n                <div class=\"col-2 pl-0\"><button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.setLocation()\"><i class=\"fa fa-map-marker text-white\"></i></button></div>\n            </div>\n        </div>\n    </div>\n    \n    <div class=\"row\">      \n        <div class=\"col\">\n            <button class=\"btn btn-outline-primary btn-lg\" ng-click=\"$ctrl.$rootScope.searchYelp()\" ng-disabled=\"newEventForm.$invalid\">Go!</button>\n        </div>\n    </div>\n</form>\n\n\n    </div>\n</div>";
 
 },{}],20:[function(require,module,exports){
 'use strict';
@@ -685,6 +737,9 @@ function apiService($resource) {
 	var getUserGroups = function getUserGroups() {
 		return $resource('https://swither.herokuapp.com/api/findgroups/:id', { id: "@id" });
 	};
+	var seeLikesinGroup = function seeLikesinGroup() {
+		return $resource('https://swither.herokuapp.com/api/likes/:id', { id: "@id" });
+	};
 	var addUserToGroup = function addUserToGroup() {
 		return $resource('https://swither.herokuapp.com/api/usergroups');
 	};
@@ -705,6 +760,7 @@ function apiService($resource) {
 		addLike: addLike,
 		addGroup: addGroup,
 		getUserGroups: getUserGroups,
+		seeLikesinGroup: seeLikesinGroup,
 		addUserToGroup: addUserToGroup,
 		joinGroup: joinGroup,
 		refreshMatches: refreshMatches,
@@ -767,6 +823,6 @@ var swipeScreenController = function swipeScreenController($rootScope, $auth, $h
 exports.default = swipeScreenController;
 
 },{}],23:[function(require,module,exports){
-module.exports = "<div id=\"swipeScreen\">\n    <div class=\"container\">\n\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"alert\" ng-if=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n        </div>\n    </div>\n    <div class=\"card card-default mt-2\">\n        <div class=\"container-fluid m-0\">\n            <div class=\"row bg-inverse pt-5 pb-2\">\n                <div class=\"col-6 mx-auto\">\n                    <img class=\"img-fluid\" src=\"{{$ctrl.$rootScope.searchResults[0][0].image_url}}\">\n                </div>\n                <div class=\"col-12 text-center text-white mt-3 mb-0\">\n                    <h3>{{$ctrl.$rootScope.searchResults[0][0].name}}</h3>\n                    <p>{{$ctrl.$rootScope.searchResults[0][0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0][0].location.display_address[1]}}</p>\n                    <sub class=\"align-text-top\">{{$ctrl.$rootScope.searchResults[0][0].phone}}</sub>\n                </div>\n            </div>\n            <div class=\"row my-2 justify-content-center\">\n                <div class=\"col hidden-sm-down\"></div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-money\"></i>\n                    <br> Price\n                    <h4>{{$ctrl.$rootScope.searchResults[0][0].price}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-star\"></i>\n                    <br> Rating\n                    <h4>{{$ctrl.$rootScope.searchResults[0][0].rating}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-cutlery\"></i>\n                    <br>Cuisine\n                    <h5>{{$ctrl.$rootScope.searchResults[0][0].categories[0].title}}</h5>\n                </div>\n                <div class=\"col text-center hidden-sm-down\">\n                    <i class=\"fa fa-laptop\"></i>\n                    <br><a href=\"{{$ctrl.$rootScope.searchResults[0][0].url}}\" target=\"_blank\">Website</a>\n                </div>\n                <div class=\"col hidden-sm-down\"></div>\n            </div>\n        </div>\n    </div>\n\n    <!-- like/pass buttons -->\n\n    <div class=\"row justify-content-center mt-2\">\n        <div class=\"col\"></div>\n        <div class=\"col text-center\">\n                <i id=\"dislike\" class=\"fa fa-times-circle-o fa-5x\" style=\"font-size: 8em;\"  ng-click=\"$ctrl.$rootScope.skipPlace()\"></i>\n        </div>\n        <div class=\"col text-center\">\n                <i id=\"like\" class=\"fa fa-plus-circle fa-5x\" style=\"font-size: 8em;\" ng-click=\"$ctrl.$rootScope.saveLike()\"></i>\n        </div>\n        <div class=\"col\"></div>\n    </div>\n\n\n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->\n\n\n\n\n\n";
+module.exports = "\n<div id=\"swipeScreen\">\n\n    <h1 id=\"likeMessage\" class=\"display-1\" ng-show=\"$ctrl.$rootScope.likeAlert\">{{$ctrl.$rootScope.message}}</h1>\n    <h1 id=\"skipMessage\" class=\"display-1\" ng-show=\"$ctrl.$rootScope.skipAlert\">{{$ctrl.$rootScope.message}}</h1>\n    <div class=\"container\" id=\"swipeContainer\">\n    <!-- {{$ctrl.$rootScope.searchResults[0].length}} -->\n    <div class=\"card card-default mt-2 mx-auto\">\n        <div class=\"container-fluid m-0\">\n            <div class=\"row bg-inverse py-3\">\n                <div class=\"col-6 mx-auto big-screen\">\n                    <img class=\"absolute img-fluid mx-auto\" src=\"{{$ctrl.$rootScope.searchResults[0][0].image_url}}\">\n                </div>\n                <div class=\"col-12 text-center text-white mt-3 mb-0\">\n                    <h3>{{$ctrl.$rootScope.searchResults[0][0].name}}</h3>\n                    <hr class=\"w-50\" style=\"background-color: white;\">\n                    <p class=\"text-white mb-1\">{{$ctrl.$rootScope.searchResults[0][0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0][0].location.display_address[1]}}</p>\n                    <sub class=\"align-text-top my-0\">{{$ctrl.$rootScope.searchResults[0][0].display_phone}}</sub>\n                </div>\n            </div>\n            <div class=\"row my-2 justify-content-center\">\n                <div class=\"col hidden-sm-down\"></div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-money\"></i>\n                    <br><p class=\"mb-1\"> Price</p> \n                    <hr class=\"my-1 w-100\">                   \n                    <h5>{{$ctrl.$rootScope.searchResults[0][0].price}}</h5>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-star\"></i>\n                    <br><p class=\"mb-1\"> Rating</p>\n                    <hr class=\"my-1 w-100\">\n                    <h5>{{$ctrl.$rootScope.searchResults[0][0].rating}}</h5>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-laptop\"></i>\n                    <br><p class=\"mb-1\">Website</p>\n                    <hr class=\"my-1 w-100\">\n                    <a href=\"{{$ctrl.$rootScope.searchResults[0][0].url}}\" target=\"_blank\"><h5>Visit</h5></a>\n                </div>\n                <div class=\"col hidden-sm-down\"></div>\n            </div>\n        </div>\n    </div>\n\n    <!-- like/pass buttons -->\n\n    <div class=\"row\">\n        <div class=\"col text-right\">\n                <i id=\"dislike\" class=\"ion-thumbsdown mt-1\" style=\"font-size: 6em;\"  ng-click=\"$ctrl.$rootScope.skipPlace()\"></i>\n        </div>\n        <div class=\"col text-left\">\n                <i id=\"like\" class=\"ion-heart mt-1\" style=\"font-size: 6em;\" ng-click=\"$ctrl.$rootScope.saveLike()\"></i>\n        </div>\n    </div>\n\n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->\n\n\n\n\n\n";
 
 },{}]},{},[4]);

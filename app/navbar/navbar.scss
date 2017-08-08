@@ -1,4 +1,5 @@
 #navbar {
+	z-index: 51;
 	.container {
 		background-color: #7f0c0b;
 	}
@@ -8,4 +9,11 @@
 	}
 
 	color: white;
+
+	a {
+		cursor: pointer; 
+		cursor: hand;
+		
+	}
+
 }

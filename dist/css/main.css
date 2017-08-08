@@ -7070,15 +7070,49 @@ html, body {
   width: 100%;
   position: fixed; }
 
+h1, i {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+main {
+  /* end 'enter' transition */ }
+  main.ng-enter {
+    /* start 'enter' transition */
+    /* transition on enter for .5s */
+    -webkit-transition: .5s;
+    -o-transition: .5s;
+    transition: .5s;
+    /* start with opacity 0 (invisible) */
+    opacity: 0; }
+  main.ng-enter-active {
+    /* end with opacity 1 (fade in) */
+    opacity: 1; }
+
+a {
+  cursor: hand; }
+
+#loadScreen {
+  z-index: 50;
+  height: 100vh;
+  width: 100%;
+  -webkit-transition: all linear .3s;
+  -o-transition: all linear .3s;
+  transition: all linear .3s;
+  margin: auto;
+  padding-top: 25%; }
+
+#loadScreen.ng-hide {
+  opacity: 0; }
+
 #dashboard {
   color: #7f0c0b; }
-  #dashboard i:hover {
+  #dashboard .animated:hover {
     -webkit-box-shadow: 25px 25px 25px 25px #929292;
     box-shadow: 25px 25px 50px 5px #929292;
     -webkit-transition: .5s;
     -o-transition: .5s;
     transition: .5s; }
-  #dashboard i {
+  #dashboard .animated {
     -webkit-transition: .5s;
     -o-transition: .5s;
     transition: .5s; }
@@ -7086,7 +7120,7 @@ html, body {
 #matchesHTML p {
   color: #7f0c0b; }
 
-#createGroup h1, #joinGroupPage h1, #dashboard h1, #matchesHTML h1 {
+#createGroup h1, #createGroup h2, #createGroup h4, #joinGroupPage h1, #joinGroupPage h2, #joinGroupPage h4, #dashboard h1, #dashboard h2, #dashboard h4, #matchesHTML h1, #matchesHTML h2, #matchesHTML h4 {
   font-family: 'Alegreya Sans', sans-serif;
   color: #7f0c0b; }
 
@@ -7097,6 +7131,37 @@ html, body {
   background: rgba(255, 255, 255, 0.6);
   -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
           box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
+
+#landing {
+  color: #7f0c0b;
+  background-color: white; }
+  #landing #maincontent {
+    background-image: url(./food.jpg);
+    -webkit-background-size: cover;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 400px;
+    display: table;
+    width: 100%; }
+  #landing #changeText {
+    -webkit-transition: 1s;
+    -o-transition: 1s;
+    transition: 1s; }
+  #landing .pull-bottom {
+    position: absolute;
+    bottom: 0;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0)), color-stop(90%, white));
+    background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), white 90%);
+    background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0), white 90%);
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), white 90%);
+    margin-bottom: -5px; }
+  #landing h1, #landing h3, #landing h4 {
+    font-family: 'Alegreya Sans', sans-serif;
+    text-shadow: 3px 3px 5px white; }
+  #landing #whatIsSwither {
+    background-color: #f1f1f1; }
 
 #login h1 {
   font-family: 'Alegreya Sans', sans-serif;
@@ -7123,11 +7188,15 @@ html, body {
           box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
 
 #navbar {
+  z-index: 51;
   color: white; }
   #navbar .container {
     background-color: #7f0c0b; }
   #navbar h3 {
     font-family: 'Alegreya Sans', sans-serif; }
+  #navbar a {
+    cursor: pointer;
+    cursor: hand; }
 
 #newEvent h1 {
   font-family: 'Alegreya Sans', sans-serif;
@@ -7144,48 +7213,62 @@ html, body {
   -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
           box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
 
-#landing {
-  color: #7f0c0b;
-  background-color: white; }
-  #landing #maincontent {
-    background-image: url(./food.jpg);
-    -webkit-background-size: cover;
-    background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 400px;
-    display: table;
-    width: 100%; }
-  #landing #title {
-    position: relative;
-    -webkit-animation: mymove 1s;
-    -o-animation: mymove 1s;
-       animation: mymove 1s;
-    font-weight: bold;
-    color: white; }
-  #landing #title {
-    -webkit-animation-timing-function: ease-out; }
-  #landing #title {
-    -webkit-animation-timing-function: ease-out;
-         -o-animation-timing-function: ease-out;
-            animation-timing-function: ease-out; }
-  #landing .pull-bottom {
-    position: absolute;
-    bottom: 0;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0)), color-stop(90%, white));
-    background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), white 90%);
-    background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0), white 90%);
-    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), white 90%);
-    margin-bottom: -5px; }
-  #landing h1, #landing h3 {
-    font-family: 'Alegreya Sans', sans-serif;
-    text-shadow: 3px 3px 2px #969696; }
-  #landing #whatIsSwither {
-    background-color: #f1f1f1; }
-
 #swipeScreen #like {
-  color: green; }
+  color: #7f0c0b; }
 
 #swipeScreen #dislike {
+  color: #7f0c0b; }
+
+#swipeScreen .card {
+  max-width: 500px; }
+
+#swipeScreen .big-screen {
+  position: relative;
+  overflow: hidden;
+  height: 150px;
+  padding: 0; }
+
+#swipeScreen .absolute {
+  position: absolute;
+  margin: auto;
+  padding: 0; }
+
+#swipeScreen h5 {
+  color: #7f0c0b; }
+
+#swipeScreen .rotate {
+  color: white !important;
+  -webkit-transition: linear .5s ease-in;
+  -o-transition: linear .5s ease-in;
+  transition: linear .5s ease-in; }
+
+#swipeScreen #likeMessage {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-top: 30%;
+  color: green;
+  -webkit-transform: rotate(19deg);
+      -ms-transform: rotate(19deg);
+       -o-transform: rotate(19deg);
+          transform: rotate(19deg);
+  text-shadow: 3px 2px 5px #969696; }
+
+#swipeScreen #skipMessage {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-top: 30%;
+  color: white;
+  -webkit-transform: rotate(19deg);
+      -ms-transform: rotate(19deg);
+       -o-transform: rotate(19deg);
+          transform: rotate(19deg);
+  text-shadow: 3px 2px 5px #969696;
   color: red; }

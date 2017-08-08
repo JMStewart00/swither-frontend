@@ -9,7 +9,7 @@ import apiService from './resource.services.js';
 
 
 // instantiation of the module of app, where injections will go.
-angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
+angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
 .component('app', appComponent)
 .component('login', loginComponent)
 .component('navbar', navbarComponent)
@@ -71,7 +71,11 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
                         url: '/swipes',
                         templateUrl: './app/swipeScreen/swipeScreen.html',
                         controller: swipeScreenComponent.controller,
-                        controllerAs: '$ctrl'
+                        controllerAs: '$ctrl',
+                        onExit: ($rootScope) => {
+                            $rootScope.alert = false;
+                            $rootScope.message = '';
+                        }
                 })
                 .state('auth.addgroup', {
                         url: '/addgroup',
@@ -83,20 +87,31 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
                         url: '/joingroup',
                         templateUrl: './app/dashboard/joingroup.html',
                         controller: dashboardComponent.controller,
-                        controllerAs: '$ctrl',
-                        onEnter: () => {
-                            console.log('hey');
-                        },
-                        onExit: () => {
-                            console.log('exit');
-                        },
+                        controllerAs: '$ctrl'
                           
                 })
                 .state('auth.matches', {
                     url: '/matches',
                     templateUrl: './app/dashboard/matches.html',
                     controller: dashboardComponent.controller,
-                    controllerAs: '$ctrl'
+                    controllerAs: '$ctrl',
+                    onExit: ($rootScope) => {
+                        $rootScope.matches = [];
+                    },
+
+                })
+                .state('auth.likes', {
+                    url: '/likes',
+                    templateUrl: './app/dashboard/likes.html',
+                    controller: dashboardComponent.controller,
+                    controllerAs: '$ctrl',
+                    onExit: ($rootScope) => {
+                        $rootScope.likes = [];
+                    },
+
+                })
+                .state('auth.load', {
+                    templateUrl: './app/loadscreen.html',
                 })
                 .state('auth', {
                         resolve: {
@@ -155,7 +170,8 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource'])
             });
         }
     }
-}]);
+}])
+
 
 
 
