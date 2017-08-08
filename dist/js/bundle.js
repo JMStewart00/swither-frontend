@@ -15,7 +15,7 @@ var _app4 = _interopRequireDefault(_app3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_app4.default.$inject = ['$rootScope', '$http', '$location', '$auth', '$state', 'apiService'];
+_app4.default.$inject = ['$rootScope', '$http', '$location', '$auth', '$state', '$timeout', 'apiService'];
 
 var appComponent = {
 	template: _app2.default,
@@ -33,7 +33,7 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiService) {
+var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $timeout, apiService) {
     _classCallCheck(this, appCtrl);
 
     var ctrl = this;
@@ -44,6 +44,23 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
     ctrl.$rootScope.alert = false;
     ctrl.$rootScope.groups = [];
     ctrl.$rootScope.loadScreen = false;
+    ctrl.$rootScope.likeAlert = false;
+    ctrl.$rootScope.skipAlert = false;
+    ctrl.$rootScope = $rootScope;
+    ctrl.$rootScope.currentLocation = '';
+
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.latitude = position.coords.latitude;
+    });
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.longitude = position.coords.longitude;
+    });
+
+    ctrl.$rootScope.setLocation = function () {
+        $('#location').prop('readonly', true);
+        ctrl.$rootScope.currentLocation = ctrl.$rootScope.latitude + ", " + ctrl.$rootScope.longitude;
+        $('#location').val(ctrl.$rootScope.currentLocation);
+    };
 
     // global logout function to be able to be called from anywhere.
     ctrl.$rootScope.logout = function () {
@@ -57,16 +74,22 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         $state.go('login');
     };
 
+    ctrl.$rootScope.seeLikesinGroup = function () {
+        console.log('yo');
+    };
+
     // search yelp with a form
     ctrl.$rootScope.searchYelp = function () {
         ctrl.$rootScope.alert = false;
         ctrl.$rootScope.loadScreen = true;
+
         // instantiate new search JSON
         ctrl.searchParameters = {
             // grab values with JQuery from form
             "term": $('#term').val(),
             "location": $('#location').val(),
-            "sort_by": 'rating'
+            "sort_by": 'rating',
+            "limit": 10
         };
 
         ctrl.$rootScope.selectedGroup = $('#groupSelect option:selected').val();
@@ -86,6 +109,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
 
     // Adding swipes to the database if it is liked
     ctrl.$rootScope.saveLike = function () {
+        ctrl.$rootScope.likeAlert = true;
         // grabbing userid for current logged in user
         ctrl.$rootScope.userId = $auth.getPayload().sub;
 
@@ -100,44 +124,48 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
         // calling on the service to do a post request to backend
         apiService.addLike().save({}, ctrl.like);
 
-        // taking the first result off the array to cycle through results
-        ctrl.$rootScope.searchResults[0].splice(0, 1);
-
         // set message to confirm add
-        ctrl.$rootScope.message = "Added to likes!";
+        ctrl.$rootScope.message = "LIKED!";
 
         // set alert to true to show on page
-        ctrl.$rootScope.alert = true;
+        $timeout(function () {
+            // taking the first result off the array to cycle through results
+            ctrl.$rootScope.searchResults[0].splice(0, 1);
+            ctrl.$rootScope.likeAlert = false;
+            ctrl.$rootScope.message = '';
+            // checks the results length to decide whether or not to redirect
+            if (ctrl.$rootScope.searchResults[0].length === 0) {
 
-        // checks the results length to decide whether or not to redirect
-        if (ctrl.$rootScope.searchResults[0].length === 0) {
+                // redirect statement
+                $state.go('auth.dashboard');
 
-            // redirect statement
-            $state.go('auth.dashboard');
-
-            ctrl.$rootScope.alert = false;
-        } // end if
+                ctrl.$rootScope.likeAlert = false;
+            } // end if
+        }, 750);
     }; // end saveLike()
 
 
     // skips a Place in results and discards it
     ctrl.$rootScope.skipPlace = function () {
-        // removes first element in the array
-        ctrl.$rootScope.searchResults[0].splice(0, 1);
 
         // sets message to skipped! 
-        ctrl.$rootScope.message = "Skipped!";
+        ctrl.$rootScope.skipAlert = true;
+        ctrl.$rootScope.message = "NOPE!";
 
-        // sets alert to true to show
-        ctrl.$rootScope.alert = true;
+        $timeout(function () {
+            // taking the first result off the array to cycle through results
+            ctrl.$rootScope.searchResults[0].splice(0, 1);
+            ctrl.$rootScope.skipAlert = false;
+            ctrl.$rootScope.message = '';
 
-        // checks the results length to decide whether or not to redirect
-        if (ctrl.$rootScope.searchResults[0].length === 0) {
+            // checks the results length to decide whether or not to redirect
+            if (ctrl.$rootScope.searchResults[0].length === 0) {
 
-            // redirect statement 
-            $state.go('auth.dashboard');
-            ctrl.$rootScope.alert = false;
-        }
+                // redirect statement 
+                $state.go('auth.dashboard');
+                ctrl.$rootScope.likeAlert = false;
+            }
+        }, 750);
     };
 
     // Adding swipes to the database if it is liked
@@ -190,7 +218,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, apiS
 
     ctrl.$rootScope.viewMatches = function () {
         ctrl.matchQuery = {
-            "group_id": $('#groupSelect option:selected').val()
+            "group_id": $('#matchRetrieve option:selected').val()
         };
         ctrl.incompatible = {
             "image_url": "./dist/css/wrong.png",
@@ -270,130 +298,139 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate']).co
 //configuration add-on
 .config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
 
-        // authentication routes definitions
-        $authProvider.loginUrl = 'https://swither.herokuapp.com/oauth/token';
-        $authProvider.signupUrl = 'https://swither.herokuapp.com/register';
+    // authentication routes definitions
+    $authProvider.loginUrl = 'https://swither.herokuapp.com/oauth/token';
+    $authProvider.signupUrl = 'https://swither.herokuapp.com/register';
 
-        // says to route to / on unknown or undefined routes.
-        $urlRouterProvider.otherwise('/');
+    // says to route to / on unknown or undefined routes.
+    $urlRouterProvider.otherwise('/');
 
-        // states
-        $stateProvider.state('landing', {
-                url: '/',
-                templateUrl: './app/landing/landing.html',
-                controller: _landing2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('login', {
-                url: '/login',
-                templateUrl: './app/login/login.html',
-                controller: _login2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('register', {
-                url: '/register',
-                templateUrl: './app/login/register.html',
-                controller: _login2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('auth.dashboard', {
-                url: '/dashboard',
-                templateUrl: './app/dashboard/dashboard.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl',
-                onExit: function onExit($rootScope) {
-                        $rootScope.getGroups();
-                }
-        }).state('auth.new', {
-                url: '/newevent',
-                templateUrl: './app/newEvent/newEvent.html',
-                controller: _newEvent2.default.controller,
-                controllerAs: '$ctrl',
-                onEnter: function onEnter($rootScope) {
-                        $rootScope.searchResults = [];
-                }
-        }).state('auth.swipes', {
-                url: '/swipes',
-                templateUrl: './app/swipeScreen/swipeScreen.html',
-                controller: _swipeScreen2.default.controller,
-                controllerAs: '$ctrl',
-                onExit: function onExit($rootScope) {
-                        $rootScope.alert = false;
-                        $rootScope.message = '';
-                }
-        }).state('auth.addgroup', {
-                url: '/addgroup',
-                templateUrl: './app/dashboard/creategroup.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('auth.joingroup', {
-                url: '/joingroup',
-                templateUrl: './app/dashboard/joingroup.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl'
+    // states
+    $stateProvider.state('landing', {
+        url: '/',
+        templateUrl: './app/landing/landing.html',
+        controller: _landing2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('login', {
+        url: '/login',
+        templateUrl: './app/login/login.html',
+        controller: _login2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('register', {
+        url: '/register',
+        templateUrl: './app/login/register.html',
+        controller: _login2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('auth.dashboard', {
+        url: '/dashboard',
+        templateUrl: './app/dashboard/dashboard.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.getGroups();
+        }
+    }).state('auth.new', {
+        url: '/newevent',
+        templateUrl: './app/newEvent/newEvent.html',
+        controller: _newEvent2.default.controller,
+        controllerAs: '$ctrl',
+        onEnter: function onEnter($rootScope) {
+            $rootScope.searchResults = [];
+        }
+    }).state('auth.swipes', {
+        url: '/swipes',
+        templateUrl: './app/swipeScreen/swipeScreen.html',
+        controller: _swipeScreen2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.alert = false;
+            $rootScope.message = '';
+        }
+    }).state('auth.addgroup', {
+        url: '/addgroup',
+        templateUrl: './app/dashboard/creategroup.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('auth.joingroup', {
+        url: '/joingroup',
+        templateUrl: './app/dashboard/joingroup.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl'
 
-        }).state('auth.matches', {
-                url: '/matches',
-                templateUrl: './app/dashboard/matches.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl',
-                onExit: function onExit($rootScope) {
-                        $rootScope.matches = [];
-                }
-
-        }).state('auth.load', {
-                templateUrl: './app/loadscreen.html'
-        }).state('auth', {
-                resolve: {
-                        loginRequired: loginRequired
-                }
-        });
-
-        function skipIfLoggedIn($q, $auth) {
-                var deferred = $q.defer();
-                if ($auth.isAuthenticated()) {
-                        deferred.reject();
-                } else {
-                        deferred.resolve();
-                }
-                return deferred.promise;
+    }).state('auth.matches', {
+        url: '/matches',
+        templateUrl: './app/dashboard/matches.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.matches = [];
         }
 
-        function loginRequired($q, $state, $auth) {
-                var deferred = $q.defer();
-                if ($auth.isAuthenticated()) {
-                        deferred.resolve();
-                } else {
-                        $state.go('login');
-                }
-                return deferred.promise;
+    }).state('auth.likes', {
+        url: '/likes',
+        templateUrl: './app/dashboard/likes.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.likes = [];
         }
+
+    }).state('auth.load', {
+        templateUrl: './app/loadscreen.html'
+    }).state('auth', {
+        resolve: {
+            loginRequired: loginRequired
+        }
+    });
+
+    function skipIfLoggedIn($q, $auth) {
+        var deferred = $q.defer();
+        if ($auth.isAuthenticated()) {
+            deferred.reject();
+        } else {
+            deferred.resolve();
+        }
+        return deferred.promise;
+    }
+
+    function loginRequired($q, $state, $auth) {
+        var deferred = $q.defer();
+        if ($auth.isAuthenticated()) {
+            deferred.resolve();
+        } else {
+            $state.go('login');
+        }
+        return deferred.promise;
+    }
 })
 
 // custom angular directive for going to different routes and clicking on any element with ng-click
 .directive('goClick', function ($state) {
-        return function (scope, element, attrs) {
-                var path = void 0;
+    return function (scope, element, attrs) {
+        var path = void 0;
 
-                attrs.$observe('goClick', function (val) {
-                        path = val;
-                });
+        attrs.$observe('goClick', function (val) {
+            path = val;
+        });
 
-                element.bind('click', function () {
-                        scope.$apply(function () {
-                                $state.go(path);
-                        });
-                });
-        };
+        element.bind('click', function () {
+            scope.$apply(function () {
+                $state.go(path);
+            });
+        });
+    };
 })
 
 // custom angular directive for limiting the enterable values into certain fields.
 .directive("limitTo", [function () {
-        return {
-                link: function link(scope, elem, attrs) {
-                        var limit = parseInt(attrs.limitTo);
-                        angular.element(elem).on("keypress", function (e) {
-                                if (elem[0].value.length == limit) e.preventDefault();
-                        });
-                }
-        };
+    return {
+        link: function link(scope, elem, attrs) {
+            var limit = parseInt(attrs.limitTo);
+            angular.element(elem).on("keypress", function (e) {
+                if (elem[0].value.length == limit) e.preventDefault();
+            });
+        }
+    };
 }]);
 
 },{"./app.component":1,"./dashboard/dashboard.component":5,"./landing/landing.component":8,"./login/login.component":11,"./navbar/navbar.component":14,"./newEvent/newEvent.component":17,"./resource.services.js":20,"./swipeScreen/swipeScreen.component":21}],5:[function(require,module,exports){
@@ -667,12 +704,18 @@ var newEventController = function newEventController($rootScope, $auth, $http, $
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.latitude = position.coords.latitude;
+    });
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.longitude = position.coords.longitude;
+    });
 };
 
 exports.default = newEventController;
 
 },{}],19:[function(require,module,exports){
-module.exports = "<div id=\"newEvent\">\n    <div class=\"container text-center mt-3 py-3 w-75 px-2\">\n        <div class=\"row\">\n            <div class=\"col text-left pl-3\">\n                <p go-click=\"auth.dashboard\"><i class=\"ion-android-arrow-back\"></i> BACK</p>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n                <h1>Headed out tonight?</h1>\n                <p>Choose your group below, enter a search term like \"Tacos\" and a general location and hit Get Results!</p>\n            </div>\n        </div>\n<form name=\"newEventForm\" novalidate>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"groupSelect\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Select Group</label>\n                <div class=\"col-sm-12 col-md-10\">              \n                    <select class=\"form-control custom-select\" id=\"groupSelect\" name=\"groupSelect\" ng-model=\"groupSelect\" required\n    ng-options=\"group.id as group.group_name for group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1] track by group.id\" >\n                        <option value=\"\">-- Select Group --</option>\n                    </select>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Search</label>\n                <div class=\"col-sm-12 col-md-10\">\n                    <input class=\"form-control\" placeholder=\"Enter a search term (i.e. Restaurants)\" name=\"term\" id=\"term\" ng-model=\"term\" required ng-required=\"true\">\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"location\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Location</label>\n                <div class=\"col-sm-12 col-md-10\">\n                    <input type=\"text\" class=\"form-control\" placeholder=\"Enter a City, ST or Zip Code\" name=\"location\" id=\"location\" ng-model=\"location\" required ng-required=\"true\">\n                </div>\n            </div>\n        </div>\n    </div>\n    \n    <div class=\"row\">      \n        <div class=\"col\">\n            <button class=\"btn btn-outline-primary btn-lg\" ng-click=\"$ctrl.$rootScope.searchYelp()\" ng-disabled=\"newEventForm.$invalid\">Go!</button>\n        </div>\n    </div>\n</form>\n\n\n    </div>\n</div>";
+module.exports = "<div id=\"newEvent\">\n    <div class=\"container text-center mt-3 py-3 w-75 px-2\">\n        <div class=\"row\">\n            <div class=\"col text-left pl-3\">\n                <p go-click=\"auth.dashboard\"><i class=\"ion-android-arrow-back\"></i> BACK</p>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n                <h1>Headed out tonight?</h1>\n                <p>Choose your group below, enter a search term like \"Tacos\" and a general location and hit Get Results!</p>\n            </div>\n        </div>\n<form name=\"newEventForm\" novalidate>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"groupSelect\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Select Group</label>\n                <div class=\"col-sm-12 col-md-10\">              \n                    <select class=\"form-control custom-select\" id=\"groupSelect\" name=\"groupSelect\" ng-model=\"groupSelect\" required\n    ng-options=\"group.id as group.group_name for group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1] track by group.id\" >\n                        <option value=\"\">-- Select Group --</option>\n                    </select>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Search</label>\n                <div class=\"col-sm-12 col-md-10\">\n                    <input class=\"form-control\" placeholder=\"Enter a search term (i.e. Restaurants)\" name=\"term\" id=\"term\" ng-model=\"term\" required ng-required=\"true\">\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"location\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Location</label>\n                <div class=\"col-10 col-md-8 pr-0\">\n                    <input type=\"text\" class=\"form-control\" placeholder=\"Enter a City, ST or Zip Code\" name=\"location\" id=\"location\" required ng-required=\"true\" onfocus=\"this.removeAttribute('readonly');\">\n                </div>\n                <div class=\"col-2 pl-0\"><button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.setLocation()\"><i class=\"fa fa-map-marker text-white\"></i></button></div>\n            </div>\n        </div>\n    </div>\n    \n    <div class=\"row\">      \n        <div class=\"col\">\n            <button class=\"btn btn-outline-primary btn-lg\" ng-click=\"$ctrl.$rootScope.searchYelp()\" ng-disabled=\"newEventForm.$invalid\">Go!</button>\n        </div>\n    </div>\n</form>\n\n\n    </div>\n</div>";
 
 },{}],20:[function(require,module,exports){
 'use strict';
@@ -694,6 +737,9 @@ function apiService($resource) {
 	var getUserGroups = function getUserGroups() {
 		return $resource('https://swither.herokuapp.com/api/findgroups/:id', { id: "@id" });
 	};
+	var seeLikesinGroup = function seeLikesinGroup() {
+		return $resource('https://swither.herokuapp.com/api/likes/:id', { id: "@id" });
+	};
 	var addUserToGroup = function addUserToGroup() {
 		return $resource('https://swither.herokuapp.com/api/usergroups');
 	};
@@ -714,6 +760,7 @@ function apiService($resource) {
 		addLike: addLike,
 		addGroup: addGroup,
 		getUserGroups: getUserGroups,
+		seeLikesinGroup: seeLikesinGroup,
 		addUserToGroup: addUserToGroup,
 		joinGroup: joinGroup,
 		refreshMatches: refreshMatches,
@@ -776,6 +823,6 @@ var swipeScreenController = function swipeScreenController($rootScope, $auth, $h
 exports.default = swipeScreenController;
 
 },{}],23:[function(require,module,exports){
-module.exports = "<div id=\"swipeScreen\">\n    <div class=\"container\" id=\"swipeContainer\">\n    <div class=\"card card-default mt-2 mx-auto\">\n        <div class=\"container-fluid m-0\">\n            <div class=\"row bg-inverse pt-5 pb-2\">\n                <div class=\"col-6 mx-auto\">\n                    <img class=\"img-fluid\" src=\"{{$ctrl.$rootScope.searchResults[0][0].image_url}}\">\n                </div>\n                <div class=\"col-12 text-center text-white mt-3 mb-0\">\n                    <h3>{{$ctrl.$rootScope.searchResults[0][0].name}}</h3>\n                    <p>{{$ctrl.$rootScope.searchResults[0][0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0][0].location.display_address[1]}}</p>\n                    <sub class=\"align-text-top\">{{$ctrl.$rootScope.searchResults[0][0].phone}}</sub>\n                </div>\n            </div>\n            <div class=\"row my-2 justify-content-center\">\n                <div class=\"col hidden-sm-down\"></div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-money\"></i>\n                    <br> Price\n                    <h4>{{$ctrl.$rootScope.searchResults[0][0].price}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-star\"></i>\n                    <br> Rating\n                    <h4>{{$ctrl.$rootScope.searchResults[0][0].rating}}</h4>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-cutlery\"></i>\n                    <br>Cuisine\n                    <h5>{{$ctrl.$rootScope.searchResults[0][0].categories[0].title}}</h5>\n                </div>\n                <div class=\"col text-center hidden-sm-down\">\n                    <i class=\"fa fa-laptop\"></i>\n                    <br><a href=\"{{$ctrl.$rootScope.searchResults[0][0].url}}\" target=\"_blank\">Website</a>\n                </div>\n                <div class=\"col hidden-sm-down\"></div>\n            </div>\n        </div>\n    </div>\n\n    <!-- like/pass buttons -->\n\n    <div class=\"row justify-content-center mt-2\">\n        <div class=\"col\"></div>\n        <div class=\"col text-center\">\n                <i id=\"dislike\" class=\"fa fa-times-circle-o fa-5x\" style=\"font-size: 8em;\"  ng-click=\"$ctrl.$rootScope.skipPlace()\"></i>\n        </div>\n        <div class=\"col text-center\">\n                <i id=\"like\" class=\"fa fa-plus-circle fa-5x\" style=\"font-size: 8em;\" ng-click=\"$ctrl.$rootScope.saveLike()\"></i>\n        </div>\n        <div class=\"col\"></div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col text-center\">\n            <div class=\"alert-dismissible\" ng-if=\"$ctrl.$rootScope.alert\">{{$ctrl.$rootScope.message}}</div>\n        </div>\n    </div>\n\n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->\n\n\n\n\n\n";
+module.exports = "\n<div id=\"swipeScreen\">\n\n    <h1 id=\"likeMessage\" class=\"display-1\" ng-show=\"$ctrl.$rootScope.likeAlert\">{{$ctrl.$rootScope.message}}</h1>\n    <h1 id=\"skipMessage\" class=\"display-1\" ng-show=\"$ctrl.$rootScope.skipAlert\">{{$ctrl.$rootScope.message}}</h1>\n    <div class=\"container\" id=\"swipeContainer\">\n    <!-- {{$ctrl.$rootScope.searchResults[0].length}} -->\n    <div class=\"card card-default mt-2 mx-auto\">\n        <div class=\"container-fluid m-0\">\n            <div class=\"row bg-inverse py-3\">\n                <div class=\"col-6 mx-auto big-screen\">\n                    <img class=\"absolute img-fluid mx-auto\" src=\"{{$ctrl.$rootScope.searchResults[0][0].image_url}}\">\n                </div>\n                <div class=\"col-12 text-center text-white mt-3 mb-0\">\n                    <h3>{{$ctrl.$rootScope.searchResults[0][0].name}}</h3>\n                    <hr class=\"w-50\" style=\"background-color: white;\">\n                    <p class=\"text-white mb-1\">{{$ctrl.$rootScope.searchResults[0][0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0][0].location.display_address[1]}}</p>\n                    <sub class=\"align-text-top my-0\">{{$ctrl.$rootScope.searchResults[0][0].display_phone}}</sub>\n                </div>\n            </div>\n            <div class=\"row my-2 justify-content-center\">\n                <div class=\"col hidden-sm-down\"></div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-money\"></i>\n                    <br><p class=\"mb-1\"> Price</p> \n                    <hr class=\"my-1 w-100\">                   \n                    <h5>{{$ctrl.$rootScope.searchResults[0][0].price}}</h5>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-star\"></i>\n                    <br><p class=\"mb-1\"> Rating</p>\n                    <hr class=\"my-1 w-100\">\n                    <h5>{{$ctrl.$rootScope.searchResults[0][0].rating}}</h5>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-laptop\"></i>\n                    <br><p class=\"mb-1\">Website</p>\n                    <hr class=\"my-1 w-100\">\n                    <a href=\"{{$ctrl.$rootScope.searchResults[0][0].url}}\" target=\"_blank\"><h5>Visit</h5></a>\n                </div>\n                <div class=\"col hidden-sm-down\"></div>\n            </div>\n        </div>\n    </div>\n\n    <!-- like/pass buttons -->\n\n    <div class=\"row\">\n        <div class=\"col text-right\">\n                <i id=\"dislike\" class=\"ion-thumbsdown mt-1\" style=\"font-size: 6em;\"  ng-click=\"$ctrl.$rootScope.skipPlace()\"></i>\n        </div>\n        <div class=\"col text-left\">\n                <i id=\"like\" class=\"ion-heart mt-1\" style=\"font-size: 6em;\" ng-click=\"$ctrl.$rootScope.saveLike()\"></i>\n        </div>\n    </div>\n\n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->\n\n\n\n\n\n";
 
 },{}]},{},[4]);
