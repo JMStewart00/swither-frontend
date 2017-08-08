@@ -6,6 +6,7 @@ function apiService($resource) {
 	let addGroup = () => $resource('https://swither.herokuapp.com/api/groups/');
 	let	addLike = () => $resource('https://swither.herokuapp.com/api/likes/');
 	let	getUserGroups = () => $resource('https://swither.herokuapp.com/api/findgroups/:id', {id: "@id"});
+	let	seeLikesinGroup = () => $resource('https://swither.herokuapp.com/api/likes/:id', {id: "@id"});
 	let addUserToGroup = () => $resource('https://swither.herokuapp.com/api/usergroups');
 	let joinGroup = () => $resource('https://swither.herokuapp.com/api/joingroup');
 	let refreshMatches = () => $resource('https://swither.herokuapp.com/api/matches/:id', {id:"@id"});
@@ -18,6 +19,7 @@ function apiService($resource) {
 				addLike : addLike,
 				addGroup : addGroup,
 				getUserGroups: getUserGroups,
+				seeLikesinGroup: seeLikesinGroup,
 				addUserToGroup: addUserToGroup,
 				joinGroup: joinGroup,
 				refreshMatches: refreshMatches,

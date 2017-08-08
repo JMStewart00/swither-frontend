@@ -74,6 +74,10 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
         $state.go('login');
     };
 
+    ctrl.$rootScope.seeLikesinGroup = function () {
+        console.log('yo');
+    };
+
     // search yelp with a form
     ctrl.$rootScope.searchYelp = function () {
         ctrl.$rootScope.alert = false;
@@ -93,8 +97,6 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
         // simple post request to the backend to send search parameters.
         // creating an array of searchResults with the data for use in Swipes
         $http.post('https://swither.herokuapp.com/api/index', ctrl.searchParameters).then(function (response) {
-            console.log(response.data[0]);
-            return;
             ctrl.$rootScope.searchResults.push(response.data);
             $state.go('auth.swipes');
             ctrl.$rootScope.loadScreen = false;
@@ -296,130 +298,139 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate']).co
 //configuration add-on
 .config(function ($stateProvider, $locationProvider, $urlRouterProvider, $authProvider) {
 
-        // authentication routes definitions
-        $authProvider.loginUrl = 'https://swither.herokuapp.com/oauth/token';
-        $authProvider.signupUrl = 'https://swither.herokuapp.com/register';
+    // authentication routes definitions
+    $authProvider.loginUrl = 'https://swither.herokuapp.com/oauth/token';
+    $authProvider.signupUrl = 'https://swither.herokuapp.com/register';
 
-        // says to route to / on unknown or undefined routes.
-        $urlRouterProvider.otherwise('/');
+    // says to route to / on unknown or undefined routes.
+    $urlRouterProvider.otherwise('/');
 
-        // states
-        $stateProvider.state('landing', {
-                url: '/',
-                templateUrl: './app/landing/landing.html',
-                controller: _landing2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('login', {
-                url: '/login',
-                templateUrl: './app/login/login.html',
-                controller: _login2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('register', {
-                url: '/register',
-                templateUrl: './app/login/register.html',
-                controller: _login2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('auth.dashboard', {
-                url: '/dashboard',
-                templateUrl: './app/dashboard/dashboard.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl',
-                onExit: function onExit($rootScope) {
-                        $rootScope.getGroups();
-                }
-        }).state('auth.new', {
-                url: '/newevent',
-                templateUrl: './app/newEvent/newEvent.html',
-                controller: _newEvent2.default.controller,
-                controllerAs: '$ctrl',
-                onEnter: function onEnter($rootScope) {
-                        $rootScope.searchResults = [];
-                }
-        }).state('auth.swipes', {
-                url: '/swipes',
-                templateUrl: './app/swipeScreen/swipeScreen.html',
-                controller: _swipeScreen2.default.controller,
-                controllerAs: '$ctrl',
-                onExit: function onExit($rootScope) {
-                        $rootScope.alert = false;
-                        $rootScope.message = '';
-                }
-        }).state('auth.addgroup', {
-                url: '/addgroup',
-                templateUrl: './app/dashboard/creategroup.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl'
-        }).state('auth.joingroup', {
-                url: '/joingroup',
-                templateUrl: './app/dashboard/joingroup.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl'
+    // states
+    $stateProvider.state('landing', {
+        url: '/',
+        templateUrl: './app/landing/landing.html',
+        controller: _landing2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('login', {
+        url: '/login',
+        templateUrl: './app/login/login.html',
+        controller: _login2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('register', {
+        url: '/register',
+        templateUrl: './app/login/register.html',
+        controller: _login2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('auth.dashboard', {
+        url: '/dashboard',
+        templateUrl: './app/dashboard/dashboard.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.getGroups();
+        }
+    }).state('auth.new', {
+        url: '/newevent',
+        templateUrl: './app/newEvent/newEvent.html',
+        controller: _newEvent2.default.controller,
+        controllerAs: '$ctrl',
+        onEnter: function onEnter($rootScope) {
+            $rootScope.searchResults = [];
+        }
+    }).state('auth.swipes', {
+        url: '/swipes',
+        templateUrl: './app/swipeScreen/swipeScreen.html',
+        controller: _swipeScreen2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.alert = false;
+            $rootScope.message = '';
+        }
+    }).state('auth.addgroup', {
+        url: '/addgroup',
+        templateUrl: './app/dashboard/creategroup.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl'
+    }).state('auth.joingroup', {
+        url: '/joingroup',
+        templateUrl: './app/dashboard/joingroup.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl'
 
-        }).state('auth.matches', {
-                url: '/matches',
-                templateUrl: './app/dashboard/matches.html',
-                controller: _dashboard2.default.controller,
-                controllerAs: '$ctrl',
-                onExit: function onExit($rootScope) {
-                        $rootScope.matches = [];
-                }
-
-        }).state('auth.load', {
-                templateUrl: './app/loadscreen.html'
-        }).state('auth', {
-                resolve: {
-                        loginRequired: loginRequired
-                }
-        });
-
-        function skipIfLoggedIn($q, $auth) {
-                var deferred = $q.defer();
-                if ($auth.isAuthenticated()) {
-                        deferred.reject();
-                } else {
-                        deferred.resolve();
-                }
-                return deferred.promise;
+    }).state('auth.matches', {
+        url: '/matches',
+        templateUrl: './app/dashboard/matches.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.matches = [];
         }
 
-        function loginRequired($q, $state, $auth) {
-                var deferred = $q.defer();
-                if ($auth.isAuthenticated()) {
-                        deferred.resolve();
-                } else {
-                        $state.go('login');
-                }
-                return deferred.promise;
+    }).state('auth.likes', {
+        url: '/likes',
+        templateUrl: './app/dashboard/likes.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl',
+        onExit: function onExit($rootScope) {
+            $rootScope.likes = [];
         }
+
+    }).state('auth.load', {
+        templateUrl: './app/loadscreen.html'
+    }).state('auth', {
+        resolve: {
+            loginRequired: loginRequired
+        }
+    });
+
+    function skipIfLoggedIn($q, $auth) {
+        var deferred = $q.defer();
+        if ($auth.isAuthenticated()) {
+            deferred.reject();
+        } else {
+            deferred.resolve();
+        }
+        return deferred.promise;
+    }
+
+    function loginRequired($q, $state, $auth) {
+        var deferred = $q.defer();
+        if ($auth.isAuthenticated()) {
+            deferred.resolve();
+        } else {
+            $state.go('login');
+        }
+        return deferred.promise;
+    }
 })
 
 // custom angular directive for going to different routes and clicking on any element with ng-click
 .directive('goClick', function ($state) {
-        return function (scope, element, attrs) {
-                var path = void 0;
+    return function (scope, element, attrs) {
+        var path = void 0;
 
-                attrs.$observe('goClick', function (val) {
-                        path = val;
-                });
+        attrs.$observe('goClick', function (val) {
+            path = val;
+        });
 
-                element.bind('click', function () {
-                        scope.$apply(function () {
-                                $state.go(path);
-                        });
-                });
-        };
+        element.bind('click', function () {
+            scope.$apply(function () {
+                $state.go(path);
+            });
+        });
+    };
 })
 
 // custom angular directive for limiting the enterable values into certain fields.
 .directive("limitTo", [function () {
-        return {
-                link: function link(scope, elem, attrs) {
-                        var limit = parseInt(attrs.limitTo);
-                        angular.element(elem).on("keypress", function (e) {
-                                if (elem[0].value.length == limit) e.preventDefault();
-                        });
-                }
-        };
+    return {
+        link: function link(scope, elem, attrs) {
+            var limit = parseInt(attrs.limitTo);
+            angular.element(elem).on("keypress", function (e) {
+                if (elem[0].value.length == limit) e.preventDefault();
+            });
+        }
+    };
 }]);
 
 },{"./app.component":1,"./dashboard/dashboard.component":5,"./landing/landing.component":8,"./login/login.component":11,"./navbar/navbar.component":14,"./newEvent/newEvent.component":17,"./resource.services.js":20,"./swipeScreen/swipeScreen.component":21}],5:[function(require,module,exports){
@@ -726,6 +737,9 @@ function apiService($resource) {
 	var getUserGroups = function getUserGroups() {
 		return $resource('https://swither.herokuapp.com/api/findgroups/:id', { id: "@id" });
 	};
+	var seeLikesinGroup = function seeLikesinGroup() {
+		return $resource('https://swither.herokuapp.com/api/likes/:id', { id: "@id" });
+	};
 	var addUserToGroup = function addUserToGroup() {
 		return $resource('https://swither.herokuapp.com/api/usergroups');
 	};
@@ -746,6 +760,7 @@ function apiService($resource) {
 		addLike: addLike,
 		addGroup: addGroup,
 		getUserGroups: getUserGroups,
+		seeLikesinGroup: seeLikesinGroup,
 		addUserToGroup: addUserToGroup,
 		joinGroup: joinGroup,
 		refreshMatches: refreshMatches,

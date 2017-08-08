@@ -42,6 +42,10 @@ class appCtrl {
             $state.go('login');
         }
 
+        ctrl.$rootScope.seeLikesinGroup = () => {
+            console.log('yo');
+        }
+
         // search yelp with a form
         ctrl.$rootScope.searchYelp = () => {
             ctrl.$rootScope.alert = false;
@@ -63,8 +67,6 @@ class appCtrl {
             // creating an array of searchResults with the data for use in Swipes
             $http.post('https://swither.herokuapp.com/api/index', ctrl.searchParameters)
                 .then( (response) => {
-                    console.log(response.data[0]);
-                    return;
                     ctrl.$rootScope.searchResults.push(response.data);
                     $state.go('auth.swipes');
                     ctrl.$rootScope.loadScreen = false;
