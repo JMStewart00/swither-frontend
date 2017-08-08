@@ -7198,6 +7198,67 @@ a {
     cursor: pointer;
     cursor: hand; }
 
+#swipeScreen #like {
+  color: #7f0c0b; }
+
+#swipeScreen #dislike {
+  color: #7f0c0b; }
+
+#swipeScreen .card {
+  max-width: 500px; }
+
+#swipeScreen .big-screen {
+  position: relative;
+  overflow: hidden;
+  height: 150px;
+  padding: 0; }
+
+#swipeScreen .absolute {
+  position: absolute;
+  margin: auto;
+  padding: 0; }
+
+#swipeScreen h5 {
+  color: #7f0c0b; }
+
+#swipeScreen .rotate {
+  color: white !important;
+  -webkit-transition: linear .5s ease-in;
+  -o-transition: linear .5s ease-in;
+  transition: linear .5s ease-in; }
+
+#swipeScreen #likeMessage {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-top: 30%;
+  color: green;
+  -webkit-transform: rotate(19deg);
+      -ms-transform: rotate(19deg);
+       -o-transform: rotate(19deg);
+          transform: rotate(19deg);
+  text-shadow: 3px 2px 5px #969696; }
+
+#swipeScreen #skipMessage {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-top: 30%;
+  color: white;
+  -webkit-transform: rotate(10deg);
+      -ms-transform: rotate(10deg);
+       -o-transform: rotate(10deg);
+          transform: rotate(10deg);
+  text-shadow: 3px 2px 5px #969696;
+  margin-left: -4%;
+  color: red; }
+
 #newEvent h1 {
   font-family: 'Alegreya Sans', sans-serif;
   color: #7f0c0b; }
@@ -7212,12 +7273,3 @@ a {
   background: rgba(255, 255, 255, 0.6);
   -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
           box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
-
-#swipeScreen #like {
-  color: green; }
-
-#swipeScreen #dislike {
-  color: red; }
-
-#swipeScreen .card {
-  max-width: 500px; }
