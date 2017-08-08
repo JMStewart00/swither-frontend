@@ -46,6 +46,21 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
     ctrl.$rootScope.loadScreen = false;
     ctrl.$rootScope.likeAlert = false;
     ctrl.$rootScope.skipAlert = false;
+    ctrl.$rootScope = $rootScope;
+    ctrl.$rootScope.currentLocation = '';
+
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.latitude = position.coords.latitude;
+    });
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.longitude = position.coords.longitude;
+    });
+
+    ctrl.$rootScope.setLocation = function () {
+        $('#location').prop('readonly', true);
+        ctrl.$rootScope.currentLocation = ctrl.$rootScope.latitude + ", " + ctrl.$rootScope.longitude;
+        $('#location').val(ctrl.$rootScope.currentLocation);
+    };
 
     // global logout function to be able to be called from anywhere.
     ctrl.$rootScope.logout = function () {
@@ -63,12 +78,14 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
     ctrl.$rootScope.searchYelp = function () {
         ctrl.$rootScope.alert = false;
         ctrl.$rootScope.loadScreen = true;
+
         // instantiate new search JSON
         ctrl.searchParameters = {
             // grab values with JQuery from form
             "term": $('#term').val(),
             "location": $('#location').val(),
-            "sort_by": 'rating'
+            "sort_by": 'rating',
+            "limit": 10
         };
 
         ctrl.$rootScope.selectedGroup = $('#groupSelect option:selected').val();
@@ -76,6 +93,8 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
         // simple post request to the backend to send search parameters.
         // creating an array of searchResults with the data for use in Swipes
         $http.post('https://swither.herokuapp.com/api/index', ctrl.searchParameters).then(function (response) {
+            console.log(response.data[0]);
+            return;
             ctrl.$rootScope.searchResults.push(response.data);
             $state.go('auth.swipes');
             ctrl.$rootScope.loadScreen = false;
@@ -107,21 +126,20 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
         ctrl.$rootScope.message = "LIKED!";
 
         // set alert to true to show on page
-        // ctrl.$rootScope.alert = true;
         $timeout(function () {
             // taking the first result off the array to cycle through results
             ctrl.$rootScope.searchResults[0].splice(0, 1);
             ctrl.$rootScope.likeAlert = false;
             ctrl.$rootScope.message = '';
+            // checks the results length to decide whether or not to redirect
+            if (ctrl.$rootScope.searchResults[0].length === 0) {
+
+                // redirect statement
+                $state.go('auth.dashboard');
+
+                ctrl.$rootScope.likeAlert = false;
+            } // end if
         }, 750);
-        // checks the results length to decide whether or not to redirect
-        if (ctrl.$rootScope.searchResults[0].length === 0) {
-
-            // redirect statement
-            $state.go('auth.dashboard');
-
-            ctrl.$rootScope.likeAlert = false;
-        } // end if
     }; // end saveLike()
 
 
@@ -130,22 +148,22 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
 
         // sets message to skipped! 
         ctrl.$rootScope.skipAlert = true;
-        ctrl.$rootScope.message = "Skipped!";
+        ctrl.$rootScope.message = "NOPE!";
 
         $timeout(function () {
             // taking the first result off the array to cycle through results
             ctrl.$rootScope.searchResults[0].splice(0, 1);
             ctrl.$rootScope.skipAlert = false;
             ctrl.$rootScope.message = '';
+
+            // checks the results length to decide whether or not to redirect
+            if (ctrl.$rootScope.searchResults[0].length === 0) {
+
+                // redirect statement 
+                $state.go('auth.dashboard');
+                ctrl.$rootScope.likeAlert = false;
+            }
         }, 750);
-
-        // checks the results length to decide whether or not to redirect
-        if (ctrl.$rootScope.searchResults[0].length === 0) {
-
-            // redirect statement 
-            $state.go('auth.dashboard');
-            ctrl.$rootScope.likeAlert = false;
-        }
     };
 
     // Adding swipes to the database if it is liked
@@ -200,7 +218,6 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
         ctrl.matchQuery = {
             "group_id": $('#matchRetrieve option:selected').val()
         };
-        console.log($('#matchRetrieve option:selected').val());
         ctrl.incompatible = {
             "image_url": "./dist/css/wrong.png",
             "name": "No matches!!",
@@ -676,12 +693,18 @@ var newEventController = function newEventController($rootScope, $auth, $http, $
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.latitude = position.coords.latitude;
+    });
+    navigator.geolocation.getCurrentPosition(function (position) {
+        ctrl.$rootScope.longitude = position.coords.longitude;
+    });
 };
 
 exports.default = newEventController;
 
 },{}],19:[function(require,module,exports){
-module.exports = "<div id=\"newEvent\">\n    <div class=\"container text-center mt-3 py-3 w-75 px-2\">\n        <div class=\"row\">\n            <div class=\"col text-left pl-3\">\n                <p go-click=\"auth.dashboard\"><i class=\"ion-android-arrow-back\"></i> BACK</p>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n                <h1>Headed out tonight?</h1>\n                <p>Choose your group below, enter a search term like \"Tacos\" and a general location and hit Get Results!</p>\n            </div>\n        </div>\n<form name=\"newEventForm\" novalidate>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"groupSelect\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Select Group</label>\n                <div class=\"col-sm-12 col-md-10\">              \n                    <select class=\"form-control custom-select\" id=\"groupSelect\" name=\"groupSelect\" ng-model=\"groupSelect\" required\n    ng-options=\"group.id as group.group_name for group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1] track by group.id\" >\n                        <option value=\"\">-- Select Group --</option>\n                    </select>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Search</label>\n                <div class=\"col-sm-12 col-md-10\">\n                    <input class=\"form-control\" placeholder=\"Enter a search term (i.e. Restaurants)\" name=\"term\" id=\"term\" ng-model=\"term\" required ng-required=\"true\">\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"location\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Location</label>\n                <div class=\"col-sm-12 col-md-10\">\n                    <input type=\"text\" class=\"form-control\" placeholder=\"Enter a City, ST or Zip Code\" name=\"location\" id=\"location\" ng-model=\"location\" required ng-required=\"true\">\n                </div>\n            </div>\n        </div>\n    </div>\n    \n    <div class=\"row\">      \n        <div class=\"col\">\n            <button class=\"btn btn-outline-primary btn-lg\" ng-click=\"$ctrl.$rootScope.searchYelp()\" ng-disabled=\"newEventForm.$invalid\">Go!</button>\n        </div>\n    </div>\n</form>\n\n\n    </div>\n</div>";
+module.exports = "<div id=\"newEvent\">\n    <div class=\"container text-center mt-3 py-3 w-75 px-2\">\n        <div class=\"row\">\n            <div class=\"col text-left pl-3\">\n                <p go-click=\"auth.dashboard\"><i class=\"ion-android-arrow-back\"></i> BACK</p>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n                <h1>Headed out tonight?</h1>\n                <p>Choose your group below, enter a search term like \"Tacos\" and a general location and hit Get Results!</p>\n            </div>\n        </div>\n<form name=\"newEventForm\" novalidate>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"groupSelect\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Select Group</label>\n                <div class=\"col-sm-12 col-md-10\">              \n                    <select class=\"form-control custom-select\" id=\"groupSelect\" name=\"groupSelect\" ng-model=\"groupSelect\" required\n    ng-options=\"group.id as group.group_name for group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1] track by group.id\" >\n                        <option value=\"\">-- Select Group --</option>\n                    </select>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Search</label>\n                <div class=\"col-sm-12 col-md-10\">\n                    <input class=\"form-control\" placeholder=\"Enter a search term (i.e. Restaurants)\" name=\"term\" id=\"term\" ng-model=\"term\" required ng-required=\"true\">\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"location\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Location</label>\n                <div class=\"col-10 col-md-8 pr-0\">\n                    <input type=\"text\" class=\"form-control\" placeholder=\"Enter a City, ST or Zip Code\" name=\"location\" id=\"location\" required ng-required=\"true\" onfocus=\"this.removeAttribute('readonly');\">\n                </div>\n                <div class=\"col-2 pl-0\"><button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.setLocation()\"><i class=\"fa fa-map-marker text-white\"></i></button></div>\n            </div>\n        </div>\n    </div>\n    \n    <div class=\"row\">      \n        <div class=\"col\">\n            <button class=\"btn btn-outline-primary btn-lg\" ng-click=\"$ctrl.$rootScope.searchYelp()\" ng-disabled=\"newEventForm.$invalid\">Go!</button>\n        </div>\n    </div>\n</form>\n\n\n    </div>\n</div>";
 
 },{}],20:[function(require,module,exports){
 'use strict';
@@ -785,6 +808,6 @@ var swipeScreenController = function swipeScreenController($rootScope, $auth, $h
 exports.default = swipeScreenController;
 
 },{}],23:[function(require,module,exports){
-module.exports = "\n<div id=\"swipeScreen\">\n\n    <h1 id=\"likeMessage\" class=\"display-1\" ng-show=\"$ctrl.$rootScope.likeAlert\">{{$ctrl.$rootScope.message}}</h1>\n    <h1 id=\"skipMessage\" class=\"display-1\" ng-show=\"$ctrl.$rootScope.skipAlert\">{{$ctrl.$rootScope.message}}</h1>\n    <div class=\"container\" id=\"swipeContainer\">\n    <!-- {{$ctrl.$rootScope.searchResults[0].length}} -->\n    <div class=\"card card-default mt-2 mx-auto\">\n        <div class=\"container-fluid m-0\">\n            <div class=\"row bg-inverse py-3\">\n                <div class=\"col-6 mx-auto big-screen\">\n                    <img class=\"absolute img-fluid mx-auto\" src=\"{{$ctrl.$rootScope.searchResults[0][0].image_url}}\">\n                </div>\n                <div class=\"col-12 text-center text-white mt-3 mb-0\">\n                    <h3>{{$ctrl.$rootScope.searchResults[0][0].name}}</h3>\n                    <hr class=\"w-50\" style=\"background-color: white;\">\n                    <p class=\"text-white mb-1\">{{$ctrl.$rootScope.searchResults[0][0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0][0].location.display_address[1]}}</p>\n                    <sub class=\"align-text-top my-0\">{{$ctrl.$rootScope.searchResults[0][0].phone}}</sub>\n                </div>\n            </div>\n            <div class=\"row my-2 justify-content-center\">\n                <div class=\"col hidden-sm-down\"></div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-money\"></i>\n                    <br><p class=\"mb-1\"> Price</p> \n                    <hr class=\"my-1 w-100\">                   \n                    <h5>{{$ctrl.$rootScope.searchResults[0][0].price}}</h5>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-star\"></i>\n                    <br><p class=\"mb-1\"> Rating</p>\n                    <hr class=\"my-1 w-100\">\n                    <h5>{{$ctrl.$rootScope.searchResults[0][0].rating}}</h5>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-laptop\"></i>\n                    <br><p class=\"mb-1\">Website</p>\n                    <hr class=\"my-1 w-100\">\n                    <a href=\"{{$ctrl.$rootScope.searchResults[0][0].url}}\" target=\"_blank\"><h5>Visit</h5></a>\n                </div>\n                <div class=\"col hidden-sm-down\"></div>\n            </div>\n        </div>\n    </div>\n\n    <!-- like/pass buttons -->\n\n    <div class=\"row\">\n        <div class=\"col text-right\">\n                <i id=\"dislike\" class=\"ion-thumbsdown mt-1\" style=\"font-size: 6em;\"  ng-click=\"$ctrl.$rootScope.skipPlace()\"></i>\n        </div>\n        <div class=\"col text-left\">\n                <i id=\"like\" class=\"ion-heart mt-1\" style=\"font-size: 6em;\" ng-click=\"$ctrl.$rootScope.saveLike()\"></i>\n        </div>\n    </div>\n\n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->\n\n\n\n\n\n";
+module.exports = "\n<div id=\"swipeScreen\">\n\n    <h1 id=\"likeMessage\" class=\"display-1\" ng-show=\"$ctrl.$rootScope.likeAlert\">{{$ctrl.$rootScope.message}}</h1>\n    <h1 id=\"skipMessage\" class=\"display-1\" ng-show=\"$ctrl.$rootScope.skipAlert\">{{$ctrl.$rootScope.message}}</h1>\n    <div class=\"container\" id=\"swipeContainer\">\n    <!-- {{$ctrl.$rootScope.searchResults[0].length}} -->\n    <div class=\"card card-default mt-2 mx-auto\">\n        <div class=\"container-fluid m-0\">\n            <div class=\"row bg-inverse py-3\">\n                <div class=\"col-6 mx-auto big-screen\">\n                    <img class=\"absolute img-fluid mx-auto\" src=\"{{$ctrl.$rootScope.searchResults[0][0].image_url}}\">\n                </div>\n                <div class=\"col-12 text-center text-white mt-3 mb-0\">\n                    <h3>{{$ctrl.$rootScope.searchResults[0][0].name}}</h3>\n                    <hr class=\"w-50\" style=\"background-color: white;\">\n                    <p class=\"text-white mb-1\">{{$ctrl.$rootScope.searchResults[0][0].location.display_address[0]}}<br />{{$ctrl.$rootScope.searchResults[0][0].location.display_address[1]}}</p>\n                    <sub class=\"align-text-top my-0\">{{$ctrl.$rootScope.searchResults[0][0].display_phone}}</sub>\n                </div>\n            </div>\n            <div class=\"row my-2 justify-content-center\">\n                <div class=\"col hidden-sm-down\"></div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-money\"></i>\n                    <br><p class=\"mb-1\"> Price</p> \n                    <hr class=\"my-1 w-100\">                   \n                    <h5>{{$ctrl.$rootScope.searchResults[0][0].price}}</h5>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-star\"></i>\n                    <br><p class=\"mb-1\"> Rating</p>\n                    <hr class=\"my-1 w-100\">\n                    <h5>{{$ctrl.$rootScope.searchResults[0][0].rating}}</h5>\n                </div>\n                <div class=\"col text-center\">\n                    <i class=\"fa fa-3x fa-laptop\"></i>\n                    <br><p class=\"mb-1\">Website</p>\n                    <hr class=\"my-1 w-100\">\n                    <a href=\"{{$ctrl.$rootScope.searchResults[0][0].url}}\" target=\"_blank\"><h5>Visit</h5></a>\n                </div>\n                <div class=\"col hidden-sm-down\"></div>\n            </div>\n        </div>\n    </div>\n\n    <!-- like/pass buttons -->\n\n    <div class=\"row\">\n        <div class=\"col text-right\">\n                <i id=\"dislike\" class=\"ion-thumbsdown mt-1\" style=\"font-size: 6em;\"  ng-click=\"$ctrl.$rootScope.skipPlace()\"></i>\n        </div>\n        <div class=\"col text-left\">\n                <i id=\"like\" class=\"ion-heart mt-1\" style=\"font-size: 6em;\" ng-click=\"$ctrl.$rootScope.saveLike()\"></i>\n        </div>\n    </div>\n\n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->\n\n\n\n\n\n";
 
 },{}]},{},[4]);

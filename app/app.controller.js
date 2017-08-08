@@ -12,6 +12,23 @@ class appCtrl {
         ctrl.$rootScope.loadScreen = false;
         ctrl.$rootScope.likeAlert = false;
         ctrl.$rootScope.skipAlert = false;
+        ctrl.$rootScope = $rootScope;
+        ctrl.$rootScope.currentLocation = '';
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            ctrl.$rootScope.latitude = position.coords.latitude;
+        });
+        navigator.geolocation.getCurrentPosition((position) => {
+            ctrl.$rootScope.longitude = position.coords.longitude;
+        });
+
+        ctrl.$rootScope.setLocation = () => {
+            $('#location').prop('readonly', true);
+            ctrl.$rootScope.currentLocation = ctrl.$rootScope.latitude + ", " + ctrl.$rootScope.longitude;
+            $('#location').val(ctrl.$rootScope.currentLocation);
+
+
+        }
 
         // global logout function to be able to be called from anywhere.
         ctrl.$rootScope.logout = () => {
@@ -29,12 +46,15 @@ class appCtrl {
         ctrl.$rootScope.searchYelp = () => {
             ctrl.$rootScope.alert = false;
             ctrl.$rootScope.loadScreen = true;
+
+        
         // instantiate new search JSON
             ctrl.searchParameters = {
                 // grab values with JQuery from form
               "term": $('#term').val(),
               "location": $('#location').val(),
-              "sort_by": 'rating'
+              "sort_by": 'rating',
+              "limit": 10
             };
 
             ctrl.$rootScope.selectedGroup = $('#groupSelect option:selected').val();
@@ -43,6 +63,8 @@ class appCtrl {
             // creating an array of searchResults with the data for use in Swipes
             $http.post('https://swither.herokuapp.com/api/index', ctrl.searchParameters)
                 .then( (response) => {
+                    console.log(response.data[0]);
+                    return;
                     ctrl.$rootScope.searchResults.push(response.data);
                     $state.go('auth.swipes');
                     ctrl.$rootScope.loadScreen = false;
@@ -78,13 +100,11 @@ class appCtrl {
             ctrl.$rootScope.message = "LIKED!";
 
             // set alert to true to show on page
-            // ctrl.$rootScope.alert = true;
-                $timeout(() => {
+            $timeout(() => {
                     // taking the first result off the array to cycle through results
                     ctrl.$rootScope.searchResults[0].splice(0, 1);
                     ctrl.$rootScope.likeAlert = false;
                     ctrl.$rootScope.message = '';
-                }, 750);
             // checks the results length to decide whether or not to redirect
             if (ctrl.$rootScope.searchResults[0].length === 0) {
 
@@ -93,6 +113,7 @@ class appCtrl {
 
                 ctrl.$rootScope.likeAlert = false;
             } // end if
+                }, 750);
         } // end saveLike()
 
 
@@ -102,14 +123,13 @@ class appCtrl {
 
             // sets message to skipped! 
             ctrl.$rootScope.skipAlert = true;
-            ctrl.$rootScope.message = "Skipped!";
+            ctrl.$rootScope.message = "NOPE!";
 
             $timeout(() => {
                 // taking the first result off the array to cycle through results
                 ctrl.$rootScope.searchResults[0].splice(0, 1);
                 ctrl.$rootScope.skipAlert = false;
                 ctrl.$rootScope.message = '';
-            }, 750);
 
             // checks the results length to decide whether or not to redirect
             if (ctrl.$rootScope.searchResults[0].length === 0) {
@@ -118,6 +138,7 @@ class appCtrl {
                 $state.go('auth.dashboard');
                 ctrl.$rootScope.likeAlert = false;
             }
+            }, 750);
         }
 
 
@@ -181,7 +202,6 @@ class appCtrl {
             ctrl.matchQuery = {
                 "group_id": $('#matchRetrieve option:selected').val()
                 }
-                console.log($('#matchRetrieve option:selected').val());
             ctrl.incompatible = {
               "image_url": "./dist/css/wrong.png",
               "name": "No matches!!",
