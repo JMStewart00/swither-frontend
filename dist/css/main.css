@@ -7095,14 +7095,42 @@ a {
   z-index: 50;
   height: 100vh;
   width: 100%;
-  -webkit-transition: all linear 1s;
-  -o-transition: all linear 1s;
-  transition: all linear 1s;
+  -webkit-transition: all linear .3s;
+  -o-transition: all linear .3s;
+  transition: all linear .3s;
   margin: auto;
   padding-top: 25%; }
 
 #loadScreen.ng-hide {
   opacity: 0; }
+
+#dashboard {
+  color: #7f0c0b; }
+  #dashboard .animated:hover {
+    -webkit-box-shadow: 25px 25px 25px 25px #929292;
+    box-shadow: 25px 25px 50px 5px #929292;
+    -webkit-transition: .5s;
+    -o-transition: .5s;
+    transition: .5s; }
+  #dashboard .animated {
+    -webkit-transition: .5s;
+    -o-transition: .5s;
+    transition: .5s; }
+
+#matchesHTML p {
+  color: #7f0c0b; }
+
+#createGroup h1, #createGroup h2, #createGroup h4, #joinGroupPage h1, #joinGroupPage h2, #joinGroupPage h4, #dashboard h1, #dashboard h2, #dashboard h4, #matchesHTML h1, #matchesHTML h2, #matchesHTML h4 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+#createGroup .container > *, #joinGroupPage .container > *, #dashboard .container > *, #matchesHTML .container > * {
+  opacity: 1; }
+
+#createGroup .container, #joinGroupPage .container, #dashboard .container, #matchesHTML .container {
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
+          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
 
 #landing {
   color: #7f0c0b;
@@ -7155,34 +7183,6 @@ a {
   opacity: 1; }
 
 #register .container {
-  background: rgba(255, 255, 255, 0.6);
-  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
-          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
-
-#dashboard {
-  color: #7f0c0b; }
-  #dashboard .animated:hover {
-    -webkit-box-shadow: 25px 25px 25px 25px #929292;
-    box-shadow: 25px 25px 50px 5px #929292;
-    -webkit-transition: .5s;
-    -o-transition: .5s;
-    transition: .5s; }
-  #dashboard .animated {
-    -webkit-transition: .5s;
-    -o-transition: .5s;
-    transition: .5s; }
-
-#matchesHTML p {
-  color: #7f0c0b; }
-
-#createGroup h1, #createGroup h2, #createGroup h4, #joinGroupPage h1, #joinGroupPage h2, #joinGroupPage h4, #dashboard h1, #dashboard h2, #dashboard h4, #matchesHTML h1, #matchesHTML h2, #matchesHTML h4 {
-  font-family: 'Alegreya Sans', sans-serif;
-  color: #7f0c0b; }
-
-#createGroup .container > *, #joinGroupPage .container > *, #dashboard .container > *, #matchesHTML .container > * {
-  opacity: 1; }
-
-#createGroup .container, #joinGroupPage .container, #dashboard .container, #matchesHTML .container {
   background: rgba(255, 255, 255, 0.6);
   -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
           box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
