@@ -71,7 +71,11 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
                         url: '/swipes',
                         templateUrl: './app/swipeScreen/swipeScreen.html',
                         controller: swipeScreenComponent.controller,
-                        controllerAs: '$ctrl'
+                        controllerAs: '$ctrl',
+                        onExit: ($rootScope) => {
+                            $rootScope.alert = false;
+                            $rootScope.message = '';
+                        }
                 })
                 .state('auth.addgroup', {
                         url: '/addgroup',

@@ -1,46 +1,44 @@
 <div id="dashboard">
-  <div class="container mt-3 py-4 w-75">
-    <div class="row">
-      <div class="col text-center">
-        <h1 class="display-4">Dashboard</h1>
-      </div>
-    </div>
-
-    <div class="row text-center">
-      <div class="col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn">
-        <div class="col">
-          <i class="ion-plus display-4 hidden-md-up" go-click="auth.new"></i>
-          <i class="ion-plus hidden-sm-down" style="font-size: 200px" go-click="auth.new"></i>
-          <h2 class="hidden-sm-down">New Night Out</h2>
-          <h4 class="hidden-md-up">New Night Out</h4>
+    <div class="container mt-3 py-4 w-75">
+        <div class="row">
+            <div class="col text-center">
+                <h1 class="display-4">Dashboard</h1>
+                <div ng-show="$ctrl.$rootScope.alert" class="alert-danger py-2">{{$ctrl.$rootScope.message}}</div>
+            </div>
         </div>
-      </div>
-      <div class="col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn">
-        <div class="col">
-          <i class="ion-android-star-outline display-4 hidden-md-up" go-click="auth.matches"></i>
-          <i class="ion-android-star-outline hidden-sm-down" style="font-size: 200px" go-click="auth.matches"></i>
-          <h2 class="hidden-sm-down">View Matches</h2>
-          <h4 class="hidden-md-up">View Matches</h4>
+        <div class="row text-center">
+            <div class="col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn">
+                <div class="col">
+                    <i class="ion-plus display-4 hidden-md-up" go-click="auth.new"></i>
+                    <i class="ion-plus hidden-sm-down" style="font-size: 200px" go-click="auth.new"></i>
+                    <h2 class="hidden-sm-down">Find New Places!</h2>
+                    <h4 class="hidden-md-up">Find New Places!</h4>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn">
+                <div class="col">
+                    <i class="ion-android-star-outline display-4 hidden-md-up" go-click="auth.matches"></i>
+                    <i class="ion-android-star-outline hidden-sm-down" style="font-size: 200px" go-click="auth.matches"></i>
+                    <h2 class="hidden-sm-down">View Matches</h2>
+                    <h4 class="hidden-md-up">View Matches</h4>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn">
+                <div class="col">
+                    <i class="ion-ios-people display-4 hidden-md-up" go-click="auth.addgroup"></i>
+                    <i class="ion-ios-people hidden-sm-down" style="font-size: 200px" go-click="auth.addgroup"></i>
+                    <h2 class="hidden-sm-down">New Group</h2>
+                    <h4 class="hidden-md-up">New Group</h4>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn">
+                <div class="col">
+                    <i class="ion-ios-personadd display-4 hidden-md-up" go-click="auth.joingroup"></i>
+                    <i class="ion-ios-personadd hidden-sm-down" style="font-size: 200px" go-click="auth.joingroup"></i>
+                    <h2 class="hidden-sm-down">Join Group</h2>
+                    <h4 class="hidden-md-up">Join Group</h4>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn">
-        <div class="col">
-          <i class="ion-ios-people display-4 hidden-md-up" go-click="auth.addgroup"></i>
-          <i class="ion-ios-people hidden-sm-down" style="font-size: 200px" go-click="auth.addgroup"></i>
-          <h2 class="hidden-sm-down">New Group</h2>
-          <h4 class="hidden-md-up">New Group</h4>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn">
-        <div class="col">
-          <i class="ion-ios-personadd display-4 hidden-md-up" go-click="auth.joingroup"></i>
-          <i class="ion-ios-personadd hidden-sm-down" style="font-size: 200px" go-click="auth.joingroup"></i>
-          <h2 class="hidden-sm-down">Join Group</h2>
-          <h4 class="hidden-md-up">Join Group</h4>
-        </div>
-      </div>
-    </div>
-
-
-  </div>  <!-- container -->
-</div> <!--id wrapper-->
+        </div>  <!-- container -->
+        </div> <!--id wrapper-->

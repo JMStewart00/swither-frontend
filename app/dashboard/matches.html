@@ -8,18 +8,18 @@
 	<div class="row">
 	    <div class="col text-center">
 	        <h1>Get Group Matches</h1>
-	        <p>First, select the group you want to see your matches for and then hit 'Retrieve Matches' to see all your matches!</p>
+	        <p>First, select the group you want to see your matches and then submit the request!</p>
 	    </div>
 	</div>
 	
-<form id="retrieveMatches">
+<form id="retrieveMatches" name="retrieveMatches">
 	<div class="row">
 		<div class="col hidden-lg-down"></div>
 		<div class="col">
 			<div class="form-group">
-				<select class="form-control custom-select" name="groupSelect" id="groupSelect" required>
-					<option>Please select a group...</option>
-					<option ng-repeat="group in $ctrl.$rootScope.groups[0]" value="{{group.id}}">{{group.group_name}}</option>
+				<select class="form-control custom-select" id="matchRetrieve" name="matchRetrieve" ng-model="matchRetrieve" required
+    ng-options="group.id as group.group_name for group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1] track by group.id" >
+					<option value=""> --  SELECT GROUP  -- </option>
 				</select>
 			</div>
 			
@@ -28,7 +28,7 @@
 	</div>
 	<div class="row text-center">
 		<div class="col">
-			<button class="btn btn-outline-primary" ng-click="$ctrl.$rootScope.viewMatches()" ng-disabled="groupSelect.$invalid">Retrieve Matches</button>
+			<button class="btn btn-outline-primary" ng-click="$ctrl.$rootScope.viewMatches()" ng-disabled="retrieveMatches.$invalid">Retrieve Matches</button>
 		</div>
 	</div>
 </form>
