@@ -15,11 +15,12 @@
 <div id="navbar" class="hidden-md-up">
 	<div class="container py-2">
 		<div class="row">
-			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-6 text-left m-0" go-click="auth.dashboard"><h3>SWiTHER</h3></a>
-			<a ng-show="$ctrl.$rootScope.loginStatus" class="col-8 text-left m-0" go-click="auth.dashboard"><h3>SWiTHER</h3></a>
-			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-3 m-0 text-right" go-click="register">Register</a>
-			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-3 m-0 text-right" go-click="login">Login</a>
-			<a ng-show="$ctrl.$rootScope.loginStatus" ng-click="$ctrl.$rootScope.logout()" class="col-4 text-right m-0">Logout</a>
+			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-7 text-left m-0" go-click="landing"><h3>SWiTHER</h3></a>
+			<a ng-show="$ctrl.$rootScope.loginStatus" class="col-7 text-left m-0" go-click="landing"><h3>SWiTHER</h3></a>
+			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-2 mt-1 mr-3 text-left" go-click="register">Register</a>
+			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-2 mt-1 text-right" go-click="login">Login</a>
+			<a ng-show="$ctrl.$rootScope.loginStatus" class="col-2 mt-1 mr-3 text-left" go-click="auth.dashboard">Home</a>
+			<a ng-show="$ctrl.$rootScope.loginStatus" ng-click="$ctrl.$rootScope.logout()" class="col-2 mt-1 text-right">Logout</a>
 		</div>
 	</div>
 </div>

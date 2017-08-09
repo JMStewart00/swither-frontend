@@ -5,24 +5,26 @@
                 <div ng-show="$ctrl.$rootScope.alert" class="alert-danger py-2">{{$ctrl.$rootScope.message}}</div>
                 <h1>Welcome, {{$ctrl.$rootScope.userName}}!</h1>
                 <p>In order for the app to work the way it is currently designed, you need to <strong>create a group</strong> for others to join or you need to <strong>join an existing group</strong>.</p>
-                <p>After that, instead of SWiTHERING over where to eat tonight, enjoy all the free time you'll to enjoy time with those close to you!</p>
+                <p>After that, instead of SWiTHERING over where to eat or to hang out tonight, enjoy all the free time you'll have with those close to you!</p>
             </div>
         </div>
-        <div class="col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn">
-            <div class="col">
-                <i class="ion-ios-people display-4 hidden-md-up" go-click="auth.addgroup"></i>
-                <i class="ion-ios-people hidden-sm-down" style="font-size: 200px" go-click="auth.addgroup"></i>
-                <h2 class="hidden-sm-down">Create New Group</h2>
-                <h4 class="hidden-md-up">Create New Group</h4>
+        <div class="row">
+            <div class="col px-0 pb-3 text-center animated fadeIn">
+                <div class="col">
+                    <i class="ion-ios-people display-4 hidden-md-up" go-click="auth.addgroup"></i>
+                    <i class="ion-ios-people hidden-sm-down" style="font-size: 200px" go-click="auth.addgroup"></i>
+                    <h2 class="hidden-sm-down">Create New Group</h2>
+                    <h4 class="hidden-md-up">Create New Group</h4>
+                </div>
             </div>
-        </div>
-        <div class="col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn">
-            <div class="col">
-                <i class="ion-ios-personadd display-4 hidden-md-up" go-click="auth.joingroup"></i>
-                <i class="ion-ios-personadd hidden-sm-down" style="font-size: 200px" go-click="auth.joingroup"></i>
-                <h2 class="hidden-sm-down">Join Existing Group</h2>
-                <h4 class="hidden-md-up">Join Existing Group</h4>
-            </div>
+            <div class="col px-0 pb-3 text-center animated fadeIn">
+                <div class="col">
+                    <i class="ion-ios-personadd display-4 hidden-md-up" go-click="auth.joingroup"></i>
+                    <i class="ion-ios-personadd hidden-sm-down" style="font-size: 200px" go-click="auth.joingroup"></i>
+                    <h2 class="hidden-sm-down">Join Existing Group</h2>
+                    <h4 class="hidden-md-up">Join Existing Group</h4>
+                </div>
+            </div>         
         </div>
     </div>
 </div>

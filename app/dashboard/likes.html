@@ -1,5 +1,5 @@
 <div id="matchesHTML">
-	<div class="container mx-2 mt-3 py-3">
+	<div class="container mt-3 py-3">
 	<div class="row">
 	    <div class="col text-left pl-3">
 	        <p go-click="auth.dashboard"><i class="ion-android-arrow-back"></i> BACK</p>
@@ -17,7 +17,7 @@
 		<div class="col hidden-lg-down"></div>
 		<div class="col">
 			<div class="form-group">
-				<select class="form-control custom-select" id="matchRetrieve" name="matchRetrieve" ng-model="matchRetrieve" required
+				<select class="form-control custom-select" id="likesRetrieve" name="likesRetrieve" ng-model="likesRetrieve" required
     ng-options="group.id as group.group_name for group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1] track by group.id" >
 					<option value=""> --  SELECT GROUP  -- </option>
 				</select>
