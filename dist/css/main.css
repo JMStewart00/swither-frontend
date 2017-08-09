@@ -7124,9 +7124,13 @@ a {
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
-    height: 400px;
+    height: 100%;
     display: table;
     width: 100%; }
+    #landing #maincontent h1, #landing #maincontent h3, #landing #maincontent h4 {
+      color: white;
+      font-family: 'Alegreya Sans', sans-serif;
+      text-shadow: 5px 5px 5px #7f0c0b; }
   #landing #changeText {
     -webkit-transition: 1s;
     -o-transition: 1s;
@@ -7140,10 +7144,12 @@ a {
     background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), white 90%);
     margin-bottom: -5px; }
   #landing h1, #landing h3, #landing h4 {
-    font-family: 'Alegreya Sans', sans-serif;
-    text-shadow: 3px 3px 5px white; }
-  #landing #whatIsSwither {
-    background-color: #f1f1f1; }
+    color: #7f0c0b;
+    font-family: 'Alegreya Sans', sans-serif; }
+  #landing i {
+    text-shadow: 3px 3px 3px #7f0c0b; }
+  #landing #gif {
+    padding-top: 12%; }
 
 #login h1 {
   font-family: 'Alegreya Sans', sans-serif;
@@ -7152,17 +7158,6 @@ a {
 #register h1 {
   font-family: 'Alegreya Sans', sans-serif;
   color: #7f0c0b; }
-
-#navbar {
-  z-index: 51;
-  color: white; }
-  #navbar .container {
-    background-color: #7f0c0b; }
-  #navbar h3 {
-    font-family: 'Alegreya Sans', sans-serif; }
-  #navbar a {
-    cursor: pointer;
-    cursor: hand; }
 
 #newEvent h1 {
   font-family: 'Alegreya Sans', sans-serif;
@@ -7230,3 +7225,14 @@ a {
           transform: rotate(19deg);
   text-shadow: 3px 2px 5px #969696;
   color: red; }
+
+#navbar {
+  z-index: 51;
+  color: white; }
+  #navbar .container {
+    background-color: #7f0c0b; }
+  #navbar h3 {
+    font-family: 'Alegreya Sans', sans-serif; }
+  #navbar a {
+    cursor: pointer;
+    cursor: hand; }
