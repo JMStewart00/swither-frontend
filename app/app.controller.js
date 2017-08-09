@@ -18,6 +18,7 @@ class appCtrl {
         ctrl.$rootScope = $rootScope;
         ctrl.$rootScope.currentLocation = '';
         ctrl.$rootScope.gotLocation = false;
+        ctrl.$rootScope.showLikesTable = false;
 
 
         // sets variables on page load of location for l
@@ -50,7 +51,24 @@ class appCtrl {
         }
 
         ctrl.$rootScope.seeLikesinGroup = () => {
-            console.log('nick such');
+            ctrl.getLikesbyGroup = {
+                "group_id": $('#seeLikes option:selected').val(),
+                "user_id": window.localStorage.getItem('currentUser')
+                };
+
+            ctrl.$rootScope.likes = [];
+            $http.post('https://swither.herokuapp.com/api/likesbygroup', ctrl.getLikesbyGroup)
+                .then( (response) => {
+                    ctrl.$rootScope.showLikesTable = true;
+                    console.log(response.data);
+                    if (response.data.length >= 1) {
+                        for (var i = 0; i < response.data.length; i++) {
+                            ctrl.$rootScope.likes.push(JSON.parse(response.data[i].business_info));
+                        }
+                    } else {
+                        ctrl.$rootScope.likes.push(ctrl.incompatible);
+                    }
+            })
         }
 
         // search yelp with a form

@@ -11,9 +11,16 @@
         background-attachment: fixed;
         background-repeat: no-repeat;
         background-size: cover;
-        height: 400px;
+        height: 100%;
         display:table;
         width: 100%;
+
+        h1, h3, h4 {
+            color: white;
+            font-family: 'Alegreya Sans', sans-serif;
+            text-shadow: 5px 5px 5px rgba(127, 12, 11, 1);
+        }
+
 
     }
 
@@ -31,12 +38,17 @@
     }
 
     h1, h3, h4 {
+        color: #7f0c0b;
         font-family: 'Alegreya Sans', sans-serif;
-        text-shadow: 3px 3px 5px rgba(255, 255, 255, 1);
     }
 
-    #whatIsSwither {
-        background-color: #f1f1f1;
+    i {
+        text-shadow: 3px 3px 3px rgba(127, 12, 11, 1);
+
     }
-    
+
+    #gif {
+        padding-top: 12%;
+    }
+
 }
