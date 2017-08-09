@@ -307,7 +307,7 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate']).co
 
     // authentication routes definitions
     $authProvider.loginUrl = 'https://swither.herokuapp.com/oauth/token';
-    $authProvider.signupUrl = 'https://swither.herokuapp.com/register';
+    $authProvider.signupUrl = '//swither.herokuapp.com/register';
 
     // says to route to / on unknown or undefined routes.
     $urlRouterProvider.otherwise('/');
@@ -600,7 +600,6 @@ var loginController = function loginController($rootScope, $auth, $http, $state,
         };$auth.login(credentials).then(function (data) {
             $auth.setToken(data.data.access_token);
             ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
-            console.log($auth.isAuthenticated());
             ctrl.$rootScope.userId = $auth.getPayload().sub;
             window.localStorage.setItem('currentUser', ctrl.$rootScope.userId);
             $state.go('auth.dashboard');
