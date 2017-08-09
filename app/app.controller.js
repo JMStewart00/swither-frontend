@@ -17,22 +17,25 @@ class appCtrl {
         ctrl.$rootScope.skipAlert = false;
         ctrl.$rootScope = $rootScope;
         ctrl.$rootScope.currentLocation = '';
+        ctrl.$rootScope.gotLocation = false;
 
+
+        // sets variables on page load of location for l
         navigator.geolocation.getCurrentPosition((position) => {
+            ctrl.$rootScope.gotLocation = true;
+            console.log('hey');
             ctrl.$rootScope.latitude = position.coords.latitude;
-        });
-        navigator.geolocation.getCurrentPosition((position) => {
             ctrl.$rootScope.longitude = position.coords.longitude;
+            $timeout(() => {
+                ctrl.$rootScope.alert = false;
+            }, 10);
         });
-
         
 
         ctrl.$rootScope.setLocation = () => {
             $('#location').prop('readonly', true);
             ctrl.$rootScope.currentLocation = ctrl.$rootScope.latitude + ", " + ctrl.$rootScope.longitude;
             $('#location').val(ctrl.$rootScope.currentLocation);
-
-
         }
 
         // global logout function to be able to be called from anywhere.
