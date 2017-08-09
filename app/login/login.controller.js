@@ -21,7 +21,6 @@ class loginController {
                 .then((data) => {
                     $auth.setToken(data.data.access_token);
                     ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
-                    console.log($auth.isAuthenticated());
                     ctrl.$rootScope.userId = $auth.getPayload().sub;
                     window.localStorage.setItem('currentUser', ctrl.$rootScope.userId);
                     $state.go('auth.dashboard');

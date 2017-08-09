@@ -24,7 +24,7 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
 
         // authentication routes definitions
         $authProvider.loginUrl = 'https://swither.herokuapp.com/oauth/token';
-        $authProvider.signupUrl = 'https://swither.herokuapp.com:443/register';
+        $authProvider.signupUrl = '//swither.herokuapp.com/register';
 
         // says to route to / on unknown or undefined routes.
         $urlRouterProvider.otherwise('/');
