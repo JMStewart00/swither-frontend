@@ -7054,16 +7054,6 @@ html {
   height: 100vh;
   overflow: scroll; }
 
-html, body {
-  padding: 0;
-  margin: 0;
-  padding-bottom: 10%;
-  bottom: 0;
-  font-family: 'Roboto', sans-serif;
-  background: url("./food.jpg") no-repeat fixed;
-  -webkit-background-size: cover;
-  background-size: cover; }
-
 .color-overlay {
   background: rgba(255, 255, 255, 0.65);
   height: 100%;
@@ -7120,17 +7110,9 @@ a {
 #matchesHTML p {
   color: #7f0c0b; }
 
-#createGroup h1, #createGroup h2, #createGroup h4, #joinGroupPage h1, #joinGroupPage h2, #joinGroupPage h4, #dashboard h1, #dashboard h2, #dashboard h4, #matchesHTML h1, #matchesHTML h2, #matchesHTML h4 {
+#createGroup h1, #createGroup h2, #createGroup h4, #joinGroupPage h1, #joinGroupPage h2, #joinGroupPage h4, #dashboard h1, #dashboard h2, #dashboard h4, #matchesHTML h1, #matchesHTML h2, #matchesHTML h4, #firstLogin h1, #firstLogin h2, #firstLogin h4 {
   font-family: 'Alegreya Sans', sans-serif;
   color: #7f0c0b; }
-
-#createGroup .container > *, #joinGroupPage .container > *, #dashboard .container > *, #matchesHTML .container > * {
-  opacity: 1; }
-
-#createGroup .container, #joinGroupPage .container, #dashboard .container, #matchesHTML .container {
-  background: rgba(255, 255, 255, 0.6);
-  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
-          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
 
 #landing {
   color: #7f0c0b;
@@ -7204,14 +7186,6 @@ a {
 
 #newEvent p {
   color: #7f0c0b; }
-
-#newEvent .container > * {
-  opacity: 1; }
-
-#newEvent .container {
-  background: rgba(255, 255, 255, 0.6);
-  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
-          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
 
 #swipeScreen #like {
   color: #7f0c0b; }
