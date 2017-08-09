@@ -67,6 +67,7 @@ class loginController {
               })
               .catch( (error) => {
                  console.log(error);
+                 ctrl.$rootScope.login();
               });
             }
 
