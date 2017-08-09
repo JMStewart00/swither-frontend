@@ -631,7 +631,9 @@ var loginController = function loginController($rootScope, $auth, $http, $state,
         $auth.signup(user).then(function (response) {
             ctrl.$rootScope.userName = user.name;
             ctrl.$rootScope.login();
-        }).catch(function (error) {});
+        }).catch(function (error) {
+            console.log(error);
+        });
     };
 };
 
