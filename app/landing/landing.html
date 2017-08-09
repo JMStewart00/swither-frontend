@@ -9,36 +9,47 @@
         counter++;
         if(counter >= text.length) { counter = 0; }
     }
+
+    // Changing the defaults
+    window.sr = ScrollReveal({ reset: true, origin: 'right', distance: '100px' });
+
+    // Customizing a reveal set
+    sr.reveal('.figure', { duration: 750 });
+    sr.reveal('img', { duration: 750 });
+    sr.reveal('p', { duration: 750 });
+    sr.reveal('h1', { duration: 750 });
+
+
     </script>
 	
 	<!------------------------------------------------------------------------
 								Header Content
 	------------------------------------------------------------------------>
 			<div class="container-fluid" id="maincontent">
-				<div class="row pt-5 ml-2">
+				<div class="row pt-5 ml-4 mt-3">
 					<h1 id="changeText" class="display-3">Dudes</h1><h1 class="display-3">&nbspnight just got a little easier!</h1>
 				</div> <!-- row -->
-				<div class="row">
+<!-- 				<div class="row">
 					
 				<img src="dist/css/whitetear.png" class="pull-bottom img-fluid">
-				</div>
+				</div> -->
 			</div> <!-- container -->
 	
 	<!------------------------------------------------------------------------
-	                    Skills Breakdown
+	                    What is Swither?
 	------------------------------------------------------------------------>
 	
-			<div class="container-fluid px-5">
+			<div class="container-fluid mt-5 px-5">
 				<div class="row mb-5">
-					<div class="col-md-6 col-sm-12 text-left">
-						<h1 class="text-left col my-2 pl-0">WHAT IS SWiTHER?</h1>
+					<div class="col-md-6 col-sm-12 my-5 ml-5 text-left">
+						<h1 class="text-left col pl-0">WHAT IS SWiTHER?</h1>
 						<p>SWiTHER is a web-based application that solves the hassle that follows the question "Where do you want to go?" 
 						</p>
 						<p>
 						It's a timeless, exhausting, and frustrating struggle. You're with a group of friends or your significant other and you're so hungry you start to wonder what the other person would taste like with a little ranch. Before resorting to cannibalism, try SWiTHER. We'll keep you from eating your friends, and find a happy place to dine or go out for drinks instead.</p>
 					</div>
-					<div class="col-md-6 col-sm-12 pt-5 hidden-sm-down">
-						<img src="dist/css/SwitherRespDesign.png" alt="" class="img-fluid">
+					<div class="col-md-4 col-sm-12 mx-auto">
+						<img src="dist/css/animatedWalkThrough.gif" alt="" class="w-50 mx-auto d-block">
 					</div>
 				</div>
 				<div class="row w-100 overview p-4">

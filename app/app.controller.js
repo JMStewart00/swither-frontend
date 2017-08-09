@@ -23,7 +23,6 @@ class appCtrl {
         // sets variables on page load of location for l
         navigator.geolocation.getCurrentPosition((position) => {
             ctrl.$rootScope.gotLocation = true;
-            console.log('hey');
             ctrl.$rootScope.latitude = position.coords.latitude;
             ctrl.$rootScope.longitude = position.coords.longitude;
             $timeout(() => {
@@ -51,7 +50,7 @@ class appCtrl {
         }
 
         ctrl.$rootScope.seeLikesinGroup = () => {
-            console.log();
+            console.log('nick such');
         }
 
         // search yelp with a form
