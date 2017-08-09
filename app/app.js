@@ -109,6 +109,12 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
                     },
 
                 })
+                .state('auth.about', {
+                    url: '/about',
+                    templateUrl: './app/dashboard/about.html',
+                    controller: dashboardComponent.controller,
+                    controllerAs: '$ctrl'
+                })
                 .state('auth.likes', {
                     url: '/likes',
                     templateUrl: './app/dashboard/likes.html',

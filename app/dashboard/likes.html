@@ -28,20 +28,25 @@
 	</div>
 	<div class="row text-center">
 		<div class="col">
-			<button class="btn btn-outline-primary" ng-click="$ctrl.$rootScope.viewMatches()" ng-disabled="seeLikes.$invalid">Retrieve Matches</button>
+			<button class="btn btn-outline-primary" ng-click="$ctrl.$rootScope.seeLikesinGroup()" >Retrieve Likes</button>
 		</div>
 	</div>
 </form>
-		<div class="card-columns mt-2">
-			<div class="card mb-2 animated zoomInUp" ng-repeat="match in $ctrl.$rootScope.matches">
-				<img class="card-img-top img-fluid" src="{{match.image_url}}" alt="Card image cap">
-				<div class="card-block">
-					<h5 class="card-title" style="color: #d2731f">{{match.name}}</h5>
-					<p class="card-text">{{match.display_phone}} <br>
-						{{match.location.display_address[0]}} <br>
-					{{match.location.display_address[1]}} </p>
-				</div>
-			</div>
-		</div>
-	</div>
+<!-- ng-disabled="seeLikes.$invalid" -->
+	<table class="table table-striped table-sm" ng-show="$ctrl.$rootScope.showLikesTable">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Category</th>
+				<th>Price</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="like in $ctrl.$rootScope.likes">
+				<td><a href="{{like.url}}" target="_blank">{{like.name}}</a></td>
+				<td>{{like.categories[1].title}}</td>
+				<td>{{like.price}}</td>
+			</tr>
+		</tbody>
+	</table>
 </div>
