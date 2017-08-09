@@ -1,5 +1,5 @@
 class loginController {
-    constructor($rootScope, $auth, $http, $state) {
+    constructor($rootScope, $auth, $http, $state, $timeout) {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
 
@@ -20,15 +20,28 @@ class loginController {
             $auth.login(credentials)
                 .then((data) => {
                     $auth.setToken(data.data.access_token);
-                    $state.go('auth.dashboard');
                     ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+                    console.log($auth.isAuthenticated());
                     ctrl.$rootScope.userId = $auth.getPayload().sub;
                     window.localStorage.setItem('currentUser', ctrl.$rootScope.userId);
+                    $state.go('auth.dashboard');
                     ctrl.$rootScope.loginError = '';
 
-                }).catch((error) => {
-                    ctrl.$rootScope.loginError = error.data.message;
-                })
+                }).then(()=>{
+                    ctrl.$rootScope.loadScreen = true;
+                    ctrl.$rootScope.getGroups();
+                    $timeout(() => {
+                        if (ctrl.$rootScope.groups[0].length === 0) {
+                            ctrl.$rootScope.loadScreen = false;
+                            $state.go('auth.firstlogin');
+
+                        } else {
+                            ctrl.$rootScope.loadScreen = false;
+                            $state.go('auth.dashboard');
+
+                        }
+                    }, 1000);
+                });
 
         } // end login
 
@@ -44,10 +57,13 @@ class loginController {
                 password_confirmation: ctrl.password_confirmation,
             };
 
+            
+
             // satellizer's signup function to send data via http request to server.
             $auth.signup(user)
               .then( (response) => {
-                $state.go('login');
+                ctrl.$rootScope.userName = user.name;
+                ctrl.$rootScope.login();
               })
               .catch( (error) => {
                  

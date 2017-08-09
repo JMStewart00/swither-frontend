@@ -4,8 +4,11 @@ class appCtrl {
 
         let ctrl = this;
         ctrl.$rootScope = $rootScope;
-        ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
         ctrl.$http = $http;
+
+
+        // variable declarations
+        ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
         ctrl.$rootScope.searchResults = [];
         ctrl.$rootScope.alert = false;
         ctrl.$rootScope.groups = [];
@@ -21,6 +24,8 @@ class appCtrl {
         navigator.geolocation.getCurrentPosition((position) => {
             ctrl.$rootScope.longitude = position.coords.longitude;
         });
+
+        
 
         ctrl.$rootScope.setLocation = () => {
             $('#location').prop('readonly', true);
@@ -43,7 +48,7 @@ class appCtrl {
         }
 
         ctrl.$rootScope.seeLikesinGroup = () => {
-            console.log('yo');
+            console.log();
         }
 
         // search yelp with a form

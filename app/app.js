@@ -32,63 +32,72 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
         // states
         $stateProvider
                 .state('landing', {
-                        url: '/',
-                        templateUrl: './app/landing/landing.html',
-                        controller: landingComponent.controller,
-                        controllerAs: '$ctrl'
+                    url: '/',
+                    templateUrl: './app/landing/landing.html',
+                    controller: landingComponent.controller,
+                    controllerAs: '$ctrl'
                 })               
                 .state('login', {
-                        url: '/login',
-                        templateUrl: './app/login/login.html',
-                        controller: loginComponent.controller,
-                        controllerAs: '$ctrl'
+                    url: '/login',
+                    templateUrl: './app/login/login.html',
+                    controller: loginComponent.controller,
+                    controllerAs: '$ctrl'
                 })
                 .state('register', {
-                        url: '/register',
-                        templateUrl: './app/login/register.html',
-                        controller: loginComponent.controller,
-                        controllerAs: '$ctrl'
+                    url: '/register',
+                    templateUrl: './app/login/register.html',
+                    controller: loginComponent.controller,
+                    controllerAs: '$ctrl'
                 })
                 .state('auth.dashboard', {
-                        url: '/dashboard',
-                        templateUrl: './app/dashboard/dashboard.html',
-                        controller: dashboardComponent.controller,
-                        controllerAs: '$ctrl',
-                        onExit: ($rootScope) => {
+                    url: '/dashboard',
+                    templateUrl: './app/dashboard/dashboard.html',
+                    controller: dashboardComponent.controller,
+                    controllerAs: '$ctrl',
+                    onExit: ($rootScope) => {
+                        if ($rootScope.loginStatus === true) {
                             $rootScope.getGroups();
                         }
+                    }
                 })
                 .state('auth.new', {
-                        url: '/newevent',
-                        templateUrl: './app/newEvent/newEvent.html',
-                        controller: newEventComponent.controller,
-                        controllerAs: '$ctrl',
-                        onEnter: ($rootScope) => {
-                            $rootScope.searchResults = [];
-                        }
+                    url: '/newevent',
+                    templateUrl: './app/newEvent/newEvent.html',
+                    controller: newEventComponent.controller,
+                    controllerAs: '$ctrl',
+                    onEnter: ($rootScope) => {
+                        $rootScope.searchResults = [];
+                    }
                 })
                 .state('auth.swipes', {
-                        url: '/swipes',
-                        templateUrl: './app/swipeScreen/swipeScreen.html',
-                        controller: swipeScreenComponent.controller,
-                        controllerAs: '$ctrl',
-                        onExit: ($rootScope) => {
-                            $rootScope.alert = false;
-                            $rootScope.message = '';
-                        }
+                    url: '/swipes',
+                    templateUrl: './app/swipeScreen/swipeScreen.html',
+                    controller: swipeScreenComponent.controller,
+                    controllerAs: '$ctrl',
+                    onExit: ($rootScope) => {
+                        $rootScope.alert = false;
+                        $rootScope.message = '';
+                    }
                 })
                 .state('auth.addgroup', {
-                        url: '/addgroup',
-                        templateUrl: './app/dashboard/creategroup.html',
-                        controller: dashboardComponent.controller,
-                        controllerAs: '$ctrl'
+                    url: '/addgroup',
+                    templateUrl: './app/dashboard/creategroup.html',
+                    controller: dashboardComponent.controller,
+                    controllerAs: '$ctrl'
                 })
                 .state('auth.joingroup', {
-                        url: '/joingroup',
-                        templateUrl: './app/dashboard/joingroup.html',
-                        controller: dashboardComponent.controller,
-                        controllerAs: '$ctrl'
+                    url: '/joingroup',
+                    templateUrl: './app/dashboard/joingroup.html',
+                    controller: dashboardComponent.controller,
+                    controllerAs: '$ctrl'
                           
+                })
+                .state('auth.firstlogin', {
+                    url: '/newuser',
+                    templateUrl: './app/dashboard/firstlogin.html',
+                    controller: dashboardComponent.controller,
+                    controllerAs: '$ctrl'
+
                 })
                 .state('auth.matches', {
                     url: '/matches',
