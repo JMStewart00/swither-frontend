@@ -7149,25 +7149,9 @@ a {
   font-family: 'Alegreya Sans', sans-serif;
   color: #7f0c0b; }
 
-#login .container > * {
-  opacity: 1; }
-
-#login .container {
-  background: rgba(255, 255, 255, 0.6);
-  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
-          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
-
 #register h1 {
   font-family: 'Alegreya Sans', sans-serif;
   color: #7f0c0b; }
-
-#register .container > * {
-  opacity: 1; }
-
-#register .container {
-  background: rgba(255, 255, 255, 0.6);
-  -webkit-box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2);
-          box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.2); }
 
 #navbar {
   z-index: 51;
