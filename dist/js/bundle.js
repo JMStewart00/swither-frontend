@@ -38,8 +38,10 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
-    ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
     ctrl.$http = $http;
+
+    // variable declarations
+    ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
     ctrl.$rootScope.searchResults = [];
     ctrl.$rootScope.alert = false;
     ctrl.$rootScope.groups = [];
@@ -75,7 +77,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
     };
 
     ctrl.$rootScope.seeLikesinGroup = function () {
-        console.log('yo');
+        console.log();
     };
 
     // search yelp with a form
@@ -253,7 +255,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
 exports.default = appCtrl;
 
 },{}],3:[function(require,module,exports){
-module.exports = "<div class=\"color-overlay\">\n</div>\n\t<navbar></navbar>\n\t<div id=\"loadScreen\" ng-hide=\"!$ctrl.$rootScope.loadScreen\" class=\"text-center\">\n\t\t<div class=\"container\">\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col text-center\">\n\t\t\t\t\t<h1>Loading...</h1>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col\">\n\t\t\t\t\t\n\t\t<i class=\"fa fa-refresh fa-5x fa-spin\"></i>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n\n\t<main ui-view ng-hide=\"$ctrl.$rootScope.loadScreen\"></main>";
+module.exports = "<!-- <div class=\"color-overlay\">\n</div> -->\n\t<navbar></navbar>\n\t<div id=\"loadScreen\" ng-hide=\"!$ctrl.$rootScope.loadScreen\" class=\"text-center\">\n\t\t<div class=\"container\">\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col text-center\">\n\t\t\t\t\t<h1>Loading...</h1>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div class=\"row\">\n\t\t\t\t<div class=\"col\">\n\t\t\t\t\t\n\t\t<i class=\"fa fa-refresh fa-5x fa-spin\"></i>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n\n\t<main ui-view ng-hide=\"$ctrl.$rootScope.loadScreen\"></main>";
 
 },{}],4:[function(require,module,exports){
 'use strict';
@@ -327,7 +329,9 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate']).co
         controller: _dashboard2.default.controller,
         controllerAs: '$ctrl',
         onExit: function onExit($rootScope) {
-            $rootScope.getGroups();
+            if ($rootScope.loginStatus === true) {
+                $rootScope.getGroups();
+            }
         }
     }).state('auth.new', {
         url: '/newevent',
@@ -354,6 +358,12 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate']).co
     }).state('auth.joingroup', {
         url: '/joingroup',
         templateUrl: './app/dashboard/joingroup.html',
+        controller: _dashboard2.default.controller,
+        controllerAs: '$ctrl'
+
+    }).state('auth.firstlogin', {
+        url: '/newuser',
+        templateUrl: './app/dashboard/firstlogin.html',
         controller: _dashboard2.default.controller,
         controllerAs: '$ctrl'
 
@@ -473,13 +483,14 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 
     var ctrl = this;
     ctrl.$rootScope = $rootScope;
-    ctrl.$rootScope.getGroups();
+    // ctrl.$rootScope.getGroups();
+
 };
 
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<div id=\"dashboard\">\n    <div class=\"container mt-3 py-4 w-75\">\n        <div class=\"row\">\n            <div class=\"col text-center\">\n                <h1 class=\"display-4\">Dashboard</h1>\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n            </div>\n        </div>\n        <div class=\"row text-center\">\n            <div class=\"col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-plus display-4 hidden-md-up\" go-click=\"auth.new\"></i>\n                    <i class=\"ion-plus hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.new\"></i>\n                    <h2 class=\"hidden-sm-down\">Find New Places!</h2>\n                    <h4 class=\"hidden-md-up\">Find New Places!</h4>\n                </div>\n            </div>\n            <div class=\"col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-android-star-outline display-4 hidden-md-up\" go-click=\"auth.matches\"></i>\n                    <i class=\"ion-android-star-outline hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.matches\"></i>\n                    <h2 class=\"hidden-sm-down\">View Matches</h2>\n                    <h4 class=\"hidden-md-up\">View Matches</h4>\n                </div>\n            </div>\n            <div class=\"col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-ios-people display-4 hidden-md-up\" go-click=\"auth.addgroup\"></i>\n                    <i class=\"ion-ios-people hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.addgroup\"></i>\n                    <h2 class=\"hidden-sm-down\">New Group</h2>\n                    <h4 class=\"hidden-md-up\">New Group</h4>\n                </div>\n            </div>\n            <div class=\"col-md-6 col-lg-3 px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-ios-personadd display-4 hidden-md-up\" go-click=\"auth.joingroup\"></i>\n                    <i class=\"ion-ios-personadd hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.joingroup\"></i>\n                    <h2 class=\"hidden-sm-down\">Join Group</h2>\n                    <h4 class=\"hidden-md-up\">Join Group</h4>\n                </div>\n            </div>\n        </div>\n        </div>  <!-- container -->\n        </div> <!--id wrapper-->\n";
+module.exports = "<div id=\"dashboard\">\n    <div class=\"container mx-auto px-3 mt-4\">\n        <div class=\"row\">\n            <div class=\"col text-center\">\n                <!-- <h1 class=\"display-4\">Dashboard</h1> -->\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n            </div>\n        </div>\n        <div class=\"row text-center mb-3\">\n            <div class=\"col hidden-md-down\"></div>\n            <div class=\"col\">\n                <div class=\"btn btn-primary btn-\" go-click=\"auth.addgroup\">New Group</div>\n            </div>\n            <div class=\"col\">\n                <div class=\"btn btn-primary btn-\" go-click=\"auth.joingroup\">Join Group</div>\n            </div>\n            <div class=\"col hidden-md-down\"></div>\n        </div>\n\n        <div class=\"row text-center\">\n            <div class=\"col hidden-md-down\"></div>\n            <div class=\"col px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-plus display-4 hidden-md-up\" go-click=\"auth.new\"></i>\n                    <i class=\"ion-plus hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.new\"></i>\n                    <h2 class=\"hidden-sm-down\">New Group Outing</h2>\n                    <h4 class=\"hidden-md-up\">New Group Outing</h4>\n                </div>\n            </div>\n            <div class=\"col px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-android-star-outline display-4 hidden-md-up\" go-click=\"auth.matches\"></i>\n                    <i class=\"ion-android-star-outline hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.matches\"></i>\n                    <h2 class=\"hidden-sm-down\">Get Group Matches</h2>\n                    <h4 class=\"hidden-md-up\">Get Group Matches</h4>\n                </div>\n            </div>\n            <div class=\"col hidden-md-down\"></div>\n        </div>\n        </div>  <!-- container -->\n        </div> <!--id wrapper-->\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
@@ -548,7 +559,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var loginComponent = {
 	bindings: {},
 	template: _login2.default,
-	controller: ['$rootScope', '$auth', '$http', '$state', _login4.default],
+	controller: ['$rootScope', '$auth', '$http', '$state', '$timeout', _login4.default],
 	controllerAs: '$ctrl'
 };
 
@@ -563,7 +574,7 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var loginController = function loginController($rootScope, $auth, $http, $state) {
+var loginController = function loginController($rootScope, $auth, $http, $state, $timeout) {
     _classCallCheck(this, loginController);
 
     var ctrl = this;
@@ -583,13 +594,24 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
             // Use Satellizer's $auth service to login
         };$auth.login(credentials).then(function (data) {
             $auth.setToken(data.data.access_token);
-            $state.go('auth.dashboard');
             ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
+            console.log($auth.isAuthenticated());
             ctrl.$rootScope.userId = $auth.getPayload().sub;
             window.localStorage.setItem('currentUser', ctrl.$rootScope.userId);
+            $state.go('auth.dashboard');
             ctrl.$rootScope.loginError = '';
-        }).catch(function (error) {
-            ctrl.$rootScope.loginError = error.data.message;
+        }).then(function () {
+            ctrl.$rootScope.loadScreen = true;
+            ctrl.$rootScope.getGroups();
+            $timeout(function () {
+                if (ctrl.$rootScope.groups[0].length === 0) {
+                    ctrl.$rootScope.loadScreen = false;
+                    $state.go('auth.firstlogin');
+                } else {
+                    ctrl.$rootScope.loadScreen = false;
+                    $state.go('auth.dashboard');
+                }
+            }, 1000);
         });
     }; // end login
 
@@ -607,7 +629,8 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
 
         // satellizer's signup function to send data via http request to server.
         $auth.signup(user).then(function (response) {
-            $state.go('login');
+            ctrl.$rootScope.userName = user.name;
+            ctrl.$rootScope.login();
         }).catch(function (error) {});
     };
 };
@@ -615,7 +638,7 @@ var loginController = function loginController($rootScope, $auth, $http, $state)
 exports.default = loginController;
 
 },{}],13:[function(require,module,exports){
-module.exports = "<div id=\"login\">\n    <div class=\"container text-center mt-3 py-3 w-75\">\n\n        <div class=\"row\">\n            <div class=\"col\">\n                <h1>LOGiN</h1>\n            </div>\n        </div>\n        \n\n        <div class=\"row\">\n            <div class=\"col-6 offset-3 mb-3\">\n                <div ng-if=\"$ctrl.$rootScope.loginError\" class=\"alert-danger\">{{$ctrl.$rootScope.loginError}}</div>\n            </div>\n        </div>\n\n\n        <form>\n\n            <div class=\"row\">\n                <div class=\"col\">\n                    <div class=\"form-group row\">\n                        <label for=\"email-input\" class=\"col-2 col-form-label text-right pr-0\">Email</label>\n                        <div class=\"col-10\">\n                            <input class=\"form-control\" type=\"email\" placeholder=\"Email\" ng-model=\"$ctrl.email\" id=\"email-input\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n\n            <div class=\"row\">\n                <div class=\"col\">\n                    <div class=\"form-group row\">\n                        <label for=\"password-input\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Password</label>\n                        <label for=\"password-input\" class=\"col-2 col-form-label text-right pr-0 hidden-md-up\">PW</label>\n                        <div class=\"col-10\">\n                            <input class=\"form-control\" type=\"password\" placeholder=\"Password\" ng-model=\"$ctrl.password\" id=\"password-input\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n\n            <div class=\"row\">      \n                <div class=\"col\">\n                    <button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.login()\">Submit</button>\n                </div>\n            </div>\n\n        </form>\n        \n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->";
+module.exports = "<div id=\"login\">\n    <div class=\"container text-center mt-3 py-3 mx-2\">\n\n        <div class=\"row\">\n            <div class=\"col\">\n                <h1>LOGiN</h1>\n            </div>\n        </div>\n        \n\n        <div class=\"row\">\n            <div class=\"col-6 offset-3 mb-3\">\n                <div ng-if=\"$ctrl.$rootScope.loginError\" class=\"alert-danger\">{{$ctrl.$rootScope.loginError}}</div>\n            </div>\n        </div>\n\n\n        <form>\n\n            <div class=\"row\">\n                <div class=\"col\">\n                    <div class=\"form-group row\">\n                        <label for=\"email-input\" class=\"col-2 col-form-label text-right pr-0\">Email</label>\n                        <div class=\"col-10\">\n                            <input class=\"form-control\" type=\"email\" placeholder=\"Email\" ng-model=\"$ctrl.email\" id=\"email-input\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n\n            <div class=\"row\">\n                <div class=\"col\">\n                    <div class=\"form-group row\">\n                        <label for=\"password-input\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Password</label>\n                        <label for=\"password-input\" class=\"col-2 col-form-label text-right pr-0 hidden-md-up\">PW</label>\n                        <div class=\"col-10\">\n                            <input class=\"form-control\" type=\"password\" placeholder=\"Password\" ng-model=\"$ctrl.password\" id=\"password-input\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n\n\n            <div class=\"row\">      \n                <div class=\"col\">\n                    <button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.login()\">Submit</button>\n                </div>\n            </div>\n\n        </form>\n        \n    </div> <!-- end container -->\n</div> <!-- end id wrapper -->";
 
 },{}],14:[function(require,module,exports){
 'use strict';
@@ -715,7 +738,7 @@ var newEventController = function newEventController($rootScope, $auth, $http, $
 exports.default = newEventController;
 
 },{}],19:[function(require,module,exports){
-module.exports = "<div id=\"newEvent\">\n    <div class=\"container text-center mt-3 py-3 w-75 px-2\">\n        <div class=\"row\">\n            <div class=\"col text-left pl-3\">\n                <p go-click=\"auth.dashboard\"><i class=\"ion-android-arrow-back\"></i> BACK</p>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n                <h1>Headed out tonight?</h1>\n                <p>Choose your group below, enter a search term like \"Tacos\" and a general location and hit Get Results!</p>\n            </div>\n        </div>\n<form name=\"newEventForm\" novalidate>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"groupSelect\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Select Group</label>\n                <div class=\"col-sm-12 col-md-10\">              \n                    <select class=\"form-control custom-select\" id=\"groupSelect\" name=\"groupSelect\" ng-model=\"groupSelect\" required\n    ng-options=\"group.id as group.group_name for group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1] track by group.id\" >\n                        <option value=\"\">-- Select Group --</option>\n                    </select>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Search</label>\n                <div class=\"col-sm-12 col-md-10\">\n                    <input class=\"form-control\" placeholder=\"Enter a search term (i.e. Restaurants)\" name=\"term\" id=\"term\" ng-model=\"term\" required ng-required=\"true\">\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"location\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Location</label>\n                <div class=\"col-10 col-md-8 pr-0\">\n                    <input type=\"text\" class=\"form-control\" placeholder=\"Enter a City, ST or Zip Code\" name=\"location\" id=\"location\" required ng-required=\"true\" onfocus=\"this.removeAttribute('readonly');\">\n                </div>\n                <div class=\"col-2 pl-0\"><button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.setLocation()\"><i class=\"fa fa-map-marker text-white\"></i></button></div>\n            </div>\n        </div>\n    </div>\n    \n    <div class=\"row\">      \n        <div class=\"col\">\n            <button class=\"btn btn-outline-primary btn-lg\" ng-click=\"$ctrl.$rootScope.searchYelp()\" ng-disabled=\"newEventForm.$invalid\">Go!</button>\n        </div>\n    </div>\n</form>\n\n\n    </div>\n</div>";
+module.exports = "<div id=\"newEvent\">\n    <div class=\"container text-center mt-3 py-3 mx-2 px-2\">\n        <div class=\"row\">\n            <div class=\"col text-left pl-3\">\n                <p go-click=\"auth.dashboard\"><i class=\"ion-android-arrow-back\"></i> BACK</p>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col\">\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n                <h1>Headed out tonight?</h1>\n                <p>Choose your group below, enter a search term like \"Tacos\" and a general location and hit Get Results!</p>\n            </div>\n        </div>\n<form name=\"newEventForm\" novalidate>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"groupSelect\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Select Group</label>\n                <div class=\"col-sm-12 col-md-10\">              \n                    <select class=\"form-control custom-select\" id=\"groupSelect\" name=\"groupSelect\" ng-model=\"groupSelect\" required\n    ng-options=\"group.id as group.group_name for group in $ctrl.$rootScope.groups[$ctrl.$rootScope.groups.length-1] track by group.id\" >\n                        <option value=\"\">-- Select Group --</option>\n                    </select>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Search</label>\n                <div class=\"col-sm-12 col-md-10\">\n                    <input class=\"form-control\" placeholder=\"Enter a search term (i.e. Restaurants)\" name=\"term\" id=\"term\" ng-model=\"term\" required ng-required=\"true\">\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col\">\n            <div class=\"form-group row\">\n                <label for=\"location\" class=\"col-2 col-form-label text-right pr-0 hidden-sm-down\">Location</label>\n                <div class=\"col-10 col-md-8 pr-0\">\n                    <input type=\"text\" class=\"form-control\" placeholder=\"Enter a City, ST or Zip Code\" name=\"location\" id=\"location\" required ng-required=\"true\" onfocus=\"this.removeAttribute('readonly');\">\n                </div>\n                <div class=\"col-2 pl-0\"><button class=\"btn btn-primary\" ng-click=\"$ctrl.$rootScope.setLocation()\"><i class=\"fa fa-map-marker text-white\"></i></button></div>\n            </div>\n        </div>\n    </div>\n    \n    <div class=\"row\">      \n        <div class=\"col\">\n            <button class=\"btn btn-outline-primary btn-lg\" ng-click=\"$ctrl.$rootScope.searchYelp()\" ng-disabled=\"newEventForm.$invalid\">Go!</button>\n        </div>\n    </div>\n</form>\n\n\n    </div>\n</div>";
 
 },{}],20:[function(require,module,exports){
 'use strict';
