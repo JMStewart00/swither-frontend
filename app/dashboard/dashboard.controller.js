@@ -14,7 +14,6 @@ class dashboardController {
 
         ctrl.$rootScope.endTutorial = () => {
             $state.go('auth.firstlogin')
-            console.log('skipped it!');
         }
     };
 }
