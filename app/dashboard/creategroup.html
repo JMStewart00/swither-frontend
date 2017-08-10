@@ -40,6 +40,11 @@
       </div>
 
 
+      <div class="row">
+        <div class="col-6 offset-3 mb-2 alert-danger" ng-if="$ctrl.pin !== $ctrl.confirm_pin">
+          PINs do not match.
+        </div>
+      </div>
 
       <div class="row">
         <!-- <div class="col-1"></div> -->
@@ -61,11 +66,6 @@
           </div>
         </div>
         <!-- <div class="col-1"></div> -->
-      </div>
-      <div class="row">
-        <div class="col-6 offset-3 mb-2 alert-danger" ng-if="$ctrl.pin !== $ctrl.confirm_pin">
-          PINs do not match.
-        </div>
       </div>
     
         <div class="row">      

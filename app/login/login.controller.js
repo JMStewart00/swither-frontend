@@ -25,8 +25,6 @@ class loginController {
                     window.localStorage.setItem('currentUser', ctrl.$rootScope.userId);
                     $state.go('auth.dashboard');
                     ctrl.$rootScope.loginError = '';
-
-                }).then(()=>{
                     ctrl.$rootScope.loadScreen = true;
                     ctrl.$rootScope.getGroups();
                     $timeout(() => {
@@ -40,6 +38,11 @@ class loginController {
 
                         }
                     }, 1000);
+
+                }, (error) => {
+                    if (error.status === 401) {
+                        ctrl.$rootScope.loginError = "Your email/password combination does not match our records."
+                    }
                 });
 
         } // end login
@@ -63,14 +66,14 @@ class loginController {
               .then( (response) => {
                 ctrl.$rootScope.userName = user.name;
                 ctrl.$rootScope.login();
+              }, (error) => {
+                 if (error.status === 422) {
+                     ctrl.$rootScope.loginError = "Your password must be 6 characters long."
+                 }
               })
-              .catch( (error) => {
-                 console.log(error);
-                 ctrl.$rootScope.login();
-              });
-            }
+            
 
-
+        }
 
 
 

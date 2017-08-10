@@ -55,6 +55,8 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
                     controller: dashboardComponent.controller,
                     controllerAs: '$ctrl',
                     onExit: ($rootScope) => {
+                        $rootScope.message = '';
+                        $rootScope.alert = false;
                         if ($rootScope.loginStatus === true) {
                             $rootScope.getGroups();
                         }
