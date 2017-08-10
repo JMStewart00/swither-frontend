@@ -7,6 +7,18 @@ class appCtrl {
         ctrl.$http = $http;
 
 
+        ctrl.$rootScope.screens =  [
+            {image: 'dist/css/screens/0.png', instructions: "Upon registration, you'll be greeted with this screen. You'll need to either join a group with credentials that you've received from a friend or you can create your own group! You pick!"},
+            {image: 'dist/css/screens/1.png', instructions: "On the 'Add Group' page you'll be asked to fill in a group name that will be case sensitive with a 4-digit PIN number! Hang on to those and send them to other potential group members!"},
+            {image: 'dist/css/screens/2.png', instructions: "If you wanted to join a group, simply input the group name (case sensitive) into the input field and enter the PIN to join in."},
+            {image: 'dist/css/screens/3.png', instructions: "The dashboard is the most prominent screen you'll see during your use of SWiTHER. It will allow you to add a new group, join a group, set up a new group outing, see your group matches, see your personal matches and finally learn more about the app"},
+            {image: 'dist/css/screens/8.png', instructions: "The first thing you'll want to do is select the 'New Group Outing' button to set up a set up potential matches."},
+            {image: 'dist/css/screens/4.png', instructions: "From the next screen you can select which group you're going to want to match with, select a search parameter for the night out, and enter a location or hit the location button. Then you'll click 'Go!' to get your matches."},
+            {image: 'dist/css/screens/5.png', instructions: "The next screen you'll see is the 'Swipe Screen'. Don't be fooled by the name because it doesn't swipe yet but it will in the future. Here you'll see a business that you may choose to like with the heart or get rid of with the thumbs down. The search will return 10 results at the most. It's easy as that."},
+            {image: 'dist/css/screens/6.png', instructions: "After returning to the dashboard, you may go to the 'Get Group Matches' page to see any matches that you have with your group up to this point. Select from the dropdown and hit retrieve to see them all."},
+            {image: 'dist/css/screens/7.png', instructions: "That's it! You may look at your likes in the 'Your Personal Likes' section or learn more about the app in the 'More About SWiTHER' section. Enjoy!"}
+        ]
+
         // variable declarations
         ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
         ctrl.$rootScope.searchResults = [];
@@ -19,6 +31,7 @@ class appCtrl {
         ctrl.$rootScope.currentLocation = '';
         ctrl.$rootScope.gotLocation = false;
         ctrl.$rootScope.showLikesTable = false;
+        ctrl.$rootScope.showMatch = false;
 
 
         // sets variables on page load of location for l
@@ -60,7 +73,6 @@ class appCtrl {
             $http.post('https://swither.herokuapp.com/api/likesbygroup', ctrl.getLikesbyGroup)
                 .then( (response) => {
                     ctrl.$rootScope.showLikesTable = true;
-                    console.log(response.data);
                     if (response.data.length >= 1) {
                         for (var i = 0; i < response.data.length; i++) {
                             ctrl.$rootScope.likes.push(JSON.parse(response.data[i].business_info));
@@ -226,17 +238,25 @@ class appCtrl {
 
 
         ctrl.$rootScope.viewMatches = () => {
+            ctrl.$rootScope.showMatch = true;
+
             ctrl.matchQuery = {
                 "group_id": $('#matchRetrieve option:selected').val()
                 }
+
+
             ctrl.incompatible = {
               "image_url": "./dist/css/wrong.png",
               "name": "No matches!!",
               "display_phone": "You're apparently incompatible with your group!"
             };
+
+
             ctrl.$rootScope.matches = [];
             $http.post('https://swither.herokuapp.com/api/matches', ctrl.matchQuery)
                 .then( (response) => {
+
+
                     if (response.data.length >= 1) {
                         for (var i = 0; i < response.data.length; i++) {
                             ctrl.$rootScope.matches.push(JSON.parse(response.data[i].business_info));
@@ -244,8 +264,29 @@ class appCtrl {
                     } else {
                         ctrl.$rootScope.matches.push(ctrl.incompatible);
                     }
-            })
+                    ctrl.randomizeMatch(ctrl.$rootScope.matches);
+                })
+
         }
+
+        ctrl.randomizeMatch = (array) => {
+              var currentIndex = array.length, temporaryValue, randomIndex;
+
+              // While there remain elements to shuffle...
+              while (0 !== currentIndex) {
+
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                // And swap it with the current element.
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+              }
+
+              return array[0];
+            }
 
         ctrl.errorMessage = () => {
                 // set message to confirm add

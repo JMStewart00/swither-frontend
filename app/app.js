@@ -106,12 +106,19 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
                     controllerAs: '$ctrl',
                     onExit: ($rootScope) => {
                         $rootScope.matches = [];
+                        $rootScope.showMatch = false;
                     },
 
                 })
                 .state('auth.about', {
                     url: '/about',
                     templateUrl: './app/dashboard/about.html',
+                    controller: dashboardComponent.controller,
+                    controllerAs: '$ctrl'
+                })
+                .state('auth.tutorial', {
+                    url: '/tutorial',
+                    templateUrl: './app/dashboard/tutorial.html',
                     controller: dashboardComponent.controller,
                     controllerAs: '$ctrl'
                 })

@@ -7106,6 +7106,9 @@ a {
     -webkit-transition: .5s;
     -o-transition: .5s;
     transition: .5s; }
+  #dashboard #tutorial {
+    opacity: .5;
+    font-size: 10px; }
 
 #matchesHTML p {
   color: #7f0c0b; }
@@ -7158,6 +7161,17 @@ a {
 #register h1 {
   font-family: 'Alegreya Sans', sans-serif;
   color: #7f0c0b; }
+
+#navbar {
+  z-index: 51;
+  color: white; }
+  #navbar .container {
+    background-color: #7f0c0b; }
+  #navbar h3 {
+    font-family: 'Alegreya Sans', sans-serif; }
+  #navbar a {
+    cursor: pointer;
+    cursor: hand; }
 
 #newEvent h1 {
   font-family: 'Alegreya Sans', sans-serif;
@@ -7225,14 +7239,3 @@ a {
           transform: rotate(19deg);
   text-shadow: 3px 2px 5px #969696;
   color: red; }
-
-#navbar {
-  z-index: 51;
-  color: white; }
-  #navbar .container {
-    background-color: #7f0c0b; }
-  #navbar h3 {
-    font-family: 'Alegreya Sans', sans-serif; }
-  #navbar a {
-    cursor: pointer;
-    cursor: hand; }

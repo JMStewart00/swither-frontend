@@ -3,7 +3,7 @@ class loginController {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
 
-
+        
         // define login function for use in the front end
         ctrl.$rootScope.login = () => {
 
@@ -32,7 +32,7 @@ class loginController {
                     $timeout(() => {
                         if (ctrl.$rootScope.groups[0].length === 0) {
                             ctrl.$rootScope.loadScreen = false;
-                            $state.go('auth.firstlogin');
+                            $state.go('auth.tutorial');
 
                         } else {
                             ctrl.$rootScope.loadScreen = false;
@@ -65,9 +65,11 @@ class loginController {
                 ctrl.$rootScope.login();
               })
               .catch( (error) => {
-                 
+                 console.log(error);
+                 ctrl.$rootScope.login();
               });
             }
+
 
 
 
