@@ -7,8 +7,8 @@
 	</div>
 	<div class="row">
 	    <div class="col text-center">
-	        <h1>Get Group Matches</h1>
-	        <p>First, select the group you want to see your matches and then submit the request!</p>
+	        <h1>Where to?</h1>
+	        <p>First, select the group you are going out with, hit 'Go!' and you'll get your spot!</p>
 	    </div>
 	</div>
 	
@@ -28,18 +28,18 @@
 	</div>
 	<div class="row text-center">
 		<div class="col">
-			<button class="btn btn-outline-primary" ng-click="$ctrl.$rootScope.viewMatches()" ng-disabled="retrieveMatches.$invalid">Retrieve Matches</button>
+			<button class="btn btn-outline-primary" ng-click="$ctrl.$rootScope.viewMatches()" ng-disabled="retrieveMatches.$invalid">GET OUR SPOT!</button>
 		</div>
 	</div>
 </form>
-		<div class="card-columns mt-2">
-			<div class="card mb-2 animated zoomInUp" ng-repeat="match in $ctrl.$rootScope.matches">
-				<img class="card-img-top img-fluid" src="{{match.image_url}}" alt="Card image cap">
+		<div class="card-columns mt-2" ng-show="$ctrl.$rootScope.showMatch">
+			<div class="card mb-2 animated zoomInUp">
+				<img class="card-img-top img-fluid" src="{{$ctrl.$rootScope.matches[0].image_url}}" alt="Card image cap">
 				<div class="card-block">
-					<h5 class="card-title" style="color: #d2731f">{{match.name}}</h5>
-					<p class="card-text">{{match.display_phone}} <br>
-						{{match.location.display_address[0]}} <br>
-					{{match.location.display_address[1]}} </p>
+					<h5 class="card-title" style="color: #d2731f">{{$ctrl.$rootScope.matches[0].name}}</h5>
+					<p class="card-text">{{$ctrl.$rootScope.matches[0].display_phone}} <br>
+						{{$ctrl.$rootScope.matches[0].location.display_address[0]}} <br>
+					{{$ctrl.$rootScope.matches[0].location.display_address[1]}} </p>
 				</div>
 			</div>
 		</div>

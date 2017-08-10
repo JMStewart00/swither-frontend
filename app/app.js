@@ -106,6 +106,7 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
                     controllerAs: '$ctrl',
                     onExit: ($rootScope) => {
                         $rootScope.matches = [];
+                        $rootScope.showMatch = false;
                     },
 
                 })
