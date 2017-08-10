@@ -1,4 +1,4 @@
-<div id="navbar" class="hidden-sm-down">
+<!-- <div id="navbar" class="hidden-sm-down">
 	<div class="container w-100 py-auto text-white">
 		<div class="row">
 			<a class="col-2 text-right my-auto pt-2 pr-0" go-click="landing"><h3>SWiTHER</h3></a>
@@ -8,6 +8,7 @@
 			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-2 my-auto text-left" go-click="login">Login</a>
 			<a ng-show="$ctrl.$rootScope.loginStatus" class="col-2 my-auto text-right" go-click="auth.dashboard">Home</a>
 			<a ng-show="$ctrl.$rootScope.loginStatus" ng-click="$ctrl.$rootScope.logout()" class="col-2 text-left my-auto">Logout</a>
+			<a id="firstNameCurrentUser" class="col-2 text-left my-auto" ng-hide="ctrl.$rootScope.firstNameCurrentUser.length === 0">{{$ctrl.$rootScope.firstNameCurrentUser}}</a>
 		</div>
 	</div>
 </div>
@@ -21,6 +22,40 @@
 			<a ng-show="!$ctrl.$rootScope.loginStatus" class="col-2 mt-1 text-right" go-click="login">Login</a>
 			<a ng-show="$ctrl.$rootScope.loginStatus" class="col-2 mt-1 mr-3 text-left" go-click="auth.dashboard">Home</a>
 			<a ng-show="$ctrl.$rootScope.loginStatus" ng-click="$ctrl.$rootScope.logout()" class="col-2 mt-1 text-right">Logout</a>
+
 		</div>
 	</div>
 </div>
+ -->
+<nav class="navbar navbar-inverse bg-primary navbar-toggleable-md" ng-show="!$ctrl.$rootScope.loginStatus">
+    <button class="navbar-toggler navbar-toggler-right" type="button" ng-click="$ctrl.collapse()" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="d-flex">
+        <h1 class="navbar-brand" go-click="landing">SWiTHER</h1>
+        <span class="navbar-text"><i class="fa fa-lg fa-tree"></i></span>
+    </div>
+    <div class="navbar-collapse collapse" id="navbarNav1">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a class="nav-link" go-click="login">Login</a></li>
+            <li class="nav-item"><a class="nav-link" go-click="register">Register</a></li>
+        </ul>
+    </div>
+</nav>
+
+<nav class="navbar navbar-inverse bg-primary navbar-toggleable-md" ng-show="$ctrl.$rootScope.loginStatus">
+    <button class="navbar-toggler navbar-toggler-right" type="button" ng-click="$ctrl.collapse()" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="d-flex">
+        <h1 class="navbar-brand" go-click="landing">SWiTHER</h1>
+        <span class="navbar-text"><i class="fa fa-lg fa-tree"></i></span>
+    </div>
+    <div class="navbar-collapse collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a class="nav-link" go-click="auth.dashboard">{{$ctrl.$rootScope.firstNameCurrentUser}}'s Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" go-click="auth.about">About</a></li>
+            <li class="nav-item"><a class="nav-link" ng-click="$ctrl.$rootScope.logout()">Logout</a></li>
+        </ul>
+    </div>
+</nav>

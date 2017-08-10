@@ -1,5 +1,5 @@
 class loginController {
-    constructor($rootScope, $auth, $http, $state, $timeout) {
+    constructor($rootScope, $auth, $http, $state, $timeout, apiService) {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
 
@@ -23,12 +23,12 @@ class loginController {
                     ctrl.$rootScope.loginStatus = $auth.isAuthenticated();
                     ctrl.$rootScope.userId = $auth.getPayload().sub;
                     window.localStorage.setItem('currentUser', ctrl.$rootScope.userId);
+                    ctrl.$rootScope.getUserName();
                     $state.go('auth.dashboard');
                     ctrl.$rootScope.loginError = '';
-
-                }).then(()=>{
                     ctrl.$rootScope.loadScreen = true;
                     ctrl.$rootScope.getGroups();
+
                     $timeout(() => {
                         if (ctrl.$rootScope.groups[0].length === 0) {
                             ctrl.$rootScope.loadScreen = false;
@@ -40,6 +40,11 @@ class loginController {
 
                         }
                     }, 1000);
+
+                }, (error) => {
+                    if (error.status === 401) {
+                        ctrl.$rootScope.loginError = "Your email/password combination does not match our records."
+                    }
                 });
 
         } // end login
@@ -63,19 +68,28 @@ class loginController {
               .then( (response) => {
                 ctrl.$rootScope.userName = user.name;
                 ctrl.$rootScope.login();
+              }, (error) => {
+                 if (error.status === 422) {
+                     ctrl.$rootScope.loginError = "Your password must be 6 characters long."
+                 }
               })
-              .catch( (error) => {
-                 console.log(error);
-                 ctrl.$rootScope.login();
-              });
-            }
+            
+
+        }
 
 
-
-
+        ctrl.$rootScope.getUserName = () => {
+             apiService.getUserName().query({id:window.localStorage.getItem('currentUser')})
+            .$promise.then( (data) => {
+                let nameSplit = data[0].name.split(' ');
+                ctrl.$rootScope.firstNameCurrentUser = nameSplit[0];
+                window.localStorage.setItem('currentUserName', ctrl.$rootScope.firstNameCurrentUser);
+            })
+        }
 
 
     }; // end constructor
+
 }
 
 export default loginController;
