@@ -2,61 +2,55 @@
     <div class="container mx-auto px-3 mt-4">
         <div class="row">
             <div class="col text-center">
-                <!-- <h1 class="display-4">Dashboard</h1> -->
-                <div ng-show="$ctrl.$rootScope.alert" class="alert-danger py-2">{{$ctrl.$rootScope.message}}</div>
+                <h1 class="display-4 animated fadeIn mb-3">Dashboard</h1>
+                <div ng-show="$ctrl.$rootScope.alert" class="alert-danger py-2 my-3 w-50 mx-auto d-block">{{$ctrl.$rootScope.message}}</div>
             </div>
         </div>
         <div class="row text-center mb-3">
             <div class="col hidden-md-down"></div>
             <div class="col">
-                <div class="btn btn-primary btn-lg" go-click="auth.addgroup">New Group</div>
+                <div class="btn btn-primary btn-lg animated fadeIn" go-click="auth.addgroup">New Group</div>
             </div>
             <div class="col">
-                <div class="btn btn-primary btn-lg" go-click="auth.joingroup">Join Group</div>
+                <div class="btn btn-primary btn-lg animated fadeIn" go-click="auth.joingroup">Join Group</div>
             </div>
             <div class="col hidden-md-down"></div>
         </div>
 
         <div class="row text-center">
-            <div class="col hidden-md-down"></div>
-            <div class="col px-0 pb-3 text-center animated fadeIn">
-                <div class="col">
+            <div class="col px-0 pb-3 text-center animated fadeIn hoverMe">
+                <div class="col" go-click="auth.new">
                     <i class="ion-plus display-4 hidden-md-up" go-click="auth.new"></i>
                     <i class="ion-plus hidden-sm-down" style="font-size: 200px" go-click="auth.new"></i>
-                    <h2 class="hidden-sm-down">New Group Outing</h2>
-                    <h4 class="hidden-md-up">New Group Outing</h4>
+                    <h2 class="hidden-sm-down" go-click="auth.new">New Group Outing</h2>
+                    <h4 class="hidden-md-up" go-click="auth.new">New Group Outing</h4>
                 </div>
             </div>
-            <div class="col px-0 pb-3 text-center animated fadeIn">
-                <div class="col">
+            <div class="col px-0 pb-3 text-center animated fadeIn hoverMe">
+                <div class="col" go-click="auth.matches">
                     <i class="ion-android-star-outline display-4 hidden-md-up" go-click="auth.matches"></i>
                     <i class="ion-android-star-outline hidden-sm-down" style="font-size: 200px" go-click="auth.matches"></i>
-                    <h2 class="hidden-sm-down">Get Group Decision!</h2>
-                    <h4 class="hidden-md-up">Get Group Decision!</h4>
+                    <h2 class="hidden-sm-down" go-click="auth.matches">Get Group Decision!</h2>
+                    <h4 class="hidden-md-up" go-click="auth.matches">Get Group Decision!</h4>
                 </div>
             </div>
-            <div class="col hidden-md-down"></div>
-        </div>
-        <div class="row text-center">
-            <div class="col hidden-md-down"></div>
-            <div class="col px-0 pb-3 text-center animated fadeIn">
-                <div class="col">
+            <div class="col px-0 pb-3 text-center animated fadeIn hoverMe">
+                <div class="col" go-click="auth.likes">
                     <i class="ion-heart display-4 hidden-md-up" go-click="auth.likes"></i>
                     <i class="ion-heart hidden-sm-down" style="font-size: 200px" go-click="auth.likes"></i>
-                    <h2 class="hidden-sm-down">Your Personal Likes</h2>
-                    <h4 class="hidden-md-up">Your Personal Likes</h4>
+                    <h2 class="hidden-sm-down" go-click="auth.likes">Your Personal Likes</h2>
+                    <h4 class="hidden-md-up" go-click="auth.likes">Your Personal Likes</h4>
                 </div>
             </div>
-            <div class="col px-0 pb-3 text-center animated fadeIn">
-                <div class="col">
+        </div>
+<!--             <div class="col px-0 pb-3 text-center animated fadeIn hoverMe">
+                <div class="col" go-click="auth.about">
                     <i class="ion-information-circled display-4 hidden-md-up" go-click="auth.about"></i>
                     <i class="ion-information-circled hidden-sm-down" style="font-size: 200px" go-click="auth.about"></i>
-                    <h2 class="hidden-sm-down">More About SWiTHER</h2>
-                    <h4 class="hidden-md-up">More About SWiTHER</h4>
+                    <h2 class="hidden-sm-down" go-click="auth.about">More About SWiTHER</h2>
+                    <h4 class="hidden-md-up" go-click="auth.about">More About SWiTHER</h4>
                 </div>
-            </div>
-            <div class="col hidden-md-down"></div>
-        </div>
+            </div> -->
         <p class="text-center fixed-bottom" id="tutorial" go-click="auth.tutorial">View Tutorial</p>
         </div>  <!-- container -->
         </div> <!--id wrapper-->

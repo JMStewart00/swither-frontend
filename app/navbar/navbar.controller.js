@@ -3,6 +3,11 @@ class navbarController {
         let ctrl=this;
         ctrl.$rootScope = $rootScope;
 
+        ctrl.collapse = () => {
+        	$('#navbarNav').toggleClass('collapse');
+        	$('#navbarNav1').toggleClass('collapse');
+
+        }
 
     };
 }
