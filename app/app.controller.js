@@ -31,6 +31,7 @@ class appCtrl {
         ctrl.$rootScope.currentLocation = '';
         ctrl.$rootScope.gotLocation = false;
         ctrl.$rootScope.showLikesTable = false;
+        ctrl.$rootScope.showMatch = false;
 
 
         // sets variables on page load of location for l
@@ -72,7 +73,6 @@ class appCtrl {
             $http.post('https://swither.herokuapp.com/api/likesbygroup', ctrl.getLikesbyGroup)
                 .then( (response) => {
                     ctrl.$rootScope.showLikesTable = true;
-                    console.log(response.data);
                     if (response.data.length >= 1) {
                         for (var i = 0; i < response.data.length; i++) {
                             ctrl.$rootScope.likes.push(JSON.parse(response.data[i].business_info));
@@ -238,17 +238,25 @@ class appCtrl {
 
 
         ctrl.$rootScope.viewMatches = () => {
+            ctrl.$rootScope.showMatch = true;
+
             ctrl.matchQuery = {
                 "group_id": $('#matchRetrieve option:selected').val()
                 }
+
+
             ctrl.incompatible = {
               "image_url": "./dist/css/wrong.png",
               "name": "No matches!!",
               "display_phone": "You're apparently incompatible with your group!"
             };
+
+
             ctrl.$rootScope.matches = [];
             $http.post('https://swither.herokuapp.com/api/matches', ctrl.matchQuery)
                 .then( (response) => {
+
+
                     if (response.data.length >= 1) {
                         for (var i = 0; i < response.data.length; i++) {
                             ctrl.$rootScope.matches.push(JSON.parse(response.data[i].business_info));
@@ -256,8 +264,29 @@ class appCtrl {
                     } else {
                         ctrl.$rootScope.matches.push(ctrl.incompatible);
                     }
-            })
+                    ctrl.randomizeMatch(ctrl.$rootScope.matches);
+                })
+
         }
+
+        ctrl.randomizeMatch = (array) => {
+              var currentIndex = array.length, temporaryValue, randomIndex;
+
+              // While there remain elements to shuffle...
+              while (0 !== currentIndex) {
+
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                // And swap it with the current element.
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+              }
+
+              return array[0];
+            }
 
         ctrl.errorMessage = () => {
                 // set message to confirm add

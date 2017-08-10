@@ -54,6 +54,7 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
     ctrl.$rootScope.currentLocation = '';
     ctrl.$rootScope.gotLocation = false;
     ctrl.$rootScope.showLikesTable = false;
+    ctrl.$rootScope.showMatch = false;
 
     // sets variables on page load of location for l
     navigator.geolocation.getCurrentPosition(function (position) {
@@ -92,7 +93,6 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
         ctrl.$rootScope.likes = [];
         $http.post('https://swither.herokuapp.com/api/likesbygroup', ctrl.getLikesbyGroup).then(function (response) {
             ctrl.$rootScope.showLikesTable = true;
-            console.log(response.data);
             if (response.data.length >= 1) {
                 for (var i = 0; i < response.data.length; i++) {
                     ctrl.$rootScope.likes.push(JSON.parse(response.data[i].business_info));
@@ -242,16 +242,21 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
     };
 
     ctrl.$rootScope.viewMatches = function () {
+        ctrl.$rootScope.showMatch = true;
+
         ctrl.matchQuery = {
             "group_id": $('#matchRetrieve option:selected').val()
         };
+
         ctrl.incompatible = {
             "image_url": "./dist/css/wrong.png",
             "name": "No matches!!",
             "display_phone": "You're apparently incompatible with your group!"
         };
+
         ctrl.$rootScope.matches = [];
         $http.post('https://swither.herokuapp.com/api/matches', ctrl.matchQuery).then(function (response) {
+
             if (response.data.length >= 1) {
                 for (var i = 0; i < response.data.length; i++) {
                     ctrl.$rootScope.matches.push(JSON.parse(response.data[i].business_info));
@@ -259,7 +264,29 @@ var appCtrl = function appCtrl($rootScope, $http, $location, $auth, $state, $tim
             } else {
                 ctrl.$rootScope.matches.push(ctrl.incompatible);
             }
+            ctrl.randomizeMatch(ctrl.$rootScope.matches);
         });
+    };
+
+    ctrl.randomizeMatch = function (array) {
+        var currentIndex = array.length,
+            temporaryValue,
+            randomIndex;
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            // And swap it with the current element.
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+
+        return array[0];
     };
 
     ctrl.errorMessage = function () {
@@ -397,6 +424,7 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate']).co
         controllerAs: '$ctrl',
         onExit: function onExit($rootScope) {
             $rootScope.matches = [];
+            $rootScope.showMatch = false;
         }
 
     }).state('auth.about', {
@@ -533,7 +561,7 @@ var dashboardController = function dashboardController($rootScope, $auth, $http,
 exports.default = dashboardController;
 
 },{}],7:[function(require,module,exports){
-module.exports = "<div id=\"dashboard\">\n    <div class=\"container mx-auto px-3 mt-4\">\n        <div class=\"row\">\n            <div class=\"col text-center\">\n                <!-- <h1 class=\"display-4\">Dashboard</h1> -->\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n            </div>\n        </div>\n        <div class=\"row text-center mb-3\">\n            <div class=\"col hidden-md-down\"></div>\n            <div class=\"col\">\n                <div class=\"btn btn-primary btn-lg\" go-click=\"auth.addgroup\">New Group</div>\n            </div>\n            <div class=\"col\">\n                <div class=\"btn btn-primary btn-lg\" go-click=\"auth.joingroup\">Join Group</div>\n            </div>\n            <div class=\"col hidden-md-down\"></div>\n        </div>\n\n        <div class=\"row text-center\">\n            <div class=\"col hidden-md-down\"></div>\n            <div class=\"col px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-plus display-4 hidden-md-up\" go-click=\"auth.new\"></i>\n                    <i class=\"ion-plus hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.new\"></i>\n                    <h2 class=\"hidden-sm-down\">New Group Outing</h2>\n                    <h4 class=\"hidden-md-up\">New Group Outing</h4>\n                </div>\n            </div>\n            <div class=\"col px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-android-star-outline display-4 hidden-md-up\" go-click=\"auth.matches\"></i>\n                    <i class=\"ion-android-star-outline hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.matches\"></i>\n                    <h2 class=\"hidden-sm-down\">Get Group Matches</h2>\n                    <h4 class=\"hidden-md-up\">Get Group Matches</h4>\n                </div>\n            </div>\n            <div class=\"col hidden-md-down\"></div>\n        </div>\n        <div class=\"row text-center\">\n            <div class=\"col hidden-md-down\"></div>\n            <div class=\"col px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-heart display-4 hidden-md-up\" go-click=\"auth.likes\"></i>\n                    <i class=\"ion-heart hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.likes\"></i>\n                    <h2 class=\"hidden-sm-down\">Your Personal Likes</h2>\n                    <h4 class=\"hidden-md-up\">Your Personal Likes</h4>\n                </div>\n            </div>\n            <div class=\"col px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-information-circled display-4 hidden-md-up\" go-click=\"auth.about\"></i>\n                    <i class=\"ion-information-circled hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.about\"></i>\n                    <h2 class=\"hidden-sm-down\">More About SWiTHER</h2>\n                    <h4 class=\"hidden-md-up\">More About SWiTHER</h4>\n                </div>\n            </div>\n            <div class=\"col hidden-md-down\"></div>\n        </div>\n        <p class=\"text-center fixed-bottom\" id=\"tutorial\" go-click=\"auth.tutorial\">View Tutorial</p>\n        </div>  <!-- container -->\n        </div> <!--id wrapper-->\n";
+module.exports = "<div id=\"dashboard\">\n    <div class=\"container mx-auto px-3 mt-4\">\n        <div class=\"row\">\n            <div class=\"col text-center\">\n                <!-- <h1 class=\"display-4\">Dashboard</h1> -->\n                <div ng-show=\"$ctrl.$rootScope.alert\" class=\"alert-danger py-2\">{{$ctrl.$rootScope.message}}</div>\n            </div>\n        </div>\n        <div class=\"row text-center mb-3\">\n            <div class=\"col hidden-md-down\"></div>\n            <div class=\"col\">\n                <div class=\"btn btn-primary btn-lg\" go-click=\"auth.addgroup\">New Group</div>\n            </div>\n            <div class=\"col\">\n                <div class=\"btn btn-primary btn-lg\" go-click=\"auth.joingroup\">Join Group</div>\n            </div>\n            <div class=\"col hidden-md-down\"></div>\n        </div>\n\n        <div class=\"row text-center\">\n            <div class=\"col hidden-md-down\"></div>\n            <div class=\"col px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-plus display-4 hidden-md-up\" go-click=\"auth.new\"></i>\n                    <i class=\"ion-plus hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.new\"></i>\n                    <h2 class=\"hidden-sm-down\">New Group Outing</h2>\n                    <h4 class=\"hidden-md-up\">New Group Outing</h4>\n                </div>\n            </div>\n            <div class=\"col px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-android-star-outline display-4 hidden-md-up\" go-click=\"auth.matches\"></i>\n                    <i class=\"ion-android-star-outline hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.matches\"></i>\n                    <h2 class=\"hidden-sm-down\">Get Group Decision!</h2>\n                    <h4 class=\"hidden-md-up\">Get Group Decision!</h4>\n                </div>\n            </div>\n            <div class=\"col hidden-md-down\"></div>\n        </div>\n        <div class=\"row text-center\">\n            <div class=\"col hidden-md-down\"></div>\n            <div class=\"col px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-heart display-4 hidden-md-up\" go-click=\"auth.likes\"></i>\n                    <i class=\"ion-heart hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.likes\"></i>\n                    <h2 class=\"hidden-sm-down\">Your Personal Likes</h2>\n                    <h4 class=\"hidden-md-up\">Your Personal Likes</h4>\n                </div>\n            </div>\n            <div class=\"col px-0 pb-3 text-center animated fadeIn\">\n                <div class=\"col\">\n                    <i class=\"ion-information-circled display-4 hidden-md-up\" go-click=\"auth.about\"></i>\n                    <i class=\"ion-information-circled hidden-sm-down\" style=\"font-size: 200px\" go-click=\"auth.about\"></i>\n                    <h2 class=\"hidden-sm-down\">More About SWiTHER</h2>\n                    <h4 class=\"hidden-md-up\">More About SWiTHER</h4>\n                </div>\n            </div>\n            <div class=\"col hidden-md-down\"></div>\n        </div>\n        <p class=\"text-center fixed-bottom\" id=\"tutorial\" go-click=\"auth.tutorial\">View Tutorial</p>\n        </div>  <!-- container -->\n        </div> <!--id wrapper-->\n";
 
 },{}],8:[function(require,module,exports){
 'use strict';
