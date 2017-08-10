@@ -9,7 +9,7 @@ import apiService from './resource.services.js';
 
 
 // instantiation of the module of app, where injections will go.
-angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
+angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate', 'ui.bootstrap'])
 .component('app', appComponent)
 .component('login', loginComponent)
 .component('navbar', navbarComponent)
@@ -35,7 +35,7 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
                     url: '/',
                     templateUrl: './app/landing/landing.html',
                     controller: landingComponent.controller,
-                    controllerAs: '$ctrl'
+                    controllerAs: '$ctrl',
                 })               
                 .state('login', {
                     url: '/login',
@@ -56,6 +56,7 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
                     controllerAs: '$ctrl',
                     onExit: ($rootScope) => {
                         $rootScope.message = '';
+
                         $rootScope.alert = false;
                         if ($rootScope.loginStatus === true) {
                             $rootScope.getGroups();
@@ -131,6 +132,7 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
                     controllerAs: '$ctrl',
                     onExit: ($rootScope) => {
                         $rootScope.likes = [];
+
                     },
 
                 })
@@ -179,6 +181,12 @@ angular.module('app', ['ui.router', 'satellizer', 'ngResource', 'ngAnimate'])
       scope.$apply(  () => {
         $state.go( path );
       });
+        if (!$('#navbarNav1').hasClass('collapse')) {
+            $('#navbarNav1').toggleClass('collapse');
+        }
+        if (!$('#navbarNav').hasClass('collapse')) {
+            $('#navbarNav').toggleClass('collapse');
+        }
     });
   };
 })

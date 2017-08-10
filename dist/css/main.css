@@ -7094,25 +7094,6 @@ a {
 #loadScreen.ng-hide {
   opacity: 0; }
 
-#login h1 {
-  font-family: 'Alegreya Sans', sans-serif;
-  color: #7f0c0b; }
-
-#register h1 {
-  font-family: 'Alegreya Sans', sans-serif;
-  color: #7f0c0b; }
-
-#navbar {
-  z-index: 51;
-  color: white; }
-  #navbar .container {
-    background-color: #7f0c0b; }
-  #navbar h3 {
-    font-family: 'Alegreya Sans', sans-serif; }
-  #navbar a {
-    cursor: pointer;
-    cursor: hand; }
-
 #dashboard {
   color: #7f0c0b; }
   #dashboard .hoverMe:hover {
@@ -7144,13 +7125,6 @@ a {
   #tutorial .card {
     height: 70vh; }
 
-#newEvent h1 {
-  font-family: 'Alegreya Sans', sans-serif;
-  color: #7f0c0b; }
-
-#newEvent p {
-  color: #7f0c0b; }
-
 #landing {
   color: #7f0c0b;
   background-color: white; }
@@ -7170,7 +7144,7 @@ a {
       text-shadow: 5px 5px 5px #7f0c0b; }
     #landing #maincontent #headerText {
       background-color: rgba(127, 12, 11, 0.6);
-      height: 40vh; }
+      height: 50%; }
   #landing #changeText {
     -webkit-transition: 1s;
     -o-transition: 1s;
@@ -7190,6 +7164,32 @@ a {
     text-shadow: 3px 3px 3px #7f0c0b; }
   #landing #gif {
     padding-top: 12%; }
+
+#login h1 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+#register h1 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+#newEvent h1 {
+  font-family: 'Alegreya Sans', sans-serif;
+  color: #7f0c0b; }
+
+#newEvent p {
+  color: #7f0c0b; }
+
+#navbar {
+  z-index: 51;
+  color: white; }
+  #navbar .container {
+    background-color: #7f0c0b; }
+  #navbar h3 {
+    font-family: 'Alegreya Sans', sans-serif; }
+  #navbar a {
+    cursor: pointer;
+    cursor: hand; }
 
 #swipeScreen #like {
   color: #7f0c0b; }

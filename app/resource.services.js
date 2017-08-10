@@ -11,6 +11,7 @@ function apiService($resource) {
 	let joinGroup = () => $resource('https://swither.herokuapp.com/api/joingroup');
 	let refreshMatches = () => $resource('https://swither.herokuapp.com/api/matches/:id', {id:"@id"});
 	let getMatches = () => $resource('https://swither.herokuapp.com/api/matches/:id', {id:"@id"});
+	let getUserName = () => $resource('https://swither.herokuapp.com/api/user/:id', {id:"@id"});
 	// let updateSite = () => $resource('http://localhost:7000/api/sites/:site', {site: "@site"}, {
  //            'update': {method: 'PUT'}
  //        	});
@@ -24,6 +25,7 @@ function apiService($resource) {
 				joinGroup: joinGroup,
 				refreshMatches: refreshMatches,
 				getMatches: getMatches,
+				getUserName: getUserName,
 
 				}
 

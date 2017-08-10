@@ -32,6 +32,7 @@ class appCtrl {
         ctrl.$rootScope.gotLocation = false;
         ctrl.$rootScope.showLikesTable = false;
         ctrl.$rootScope.showMatch = false;
+        ctrl.$rootScope.firstNameCurrentUser = window.localStorage.getItem('currentUserName');
 
 
         // sets variables on page load of location for l
@@ -60,7 +61,11 @@ class appCtrl {
             ctrl.$rootScope.alert = false;
             ctrl.$rootScope.groups = [];
             ctrl.$rootScope.message = '';
+            ctrl.$rootScope.firstNameCurrentUser = '';
+            $('#navbarNav').toggleClass('collapse');
+            $('#navbarNav1').toggleClass('collapse');
             $state.go('login');
+
         }
 
         ctrl.$rootScope.seeLikesinGroup = () => {
